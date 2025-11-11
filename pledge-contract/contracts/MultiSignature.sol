@@ -10,7 +10,7 @@ contract MultiSignature {
     // ============ 状态变量 ============
     address[] public owners;                    // 所有者列表
     mapping(address => bool) public isOwner;    // 是否为所有者
-    uint256 public required;                    // 需要的确认数
+    uint256 public required;                    // 需要的确认数量
     
 
     // 场景：3个owner的多签钱包，需要2个确认
@@ -28,6 +28,10 @@ contract MultiSignature {
     }
     
     Transaction[] public transactions;
+    // 双层映射：记录每个交易的每个owner的确认状态
+    // 结构：交易ID => (Owner地址 => 是否已确认)
+    // 作用：1) 防止同一owner重复确认  2) 支持撤销确认  3) 透明可查询
+    // 示例：isConfirmed[0][Alice] = true 表示Alice已确认交易#0
     mapping(uint256 => mapping(address => bool)) public isConfirmed;
     
     // ============ 事件 ============
@@ -91,24 +95,24 @@ contract MultiSignature {
     /// @notice 执行交易
     function execute(uint256 _txId) public onlyOwner txExists(_txId) notExecuted(_txId) {
         require(transactions[_txId].numConfirmations >= required, "not enough confirmations");
-        Transaction storage transaction = transactions[_txId];
-        transaction.executed = true;
-        (bool success, ) = transaction.to.call{value: transaction.value}(transaction.data);
+        Transaction storage transaction = transactions[_txId]; // 获取交易记录
+        transaction.executed = true;  // 标记交易已执行
+        (bool success, ) = transaction.to.call{value: transaction.value}(transaction.data); // 执行交易
         require(success, "tx failed");
         emit Execute(_txId);
     }
     
     /// @notice 撤销确认
     function revoke(uint256 _txId) public onlyOwner txExists(_txId) notExecuted(_txId) {
-        require(isConfirmed[_txId][msg.sender], "tx not confirmed");
-        isConfirmed[_txId][msg.sender] = false;
-        transactions[_txId].numConfirmations -= 1;
+        require(isConfirmed[_txId][msg.sender], "tx not confirmed");  // 检查是否已确认
+        isConfirmed[_txId][msg.sender] = false;  // 撤销确认
+        transactions[_txId].numConfirmations -= 1; // 减少确认数
         emit Revoke(msg.sender, _txId);
     }
     
     // ============ 查询函数 ============
     function getTransactionCount() public view returns (uint256) {
-        return transactions.length;
+        return transactions.length;  // 返回交易数量
     }
     
     receive() external payable {}

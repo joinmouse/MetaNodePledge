@@ -13,7 +13,7 @@ describe("MultiSignature", function () {
     const MultiSignature = await ethers.getContractFactory("MultiSignature");
     multiSig = await MultiSignature.deploy(
       [owner1.address, owner2.address, owner3.address],
-      2
+      2 // 至少2个确认
     );
   });
 
