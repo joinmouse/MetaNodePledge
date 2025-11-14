@@ -105,48 +105,5 @@ flowchart TD
 
 ## 版本历史
 
-### v0.4.0 (2025-11-14) 新增DebtToken代币合约
-
-- 💰 **DebtToken 债务代币合约**
-  - ✨ 继承 ERC20 标准，实现债务代币功能
-  - 🔐 仅 Minter 可铸造/销毁代币
-  - 🛡️ 集成 AddressPrivileges 权限管理
-  - ✅ 完整的单元测试（11 个测试用例全部通过）
-
-### v0.3.0 (2025-11-14) 新增AddressPrivileges权限管理合约
-
-- 🔐 **AddressPrivileges 权限管理合约**
-  - ✨ 实现 Minter（铸币者）角色管理功能
-  - 🛡️ 继承 MultiSigClient，所有权限操作需多签批准
-  - 📝 支持添加/删除 Minter，查询 Minter 列表
-  - ✅ 完整的单元测试覆盖（包含多签集成测试）
-- 📚 **核心概念**
-  - 💡 Minter：有权铸造和销毁代币的合约地址（如借贷池）
-  - 🔗 为后续 DebtToken 和 PledgePool 奠定基础
-
-### v0.2.0 (2025-11-13) 新增MultiSignatureV2多签合约
-
-- 🚀 **多签架构重构 (MultiSignatureV2)**
-  - ✨ 采用验证中心 + 客户端分离架构，职责更清晰
-  - 🏦 新增 `MultiSigWallet` 作为独立的签名验证中心
-  - 🛡️ 新增 `MultiSigClient` 基类，提供 `validCall` 修饰器
-  - 🔌 业务合约通过继承 `MultiSigClient` 即可获得多签保护能力
-- ⚡ **性能优化**
-  - 📊 使用 hash 索引替代数组遍历，节省 30-40% Gas
-  - 🎯 简化调用流程：从 3 步操作简化为 1 步调用
-- 🔐 **安全性增强**
-  - ✅ 添加重复签名检查，防止签名混淆
-  - 🔒 框架级防护，自动处理重复执行风险
-  - 💾 采用 EIP-1967 槽位模式，避免存储冲突
-- 📚 **工具库优化**
-  - 🔧 新增 `AddressArrayLib` 地址数组工具库
-  - ✨ 支持自动去重、快速查找等功能
-- 🧪 **测试完善**
-  - 📝 新增 `MockMultiSigClient` 测试合约
-  - ✅ 完整的单元测试覆盖
-
-### v0.1.0 (2025-11-11) 新增MultiSignatureV1多签合约
-
-- ✨ 新增多签钱包合约 (MultiSignatureV1)，支持多方确认交易
-- 🔐 实现提交、确认、撤销、执行交易完整流程
-- 📝 支持纯转账和合约调用两种交易模式
+📖 [查看完整版本历史 (CHANGELOG.md)](./CHANGELOG.md)  
+🏷️ [查看所有 Releases →](https://github.com/your-username/MetaNodePledge/releases)
