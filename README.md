@@ -105,7 +105,15 @@ flowchart TD
 
 ## 版本历史
 
-### v0.3.0 (2025-11-14)
+### v0.4.0 (2025-11-14) 新增DebtToken代币合约
+
+- 💰 **DebtToken 债务代币合约**
+  - ✨ 继承 ERC20 标准，实现债务代币功能
+  - 🔐 仅 Minter 可铸造/销毁代币
+  - 🛡️ 集成 AddressPrivileges 权限管理
+  - ✅ 完整的单元测试（11 个测试用例全部通过）
+
+### v0.3.0 (2025-11-14) 新增AddressPrivileges权限管理合约
 
 - 🔐 **AddressPrivileges 权限管理合约**
   - ✨ 实现 Minter（铸币者）角色管理功能
@@ -116,7 +124,7 @@ flowchart TD
   - 💡 Minter：有权铸造和销毁代币的合约地址（如借贷池）
   - 🔗 为后续 DebtToken 和 PledgePool 奠定基础
 
-### v0.2.0 (2025-11-13)
+### v0.2.0 (2025-11-13) 新增MultiSignatureV2多签合约
 
 - 🚀 **多签架构重构 (MultiSignatureV2)**
   - ✨ 采用验证中心 + 客户端分离架构，职责更清晰
@@ -137,7 +145,7 @@ flowchart TD
   - 📝 新增 `MockMultiSigClient` 测试合约
   - ✅ 完整的单元测试覆盖
 
-### v0.1.0 (2025-11-11)
+### v0.1.0 (2025-11-11) 新增MultiSignatureV1多签合约
 
 - ✨ 新增多签钱包合约 (MultiSignatureV1)，支持多方确认交易
 - 🔐 实现提交、确认、撤销、执行交易完整流程
