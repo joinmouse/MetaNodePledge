@@ -5,6 +5,15 @@
 格式基于 [Keep a Changelog](https://keepachangelog.com/zh-CN/1.0.0/)，
 版本号遵循 [语义化版本](https://semver.org/lang/zh-CN/)。
 
+## [0.6.0] - 2025-11-15
+
+- 🏗️ 新增质押池核心架构（PoolStorage + PoolAdmin）
+- 🎯 支持池子创建、状态管理和权限控制
+- 📊 完整的数据结构设计和事件系统
+- ✅ 完整测试覆盖（217行测试用例全部通过）
+
+---
+
 ## [0.5.0] - 2025-11-14
 
 - 📊 新增 Oracle 价格预言机合约
@@ -81,6 +90,7 @@
 
 ## 版本说明
 
+- **[0.6.0]** - 质押池核心架构（PoolStorage + PoolAdmin）
 - **[0.5.0]** - Oracle 价格预言机合约
 - **[0.4.0]** - DebtToken 债务代币合约
 - **[0.3.0]** - AddressPrivileges 权限管理
