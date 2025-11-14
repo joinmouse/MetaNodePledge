@@ -5,14 +5,15 @@
     "dotenv": "^17.2.3",
     "hardhat": "^2.27.0"
   },
+  "dependencies": {
+    "@chainlink/contracts": "^1.5.0",
+    "@openzeppelin/contracts": "^5.4.0"
+  },
   "scripts": {
     "test": "npx hardhat test",
     "node": "npx hardhat node",
     "deploy:local": "npx hardhat ignition deploy ignition/modules/MultiSignature.js --network localhost",
     "deploy:hardhat": "npx hardhat ignition deploy ignition/modules/MultiSignature.js --network hardhat",
     "verify": "npx hardhat verify --network sepolia"
-  },
-  "dependencies": {
-    "@openzeppelin/contracts": "^5.4.0"
   }
 }
