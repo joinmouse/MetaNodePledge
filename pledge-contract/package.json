@@ -11,5 +11,8 @@
     "deploy:local": "npx hardhat ignition deploy ignition/modules/MultiSignature.js --network localhost",
     "deploy:hardhat": "npx hardhat ignition deploy ignition/modules/MultiSignature.js --network hardhat",
     "verify": "npx hardhat verify --network sepolia"
+  },
+  "dependencies": {
+    "@openzeppelin/contracts": "^5.4.0"
   }
 }
