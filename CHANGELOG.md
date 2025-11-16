@@ -5,6 +5,20 @@
 格式基于 [Keep a Changelog](https://keepachangelog.com/zh-CN/1.0.0/)，
 版本号遵循 [语义化版本](https://semver.org/lang/zh-CN/)。
 
+## [0.7.0] - 2025-11-16
+
+- 💰 **PoolLend 借出方合约实现**
+  - 新增完整的借出方生命周期管理（存款→领取凭证→提取收益）
+- 🎫 **spToken 债权凭证代币化**
+  - 实现标准DeFi两阶段借贷模式（claimLend + withdrawLend）
+  - 支持债权代币二级市场交易，增强协议流动性
+- 🏗️ **架构优化**
+  - PoolLend 继承 PoolAdmin，统一存储状态管理
+  - 优化 createPool 方法签名，支持灵活的代币配置
+- ✅ **完整测试覆盖**（17个测试用例全部通过，涵盖所有业务场景）
+
+---
+
 ## [0.6.0] - 2025-11-15
 
 - 🏗️ 新增质押池核心架构（PoolStorage + PoolAdmin）
@@ -90,6 +104,7 @@
 
 ## 版本说明
 
+- **[0.7.0]** - PoolLend 借出方合约（DeFi标准两阶段模式）
 - **[0.6.0]** - 质押池核心架构（PoolStorage + PoolAdmin）
 - **[0.5.0]** - Oracle 价格预言机合约
 - **[0.4.0]** - DebtToken 债务代币合约
