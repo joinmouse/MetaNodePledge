@@ -42,7 +42,9 @@ contract PoolAdmin is PoolStorage {
             settleAmountLend: 0,
             settleAmountBorrow: 0,
             state: PoolState.MATCH,
-            creator: msg.sender
+            creator: msg.sender,
+            spToken: address(0), // 初始为空，后续设置
+            jpToken: address(0)  // 初始为空，后续设置
         });
         
         emit PoolCreated(poolId, msg.sender, _settleToken, _pledgeToken);
@@ -62,10 +64,22 @@ contract PoolAdmin is PoolStorage {
         oracle = _oracle;
     }
     
-    // 设置债务代币
+    // 设置债务代币地址
     function setDebtToken(address _debtToken) external onlyAdmin {
         require(_debtToken != address(0), "PoolAdmin: invalid debt token address");
         debtToken = _debtToken;
+    }
+    
+    // 设置池子的sp代币
+    function setPoolSpToken(uint256 poolId, address _spToken) external onlyAdmin poolExists(poolId) {
+        require(_spToken != address(0), "PoolAdmin: invalid sp token address");
+        pools[poolId].spToken = _spToken;
+    }
+    
+    // 设置池子的jp代币
+    function setPoolJpToken(uint256 poolId, address _jpToken) external onlyAdmin poolExists(poolId) {
+        require(_jpToken != address(0), "PoolAdmin: invalid jp token address");
+        pools[poolId].jpToken = _jpToken;
     }
     
     // 暂停池子

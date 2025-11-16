@@ -28,13 +28,15 @@ contract PoolStorage {
         uint256 settleAmountBorrow; // 借入方总金额
         PoolState state;            // 池子状态
         address creator;            // 创建者地址
+        address spToken;            // sp债权代币地址
+        address jpToken;            // jp债权代币地址
     }
     
     // 借出方信息结构体
     struct LendInfo {
         uint256 amount;           // 借出金额
         uint256 interestAmount;   // 应得利息
-        bool claimed;             // 是否已领取收益
+        bool claimed;             // 是否已领取sp代币
         bool refunded;            // 是否已退款
     }
     
@@ -69,6 +71,8 @@ contract PoolStorage {
     event BorrowPledge(uint256 indexed poolId, address indexed borrower, uint256 pledgeAmount, uint256 borrowAmount);
     event PoolStateChanged(uint256 indexed poolId, PoolState oldState, PoolState newState);
     event InterestClaimed(uint256 indexed poolId, address indexed lender, uint256 amount);
+    event SpTokenClaimed(uint256 indexed poolId, address indexed lender, uint256 spAmount);
+    event SpTokenWithdrawn(uint256 indexed poolId, address indexed lender, uint256 spAmount, uint256 redeemAmount);
     event PoolSettled(uint256 indexed poolId, uint256 totalLendAmount, uint256 totalBorrowAmount);
     event Liquidation(uint256 indexed poolId, address indexed borrower, uint256 pledgeAmount);
     
