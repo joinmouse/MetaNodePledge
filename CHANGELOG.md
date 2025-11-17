@@ -5,6 +5,25 @@
 格式基于 [Keep a Changelog](https://keepachangelog.com/zh-CN/1.0.0/)，
 版本号遵循 [语义化版本](https://semver.org/lang/zh-CN/)。
 
+## [0.8.0] - 2025-11-17
+
+- 🏦 **PoolBorrow 借入方合约实现**
+  - 新增超额抵押借贷机制（质押→领取借款→还款赎回）
+- 🔒 **质押率安全控制**
+  - 实现质押率计算逻辑（借款额 = 质押价值 / 质押率）
+  - 支持150%超额抵押，确保借出方资金安全
+- 💎 **jpToken 债务凭证代币化**
+  - 实现标准DeFi两阶段借贷模式（claimBorrow + withdrawBorrow）
+  - 支持债务代币二级市场交易，增强协议灵活性
+- 🔄 **完整生命周期管理**
+  - depositBorrow：质押资产（支持ETH/ERC20）
+  - claimBorrow：领取借款并铸造jpToken凭证
+  - withdrawBorrow：还款销毁jpToken并赎回质押资产
+  - refundBorrow：池子失败时退还质押资产
+- ✅ **完整测试覆盖**（5个测试用例全部通过，涵盖质押、借款、计算等核心场景）
+
+---
+
 ## [0.7.0] - 2025-11-16
 
 - 💰 **PoolLend 借出方合约实现**
@@ -104,6 +123,7 @@
 
 ## 版本说明
 
+- **[0.8.0]** - PoolBorrow 借入方合约（超额抵押借贷机制）
 - **[0.7.0]** - PoolLend 借出方合约（DeFi标准两阶段模式）
 - **[0.6.0]** - 质押池核心架构（PoolStorage + PoolAdmin）
 - **[0.5.0]** - Oracle 价格预言机合约
