@@ -24,8 +24,11 @@ contract PoolStorage {
         uint256 pledgeRate;         // 质押率 (基点，15000=150%)
         uint256 liquidationRate;    // 清算率 (基点，13000=130%)
         uint256 endTime;            // 结束时间戳
+        uint256 settleTime;         // 结算时间戳
+        uint256 lendAmount;         // 借出方总金额
         uint256 settleAmountLend;   // 借出方总金额
         uint256 settleAmountBorrow; // 借入方总金额
+        uint256 liquidationAmount;  // 清算后可取回金额
         PoolState state;            // 池子状态
         address creator;            // 创建者地址
         address spToken;            // sp债权代币地址
@@ -35,8 +38,10 @@ contract PoolStorage {
     // 借出方信息结构体
     struct LendInfo {
         uint256 amount;           // 借出金额
+        uint256 lendAmount;       // 实际借出金额（结算后）
         uint256 interestAmount;   // 应得利息
         bool claimed;             // 是否已领取sp代币
+        bool settled;             // 是否已结算
         bool refunded;            // 是否已退款
     }
     
@@ -75,6 +80,7 @@ contract PoolStorage {
     event SpTokenWithdrawn(uint256 indexed poolId, address indexed lender, uint256 spAmount, uint256 redeemAmount);
     event PoolSettled(uint256 indexed poolId, uint256 totalLendAmount, uint256 totalBorrowAmount);
     event Liquidation(uint256 indexed poolId, address indexed borrower, uint256 pledgeAmount);
+    event WithdrawLend(address indexed user, uint256 indexed poolId, address indexed token, uint256 amount);
     
     // 管理员权限
     modifier onlyAdmin() {

@@ -39,8 +39,11 @@ contract PoolAdmin is PoolStorage {
             pledgeRate: _pledgeRate,
             liquidationRate: _liquidationRate,
             endTime: _endTime,
+            settleTime: 0,
+            lendAmount: 0,
             settleAmountLend: 0,
             settleAmountBorrow: 0,
+            liquidationAmount: 0,
             state: PoolState.MATCH,
             creator: msg.sender,
             spToken: address(0), // 初始为空，后续设置
@@ -97,5 +100,20 @@ contract PoolAdmin is PoolStorage {
     // 获取池子数量
     function getPoolsLength() external view returns (uint256) {
         return poolCounter;
+    }
+    
+    // 获取池子信息（简化版）
+    function getPool(uint256 poolId) external view poolExists(poolId) returns (Pool memory) {
+        return pools[poolId];
+    }
+    
+    // 设置池子结算时间（测试用）
+    function setPoolSettleTime(uint256 poolId, uint256 _settleTime) external onlyAdmin poolExists(poolId) {
+        pools[poolId].settleTime = _settleTime;
+    }
+    
+    // 设置池子借出总金额（测试用）
+    function setPoolLendAmount(uint256 poolId, uint256 _lendAmount) external onlyAdmin poolExists(poolId) {
+        pools[poolId].lendAmount = _lendAmount;
     }
 }
