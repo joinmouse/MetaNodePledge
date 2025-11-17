@@ -51,6 +51,11 @@ describe("PoolLend", function () {
         // 设置池子的sp和jp代币
         await poolLend.setPoolSpToken(1, mockSpToken.target);
         await poolLend.setPoolJpToken(1, mockJpToken.target);
+        
+        // 设置Minter权限，让poolLend合约可以铸造和销毁代币
+        await mockSpToken.setMinter(poolLend.target, true);
+        await mockJpToken.setMinter(poolLend.target, true);
+        
         const receipt = await tx.wait();
         poolId = 1; // 第一个池子ID为1
     });
