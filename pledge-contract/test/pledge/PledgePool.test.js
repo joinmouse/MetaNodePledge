@@ -18,7 +18,7 @@ describe("PledgePool - V2对齐集成测试", function () {
         [owner, lender1, lender2, borrower1, borrower2] = await ethers.getSigners();
 
         // 部署Oracle
-        const Oracle = await ethers.getContractFactory("Oracle");
+        const Oracle = await ethers.getContractFactory("MockOracle");
         oracle = await Oracle.deploy();
         await oracle.waitForDeployment();
 
@@ -29,10 +29,10 @@ describe("PledgePool - V2对齐集成测试", function () {
         await settleToken.waitForDeployment();
         await pledgeToken.waitForDeployment();
 
-        // 部署DebtToken
-        const DebtToken = await ethers.getContractFactory("DebtToken");
-        spToken = await DebtToken.deploy("SP Token", "SP");
-        jpToken = await DebtToken.deploy("JP Token", "JP");
+        // 部署MockDebtToken
+        const MockDebtToken = await ethers.getContractFactory("MockDebtToken");
+        spToken = await MockDebtToken.deploy("SP Token", "SP");
+        jpToken = await MockDebtToken.deploy("JP Token", "JP");
         await spToken.waitForDeployment();
         await jpToken.waitForDeployment();
 
@@ -41,12 +41,16 @@ describe("PledgePool - V2对齐集成测试", function () {
         pledgePool = await PledgePool.deploy();
         await pledgePool.waitForDeployment();
 
+        // 设置PledgePool为minter
+        await spToken.addMinter(pledgePool.getAddress());
+        await jpToken.addMinter(pledgePool.getAddress());
+
         // 设置Oracle
-        await pledgePool.setOracle(await oracle.getAddress());
+        await pledgePool.setOracle(oracle.getAddress());
 
         // 设置价格
-        await oracle.setPrice(await settleToken.getAddress(), ethers.parseEther("1")); // 1 USDT = $1
-        await oracle.setPrice(await pledgeToken.getAddress(), ethers.parseEther("50000")); // 1 BTC = $50000
+        await oracle.setPrice(settleToken.target, ethers.parseEther("1")); // 1 USDT = $1
+        await oracle.setPrice(pledgeToken.target, ethers.parseEther("50000")); // 1 BTC = $50000
 
         // 给测试账户分配代币
         await settleToken.mint(lender1.address, ethers.parseEther("100000"));
@@ -55,14 +59,10 @@ describe("PledgePool - V2对齐集成测试", function () {
         await pledgeToken.mint(borrower2.address, ethers.parseEther("10"));
 
         // 授权
-        await settleToken.connect(lender1).approve(await pledgePool.getAddress(), ethers.MaxUint256);
-        await settleToken.connect(lender2).approve(await pledgePool.getAddress(), ethers.MaxUint256);
-        await pledgeToken.connect(borrower1).approve(await pledgePool.getAddress(), ethers.MaxUint256);
-        await pledgeToken.connect(borrower2).approve(await pledgePool.getAddress(), ethers.MaxUint256);
-
-        // 设置DebtToken的minter
-        await spToken.setMinter(await pledgePool.getAddress());
-        await jpToken.setMinter(await pledgePool.getAddress());
+        await settleToken.connect(lender1).approve(pledgePool.target, ethers.MaxUint256);
+        await settleToken.connect(lender2).approve(pledgePool.target, ethers.MaxUint256);
+        await pledgeToken.connect(borrower1).approve(pledgePool.target, ethers.MaxUint256);
+        await pledgeToken.connect(borrower2).approve(pledgePool.target, ethers.MaxUint256);
     });
 
     describe("1. 创建池子 - createPoolInfo", function () {
@@ -80,10 +80,10 @@ describe("PledgePool - V2对齐集成测试", function () {
                 interestRate,
                 maxSupply,
                 martgageRate,
-                await settleToken.getAddress(),
-                await pledgeToken.getAddress(),
-                await spToken.getAddress(),
-                await jpToken.getAddress(),
+                settleToken.target,
+                pledgeToken.target,
+                spToken.target,
+                jpToken.target,
                 autoLiquidateThreshold
             );
 
@@ -107,10 +107,10 @@ describe("PledgePool - V2对齐集成测试", function () {
                 interestRate,
                 maxSupply,
                 martgageRate,
-                await settleToken.getAddress(),
-                await pledgeToken.getAddress(),
-                await spToken.getAddress(),
-                await jpToken.getAddress(),
+                settleToken.target,
+                pledgeToken.target,
+                spToken.target,
+                jpToken.target,
                 autoLiquidateThreshold
             );
             poolId = 1;
@@ -178,10 +178,10 @@ describe("PledgePool - V2对齐集成测试", function () {
                 interestRate,
                 maxSupply,
                 martgageRate,
-                await settleToken.getAddress(),
-                await pledgeToken.getAddress(),
-                await spToken.getAddress(),
-                await jpToken.getAddress(),
+                settleToken.target,
+                pledgeToken.target,
+                spToken.target,
+                jpToken.target,
                 autoLiquidateThreshold
             );
             poolId = 1;
