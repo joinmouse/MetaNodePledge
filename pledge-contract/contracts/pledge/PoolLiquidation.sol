@@ -1,11 +1,10 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.28;
 
-import "./PoolBorrow.sol";
-import "./PoolLend.sol";
+import "./PoolSettle.sol";
 import "../interface/IOracle.sol";
 
-contract PoolLiquidation is PoolBorrow, PoolLend {
+contract PoolLiquidation is PoolSettle {
     using SafeERC20 for IERC20;
 
     uint256 public constant LIQUIDATION_PENALTY = 1000; // 10%
@@ -13,7 +12,7 @@ contract PoolLiquidation is PoolBorrow, PoolLend {
 
     event LiquidationTriggered(uint256 indexed poolId, uint256 timestamp, uint256 healthFactor);
     event PoolLiquidated(uint256 indexed poolId, uint256 borrowTokenAmount, uint256 settleTokenAmount);
-    event LiquidationReward(address indexed liquidator, uint256 indexed poolId, uint256 rewardAmount);
+    event WithdrawBorrow(address indexed user, uint256 indexed poolId, address indexed token, uint256 amount, uint256 fee);
 
     // 计算健康因子
     function calculateHealthFactor(uint256 poolId) public view poolExists(poolId) returns (uint256) {
@@ -35,14 +34,49 @@ contract PoolLiquidation is PoolBorrow, PoolLend {
         uint256 healthFactor = calculateHealthFactor(poolId);
         require(healthFactor < pool.liquidationRate, "PoolLiquidation: health factor above threshold");
 
+        // 计算时间比率和利息
+        uint256 duration = block.timestamp - pool.settleTime;
+        uint256 timeRatio = (duration * RATE_BASE) / SECONDS_PER_YEAR;
+        uint256 interest = (timeRatio * pool.interestRate * pool.settleAmountLend) / (RATE_BASE * RATE_BASE);
+        
+        // 计算需要的总金额（本金 + 利息）
+        uint256 lendAmount = pool.settleAmountLend + interest;
+        
+        // 计算需要卖出的金额（包含借出费用）
+        uint256 sellAmount = (lendAmount * (RATE_BASE + lendFee)) / RATE_BASE;
+
+        // 执行swap：质押代币 -> 结算代币
+        (uint256 amountSell, uint256 amountIn) = _sellExactAmount(pool.pledgeToken, pool.settleToken, sellAmount);
+
+        // 处理借出方费用
+        if (amountIn > lendAmount) {
+            uint256 feeAmount = amountIn - lendAmount;
+            if (feeAmount > 0 && feeAddress != address(0)) {
+                _transferToken(pool.settleToken, feeAddress, feeAmount);
+            }
+            pool.liquidationAmountLend = amountIn - feeAmount;
+        } else {
+            pool.liquidationAmountLend = amountIn;
+        }
+
+        // 计算剩余质押金额并扣除借入费用
+        uint256 remainAmount = pool.settleAmountBorrow - amountSell;
+        pool.liquidationAmountBorrow = _redeemFees(borrowFee, pool.pledgeToken, remainAmount);
+
+        // 更新状态
         pool.state = PoolState.LIQUIDATION;
         emit LiquidationTriggered(poolId, block.timestamp, healthFactor);
 
-        (uint256 totalPledge, uint256 totalBorrow) = _calculateLiquidationAmounts(poolId);
-        _executeLiquidation(poolId, totalPledge);
-        _rewardLiquidator(pool, msg.sender, totalPledge);
+        // 标记所有借入方为已清算
+        address[] memory borrowerList = borrowers[poolId];
+        for (uint256 i = 0; i < borrowerList.length; i++) {
+            BorrowInfo storage info = borrowInfos[poolId][borrowerList[i]];
+            if (info.settled && !info.liquidated) {
+                info.liquidated = true;
+            }
+        }
 
-        emit PoolLiquidated(poolId, totalPledge, totalBorrow);
+        emit PoolLiquidated(poolId, amountSell, amountIn);
     }
 
     // 借出方清算后提取
@@ -52,7 +86,7 @@ contract PoolLiquidation is PoolBorrow, PoolLend {
 
         require(pool.state == PoolState.LIQUIDATION && lendInfo.claimed && lendInfo.amount > 0, "PoolLiquidation: invalid withdraw");
 
-        uint256 withdrawAmount = (pool.liquidationAmount * lendInfo.amount) / pool.settleAmountLend;
+        uint256 withdrawAmount = (pool.liquidationAmountLend * lendInfo.amount) / pool.settleAmountLend;
         require(withdrawAmount > 0, "PoolLiquidation: no withdraw amount");
 
         lendInfo.amount = 0;
@@ -102,6 +136,7 @@ contract PoolLiquidation is PoolBorrow, PoolLend {
 
     // 内部函数：获取价格
     function _getPrices(Pool storage pool) internal view returns (uint256 pledgePrice, uint256 settlePrice) {
+        require(oracle != address(0), "PoolLiquidation: oracle not set");
         pledgePrice = IOracle(oracle).getPrice(pool.pledgeToken);
         settlePrice = IOracle(oracle).getPrice(pool.settleToken);
     }
@@ -130,36 +165,4 @@ contract PoolLiquidation is PoolBorrow, PoolLend {
         }
     }
 
-    // 内部函数：执行清算
-    function _executeLiquidation(uint256 poolId, uint256 totalPledgeAmount) internal {
-        Pool storage pool = pools[poolId];
-        (uint256 pledgePrice, uint256 settlePrice) = _getPrices(pool);
-        
-        uint256 pledgeValue = (totalPledgeAmount * pledgePrice) / settlePrice;
-        pool.liquidationAmount = pledgeValue - (pledgeValue * LIQUIDATION_PENALTY) / RATE_BASE;
-
-        address[] memory borrowerList = borrowers[poolId];
-        for (uint256 i = 0; i < borrowerList.length; i++) {
-            BorrowInfo storage info = borrowInfos[poolId][borrowerList[i]];
-            if (info.settled && !info.liquidated) info.liquidated = true;
-        }
-    }
-
-    // 内部函数：奖励清算者
-    function _rewardLiquidator(Pool storage pool, address liquidator, uint256 totalPledgeAmount) internal {
-        uint256 rewardAmount = (totalPledgeAmount * LIQUIDATION_REWARD) / RATE_BASE;
-        if (rewardAmount > 0) {
-            _transferToken(pool.pledgeToken, liquidator, rewardAmount);
-            emit LiquidationReward(liquidator, pool.liquidationAmount, rewardAmount);
-        }
-    }
-
-    // 内部函数：转账
-    function _transferToken(address token, address to, uint256 amount) internal {
-        if (token == address(0)) {
-            payable(to).transfer(amount);
-        } else {
-            IERC20(token).safeTransfer(to, amount);
-        }
-    }
 }

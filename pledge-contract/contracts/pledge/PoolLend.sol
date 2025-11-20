@@ -12,12 +12,13 @@ contract PoolLend is PoolAdmin, ReentrancyGuard {
 
     // 借出方存款
     function depositLend(uint256 poolId, uint256 amount) external 
-        nonReentrant poolExists(poolId) validState(poolId, PoolState.MATCH) 
+        nonReentrant notPaused poolExists(poolId) validState(poolId, PoolState.MATCH) 
     {
         require(amount > 0, "PoolLend: amount must be greater than 0");
+        require(amount >= minAmount, "PoolLend: less than min amount");
         require(block.timestamp < pools[poolId].endTime, "PoolLend: pool has ended");
         Pool storage pool = pools[poolId];
-        require(pool.settleAmountLend + amount <= pool.borrowAmount, "PoolLend: exceeds borrow amount");
+        require(pool.lendSupply + amount <= pool.maxSupply, "PoolLend: exceeds max supply");
         
         // 检查用户是否已经有借出方存款，如果没有，则添加到lenders列表中
         IERC20(pool.settleToken).safeTransferFrom(msg.sender, address(this), amount);
@@ -27,41 +28,43 @@ contract PoolLend is PoolAdmin, ReentrancyGuard {
         }
         // 更新借出方存款信息
         lendInfo.amount += amount;
-        pool.settleAmountLend += amount;
+        pool.lendSupply += amount;
         emit LendDeposit(poolId, msg.sender, amount);
     }
 
-    // 借出方取款（仅在MATCH状态下可取消）
-    function cancelLend(uint256 poolId, uint256 amount) external nonReentrant poolExists(poolId) validState(poolId, PoolState.MATCH) {
+    // 借出方取款（仅在MATCH状态下可取消）- 对齐V2的refundLend方法名
+    function refundLend(uint256 poolId, uint256 amount) external nonReentrant notPaused poolExists(poolId) validState(poolId, PoolState.MATCH) {
         require(amount > 0, "PoolLend: amount must be greater than 0");
         LendInfo storage lendInfo = lendInfos[poolId][msg.sender];
         require(lendInfo.amount >= amount, "PoolLend: insufficient balance");
         Pool storage pool = pools[poolId];
          
         lendInfo.amount -= amount;
-        pool.settleAmountLend -= amount;
+        pool.lendSupply -= amount;
         IERC20(pool.settleToken).safeTransfer(msg.sender, amount);
         emit LendDeposit(poolId, msg.sender, amount);
     }
 
     // 第一阶段：领取sp代币（债权凭证）
     function claimLend(uint256 poolId) external nonReentrant poolExists(poolId) {
-        require(pools[poolId].state == PoolState.EXECUTION || pools[poolId].state == PoolState.FINISH, "PoolLend: invalid state");
+        require(pools[poolId].state == PoolState.EXECUTION || pools[poolId].state == PoolState.FINISH || pools[poolId].state == PoolState.LIQUIDATION, "PoolLend: invalid state");
         LendInfo storage lendInfo = lendInfos[poolId][msg.sender];
         require(lendInfo.amount > 0, "PoolLend: no lending position");
         require(!lendInfo.claimed, "PoolLend: already claimed");
         
         Pool storage pool = pools[poolId];
         require(pool.spToken != address(0), "PoolLend: spToken not set");
+        require(pool.lendSupply > 0, "PoolLend: no lend supply");
         
-        // 计算用户份额：用户质押金额 / 总质押金额
-        uint256 userShare = (lendInfo.amount * 1e18) / pool.settleAmountLend;
-        // sp代币数量 = 总结算金额 * 用户份额
+        // 计算用户份额：用户质押金额 / 总借出供应量
+        uint256 userShare = (lendInfo.amount * 1e18) / pool.lendSupply;
+        // sp代币数量 = settleAmountLend * 用户份额（注意：sp总量等于settleAmountLend）
         uint256 spAmount = (pool.settleAmountLend * userShare) / 1e18;
         
         // 铸造sp代币给用户
         IDebtToken(pool.spToken).mint(msg.sender, spAmount);
         lendInfo.claimed = true;
+        lendInfo.lendAmount = spAmount; // 记录实际借出金额
         
         emit SpTokenClaimed(poolId, msg.sender, spAmount);
     }
@@ -76,19 +79,19 @@ contract PoolLend is PoolAdmin, ReentrancyGuard {
         // 销毁用户的sp代币
         IDebtToken(pool.spToken).burn(msg.sender, spAmount);
         
+        // 计算sp份额：销毁的sp数量 / sp总量（settleAmountLend）
+        uint256 spShare = (spAmount * 1e18) / pool.settleAmountLend;
+        
         // 计算赎回金额
         uint256 redeemAmount;
         if (pool.state == PoolState.FINISH) {
             require(block.timestamp > pool.endTime, "PoolLend: pool not ended");
-            // 完成状态：本金 + 利息
-            uint256 totalFinishAmount = calculateFinishAmount(poolId);
-            uint256 spShare = (spAmount * 1e18) / pool.settleAmountLend;
-            redeemAmount = (totalFinishAmount * spShare) / 1e18;
+            // 完成状态：赎回金额 = finishAmountLend * sp份额
+            redeemAmount = (pool.finishAmountLend * spShare) / 1e18;
         } else if (pool.state == PoolState.LIQUIDATION) {
-            // 清算状态：根据清算结果计算
-            uint256 totalLiquidationAmount = calculateLiquidationAmount(poolId);
-            uint256 spShare = (spAmount * 1e18) / pool.settleAmountLend;
-            redeemAmount = (totalLiquidationAmount * spShare) / 1e18;
+            require(block.timestamp > pool.settleTime, "PoolLend: before settle time");
+            // 清算状态：赎回金额 = liquidationAmountLend * sp份额
+            redeemAmount = (pool.liquidationAmountLend * spShare) / 1e18;
         }
         
         require(redeemAmount > 0, "PoolLend: no amount to redeem");
@@ -97,40 +100,27 @@ contract PoolLend is PoolAdmin, ReentrancyGuard {
         emit SpTokenWithdrawn(poolId, msg.sender, spAmount, redeemAmount);
     }
 
-    // 退款（池子未成功匹配时）
-    function refundLend(uint256 poolId) external nonReentrant poolExists(poolId) {
-        require(pools[poolId].state == PoolState.FINISH, "PoolLend: invalid state for refund");
+    // 退款（结算后有多余资金时）- 对齐V2逻辑
+    function refundLendAfterSettle(uint256 poolId) external nonReentrant poolExists(poolId) {
+        Pool storage pool = pools[poolId];
+        require(pool.state == PoolState.EXECUTION || pool.state == PoolState.FINISH || pool.state == PoolState.LIQUIDATION, "PoolLend: invalid state for refund");
+        require(block.timestamp >= pool.settleTime, "PoolLend: before settle time");
+        
         LendInfo storage lendInfo = lendInfos[poolId][msg.sender];
         require(lendInfo.amount > 0, "PoolLend: no lending position");
         require(!lendInfo.refunded, "PoolLend: already refunded");
+        require(pool.lendSupply > pool.settleAmountLend, "PoolLend: no refund needed");
         
-        Pool storage pool = pools[poolId];
-        bool needRefund = pool.settleAmountBorrow < pool.settleAmountLend;
-        require(needRefund, "PoolLend: no refund needed");
+        // 计算用户份额：用户质押金额 / 总借出供应量
+        uint256 userShare = (lendInfo.amount * 1e18) / pool.lendSupply;
+        // 计算退款金额 = (总供应 - 结算金额) * 用户份额
+        uint256 refundAmount = ((pool.lendSupply - pool.settleAmountLend) * userShare) / 1e18;
+        
+        require(refundAmount > 0, "PoolLend: no refund amount");
         lendInfo.refunded = true;
-        IERC20(pool.settleToken).safeTransfer(msg.sender, lendInfo.amount);
-        emit LendDeposit(poolId, msg.sender, lendInfo.amount);
-    }
-
-    // 计算完成状态下的总金额（本金+利息）
-    function calculateFinishAmount(uint256 poolId) public view poolExists(poolId) returns (uint256) {
-        Pool memory pool = pools[poolId];
-        if (pool.state != PoolState.FINISH) return 0;
         
-        uint256 duration = pool.endTime - block.timestamp;
-        if (duration > SECONDS_PER_YEAR) duration = SECONDS_PER_YEAR;
-        
-        uint256 interest = (pool.settleAmountLend * pool.interestRate * duration) / (RATE_BASE * SECONDS_PER_YEAR);
-        return pool.settleAmountLend + interest;
-    }
-
-    // 计算清算状态下的总金额
-    function calculateLiquidationAmount(uint256 poolId) public view poolExists(poolId) returns (uint256) {
-        Pool memory pool = pools[poolId];
-        if (pool.state != PoolState.LIQUIDATION) return 0;
-        
-        // 简化计算：返回原始金额的90%（模拟清算损失）
-        return (pool.settleAmountLend * 9000) / RATE_BASE;
+        IERC20(pool.settleToken).safeTransfer(msg.sender, refundAmount);
+        emit LendDeposit(poolId, msg.sender, refundAmount);
     }
 
     // 获取借出方信息
@@ -141,17 +131,5 @@ contract PoolLend is PoolAdmin, ReentrancyGuard {
     // 获取池子借出方列表
     function getPoolLenders(uint256 poolId) external view poolExists(poolId) returns (address[] memory) {
         return lenders[poolId];
-    }
-
-    // 获取用户的sp代币余额
-    function getSpTokenBalance(uint256 poolId, address user) external view poolExists(poolId) returns (uint256) {
-        Pool memory pool = pools[poolId];
-        if (pool.spToken == address(0)) return 0;
-        return IERC20(pool.spToken).balanceOf(user);
-    }
-    
-    // 测试辅助方法：设置池子的借入金额（仅用于测试）
-    function setPoolBorrowAmount(uint256 poolId, uint256 amount) external onlyAdmin poolExists(poolId) {
-        pools[poolId].settleAmountBorrow = amount;
     }
 }

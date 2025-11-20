@@ -17,35 +17,22 @@ contract PoolBorrow is PoolAdmin, ReentrancyGuard {
     event WithdrawBorrow(address indexed user, uint256 indexed poolId, address indexed token, uint256 amount, uint256 jpBurnAmount);
     event RefundBorrow(address indexed user, uint256 indexed poolId, address indexed token, uint256 refundAmount);
 
-    // 匹配状态
-    modifier stateMatch(uint256 poolId) {
-        require(poolId > 0 && poolId <= poolCounter, "PoolBorrow: invalid pool id");
-        require(pools[poolId].state == PoolState.MATCH, "PoolBorrow: pool not in MATCH state");
-        _;
-    }
-    //  非匹配状态
+    // 非匹配状态修饰符
     modifier stateNotMatch(uint256 poolId) {
-        require(poolId > 0 && poolId <= poolCounter, "PoolBorrow: invalid pool id");
         require(pools[poolId].state != PoolState.MATCH, "PoolBorrow: invalid pool state");
         _;
     }
-    //  完成状态或清算状态
+    
+    // 完成或清算状态修饰符
     modifier stateFinishLiquidation(uint256 poolId) {
-        require(poolId > 0 && poolId <= poolCounter, "PoolBorrow: invalid pool id");
         PoolState state = pools[poolId].state;
         require(state == PoolState.FINISH || state == PoolState.LIQUIDATION, "PoolBorrow: pool not finished or liquidated");
-        _;
-    }
-    //  时间在结束时间之前
-    modifier timeBefore(uint256 poolId) {
-        require(poolId > 0 && poolId <= poolCounter, "PoolBorrow: invalid pool id");
-        require(block.timestamp < pools[poolId].endTime, "PoolBorrow: after end time");
         _;
     }
 
     // 1、质押资产借入
     function depositBorrow(uint256 poolId, uint256 pledgeAmount) external payable 
-        nonReentrant poolExists(poolId) stateMatch(poolId) timeBefore(poolId) 
+        nonReentrant notPaused poolExists(poolId) validState(poolId, PoolState.MATCH) timeBefore(poolId)
     {
         require(pledgeAmount > 0, "PoolBorrow: amount must be greater than 0");
         
@@ -76,13 +63,16 @@ contract PoolBorrow is PoolAdmin, ReentrancyGuard {
         borrowInfo.pledgeAmount += actualAmount;
         borrowInfo.settled = false;
         borrowInfo.liquidated = false;
+        
+        // 更新借入供应量
+        pool.borrowSupply += actualAmount;
 
         emit DepositBorrow(msg.sender, poolId, pool.pledgeToken, actualAmount);
     }
 
     // 2、 领取借入 (获得jpToken凭证 + 借入资金)
     function claimBorrow(uint256 poolId) external
-        nonReentrant poolExists(poolId) stateNotMatch(poolId)
+        nonReentrant notPaused poolExists(poolId) stateNotMatch(poolId)
     {
         Pool storage pool = pools[poolId];
         BorrowInfo storage borrowInfo = borrowInfos[poolId][msg.sender];
@@ -123,7 +113,7 @@ contract PoolBorrow is PoolAdmin, ReentrancyGuard {
 
     // 3、 提取质押资产 (销毁jpToken)
     function withdrawBorrow(uint256 poolId, uint256 jpAmount) external payable
-        nonReentrant poolExists(poolId) stateFinishLiquidation(poolId)
+        nonReentrant notPaused poolExists(poolId) stateFinishLiquidation(poolId)
     {
         require(jpAmount > 0, "PoolBorrow: jpAmount must be greater than 0");
 
@@ -167,20 +157,23 @@ contract PoolBorrow is PoolAdmin, ReentrancyGuard {
         emit WithdrawBorrow(msg.sender, poolId, pool.pledgeToken, redeemAmount, jpAmount);
     }
 
-    // 4、退还多余质押资产
-    function refundBorrow(uint256 poolId) external nonReentrant poolExists(poolId) {
+    // 4、退还多余质押资产 - 对齐V2逻辑，结算后退还多余质押
+    function refundBorrow(uint256 poolId) external nonReentrant notPaused poolExists(poolId) {
         Pool storage pool = pools[poolId];
         BorrowInfo storage borrowInfo = borrowInfos[poolId][msg.sender];
 
         require(borrowInfo.pledgeAmount > 0, "PoolBorrow: no pledge to refund");
-        require(!borrowInfo.liquidated, "PoolBorrow: already liquidated");
-        require(pool.state == PoolState.FINISH, "PoolBorrow: pool not finished");
+        require(!borrowInfo.settled, "PoolBorrow: already settled");
+        require(pool.state == PoolState.EXECUTION || pool.state == PoolState.FINISH || pool.state == PoolState.LIQUIDATION, "PoolBorrow: invalid state");
+        require(pool.borrowSupply > pool.settleAmountBorrow, "PoolBorrow: no refund needed");
+        require(block.timestamp >= pool.settleTime, "PoolBorrow: before settle time");
 
-        if (borrowInfo.settled && borrowInfo.borrowAmount > 0) {
-            revert("PoolBorrow: please repay loan first");
-        }
-
-        uint256 refundAmount = borrowInfo.pledgeAmount;
+        // 计算用户份额
+        uint256 userShare = (borrowInfo.pledgeAmount * 1e18) / pool.borrowSupply;
+        // 计算退款金额
+        uint256 refundAmount = ((pool.borrowSupply - pool.settleAmountBorrow) * userShare) / 1e18;
+        
+        require(refundAmount > 0, "PoolBorrow: no refund amount");
 
         // 退还质押资产
         if (pool.pledgeToken == address(0)) {
@@ -189,7 +182,7 @@ contract PoolBorrow is PoolAdmin, ReentrancyGuard {
             IERC20(pool.pledgeToken).safeTransfer(msg.sender, refundAmount);
         }
 
-        borrowInfo.pledgeAmount = 0;
+        borrowInfo.settled = true; // 标记为已处理
 
         emit RefundBorrow(msg.sender, poolId, pool.pledgeToken, refundAmount);
     }
@@ -199,39 +192,9 @@ contract PoolBorrow is PoolAdmin, ReentrancyGuard {
     function getUserBorrowInfo(address user, uint256 poolId) external view poolExists(poolId) returns (BorrowInfo memory){
         return borrowInfos[poolId][user];
     }
-    // 计算用户可借入的资金数量
-    function calculateBorrowAmount(address user, uint256 poolId) external view returns (uint256){
-        if (poolId == 0 || poolId > poolCounter) return 0;
-        
-        Pool storage pool = pools[poolId];
-        BorrowInfo storage borrowInfo = borrowInfos[poolId][user];
-        
-        if (borrowInfo.pledgeAmount == 0) return 0;
-        
-        uint256 pledgeValue = borrowInfo.pledgeAmount;
-        uint256 borrowAmount = (pledgeValue * RATE_BASE) / pool.pledgeRate;
-        if (borrowAmount > pool.borrowAmount) {
-            borrowAmount = pool.borrowAmount;
-        }
-        
-        return borrowAmount;
-    }
 
     // 获取池子的借入方列表
     function getPoolBorrowers(uint256 poolId) external view poolExists(poolId) returns (address[] memory) {
         return borrowers[poolId];
-    }
-
-    // 检查用户是否可以退还质押
-    function canRefund(address user, uint256 poolId) external view returns (bool) {
-        if (poolId == 0 || poolId > poolCounter) return false;
-        
-        Pool storage pool = pools[poolId];
-        BorrowInfo storage borrowInfo = borrowInfos[poolId][user];
-        
-        return borrowInfo.pledgeAmount > 0 && 
-               !borrowInfo.liquidated && 
-               pool.state == PoolState.FINISH &&
-               (!borrowInfo.settled || borrowInfo.borrowAmount == 0);
     }
 }

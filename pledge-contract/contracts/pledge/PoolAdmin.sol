@@ -3,6 +3,7 @@ pragma solidity ^0.8.28;
 
 import "./PoolStorage.sol";
 import "../interface/IDebtToken.sol";
+import "../interface/IOracle.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 
 contract PoolAdmin is PoolStorage {
@@ -24,8 +25,8 @@ contract PoolAdmin is PoolStorage {
         require(_settleToken != address(0), "PoolAdmin: invalid settle token");
         require(_pledgeToken != address(0), "PoolAdmin: invalid pledge token");
         require(_borrowAmount > 0, "PoolAdmin: invalid borrow amount");
-        require(_interestRate > 0 && _interestRate <= RATE_BASE, "PoolAdmin: invalid interest rate");
-        require(_pledgeRate > RATE_BASE, "PoolAdmin: pledge rate must > 100%");
+        require(_interestRate > 0 && _interestRate <= MAX_INTEREST_RATE, "PoolAdmin: invalid interest rate");
+        require(_pledgeRate >= MIN_PLEDGE_RATE && _pledgeRate <= MAX_PLEDGE_RATE, "PoolAdmin: invalid pledge rate");
         require(_liquidationRate > RATE_BASE && _liquidationRate < _pledgeRate, "PoolAdmin: invalid liquidation rate");
         require(_endTime > block.timestamp, "PoolAdmin: invalid end time");
         
@@ -34,20 +35,27 @@ contract PoolAdmin is PoolStorage {
         pools[poolId] = Pool({
             settleToken: _settleToken,
             pledgeToken: _pledgeToken,
+            maxSupply: _borrowAmount,
+            lendSupply: 0,
+            borrowSupply: 0,
             borrowAmount: _borrowAmount,
             interestRate: _interestRate,
             pledgeRate: _pledgeRate,
             liquidationRate: _liquidationRate,
+            autoLiquidateThreshold: _liquidationRate,
             endTime: _endTime,
             settleTime: 0,
             lendAmount: 0,
             settleAmountLend: 0,
             settleAmountBorrow: 0,
-            liquidationAmount: 0,
+            finishAmountLend: 0,
+            finishAmountBorrow: 0,
+            liquidationAmountLend: 0,
+            liquidationAmountBorrow: 0,
             state: PoolState.MATCH,
             creator: msg.sender,
-            spToken: address(0), // 初始为空，后续设置
-            jpToken: address(0)  // 初始为空，后续设置
+            spToken: address(0),
+            jpToken: address(0)
         });
         
         emit PoolCreated(poolId, msg.sender, _settleToken, _pledgeToken);
@@ -85,13 +93,6 @@ contract PoolAdmin is PoolStorage {
         pools[poolId].jpToken = _jpToken;
     }
     
-    // 暂停池子
-    function pausePool(uint256 poolId) external onlyAdmin poolExists(poolId) {
-        require(pools[poolId].state == PoolState.MATCH, "PoolAdmin: can only pause MATCH state");
-        pools[poolId].state = PoolState.FINISH;
-        emit PoolStateChanged(poolId, PoolState.MATCH, PoolState.FINISH);
-    }
-    
     // 获取池子信息
     function getPoolInfo(uint256 poolId) external view poolExists(poolId) returns (Pool memory) {
         return pools[poolId];
@@ -102,18 +103,20 @@ contract PoolAdmin is PoolStorage {
         return poolCounter;
     }
     
-    // 获取池子信息（简化版）
-    function getPool(uint256 poolId) external view poolExists(poolId) returns (Pool memory) {
-        return pools[poolId];
+    // 获取池子状态 - 对齐V2
+    function getPoolState(uint256 poolId) external view poolExists(poolId) returns (uint256) {
+        return uint256(pools[poolId].state);
     }
     
-    // 设置池子结算时间（测试用）
-    function setPoolSettleTime(uint256 poolId, uint256 _settleTime) external onlyAdmin poolExists(poolId) {
-        pools[poolId].settleTime = _settleTime;
-    }
-    
-    // 设置池子借出总金额（测试用）
-    function setPoolLendAmount(uint256 poolId, uint256 _lendAmount) external onlyAdmin poolExists(poolId) {
-        pools[poolId].lendAmount = _lendAmount;
+    // 获取标的价格 - 对齐V2
+    function getUnderlyingPriceView(uint256 poolId) external view poolExists(poolId) returns (uint256[2] memory) {
+        require(oracle != address(0), "PoolAdmin: oracle not set");
+        Pool storage pool = pools[poolId];
+        
+        // 调用Oracle获取价格
+        uint256 settlePrice = IOracle(oracle).getPrice(pool.settleToken);
+        uint256 pledgePrice = IOracle(oracle).getPrice(pool.pledgeToken);
+        
+        return [settlePrice, pledgePrice];
     }
 }
