@@ -12,8 +12,8 @@
   "scripts": {
     "test": "npx hardhat test",
     "node": "npx hardhat node",
-    "deploy:local": "npx hardhat ignition deploy ignition/modules/MultiSignature.js --network localhost",
-    "deploy:hardhat": "npx hardhat ignition deploy ignition/modules/MultiSignature.js --network hardhat",
+    "deploy:local": "npx hardhat ignition deploy ignition/modules/PledgeProtocol.js --network localhost",
+    "deploy:hardhat": "npx hardhat ignition deploy ignition/modules/PledgeProtocol.js --network hardhat",
     "verify": "npx hardhat verify --network sepolia"
   }
 }
