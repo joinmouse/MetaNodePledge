@@ -20,29 +20,42 @@ contract PoolStorage {
     
     // 池子信息结构体
     struct Pool {
+        // ============ 基础信息 ============
+        address creator;            // 创建者地址
+        PoolState state;            // 池子状态
+        
+        // ============ 代币地址 ============
         address settleToken;        // 结算代币地址
         address pledgeToken;        // 质押代币地址
+        address spToken;            // sp债权代币地址（借出方债权代币）
+        address jpToken;            // jp债权代币地址（借入方债权代币）
+        
+        // ============ 供应量配置 ============
         uint256 maxSupply;          // 最大供应量
         uint256 lendSupply;         // 当前借出供应量
         uint256 borrowSupply;       // 当前借入供应量
         uint256 borrowAmount;       // 可借金额
+        
+        // ============ 利率和质押率配置 ============
         uint256 interestRate;       // 年化利率 (基点，10000=100%)
         uint256 pledgeRate;         // 质押率 (基点，15000=150%)
         uint256 liquidationRate;    // 清算率 (基点，13000=130%)
         uint256 autoLiquidateThreshold; // 自动清算阈值
+        
+        // ============ 时间配置 ============
         uint256 endTime;            // 结束时间戳
         uint256 settleTime;         // 结算时间戳
+        
+        // ============ 借出方金额统计 ============
         uint256 lendAmount;         // 借出方总金额
         uint256 settleAmountLend;   // 结算借出金额
-        uint256 settleAmountBorrow; // 结算借入金额
         uint256 finishAmountLend;   // 完成借出金额
-        uint256 finishAmountBorrow; // 完成借入金额
         uint256 liquidationAmountLend;  // 清算借出金额
+        
+        // ============ 借入方金额统计 ============
+        uint256 settleAmountBorrow; // 结算借入金额
+        uint256 finishAmountBorrow; // 完成借入金额
         uint256 liquidationAmountBorrow; // 清算借入金额
-        PoolState state;            // 池子状态
-        address creator;            // 创建者地址
-        address spToken;            // sp债权代币地址
-        address jpToken;            // jp债权代币地址
     }
     
     // 借出方信息结构体
