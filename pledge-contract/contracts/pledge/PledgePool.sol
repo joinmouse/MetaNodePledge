@@ -8,10 +8,12 @@ import "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 
 /**
  * @title PledgePool
- * @dev 主合约，整合所有功能模块，对外暴露V2对齐的方法
+ * @dev 主合约，整合所有功能模块
  */
 contract PledgePool is PoolLendBorrow {
     using SafeERC20 for IERC20;
+
+    constructor(address multiSignature) PoolLendBorrow(multiSignature) {}
 
     uint256 public constant LIQUIDATION_PENALTY = 1000;
     uint256 public constant LIQUIDATION_REWARD = 500;
@@ -19,36 +21,27 @@ contract PledgePool is PoolLendBorrow {
     event LiquidationTriggered(uint256 indexed poolId, uint256 timestamp, uint256 healthFactor);
     event PoolLiquidated(uint256 indexed poolId, uint256 borrowTokenAmount, uint256 settleTokenAmount);
     event SetSwapRouterAddress(address indexed oldRouter, address indexed newRouter);
-    
-    constructor() {
-        admin = msg.sender;
-    }
 
-    // ============ V2对齐接口 ============
+    // ============ 对外接口 ============
     function createPoolInfo(
-        uint256 _settleTime,
-        uint256 _endTime,
-        uint64 _interestRate,
-        uint256 _maxSupply,
+        uint256 _settleTime, 
+        uint256 _endTime, 
+        uint64 _interestRate, 
+        uint256 _maxSupply, 
         uint256 _martgageRate,
-        address _lendToken,
-        address _borrowToken,
-        address _spToken,
+        address _lendToken, 
+        address _borrowToken, 
+        address _spToken, 
         address _jpToken,
-        uint256 _autoLiquidateThreshold
-    ) external onlyAdmin returns (uint256) {
+         uint256 _autoLiquidateThreshold
+    ) external validCall returns (uint256) {
         require(_endTime > _settleTime, "PledgePool: end time must be greater than settle time");
         require(_jpToken != address(0), "PledgePool: jpToken is zero address");
         require(_spToken != address(0), "PledgePool: spToken is zero address");
         
         uint256 poolId = createPool(
-            _lendToken,
-            _borrowToken,
-            _maxSupply,
-            _interestRate,
-            _martgageRate,
-            _autoLiquidateThreshold,
-            _endTime
+            _lendToken, _borrowToken, _maxSupply,
+            _interestRate, _martgageRate, _autoLiquidateThreshold, _endTime
         );
         
         // 设置结算时间
@@ -59,10 +52,6 @@ contract PledgePool is PoolLendBorrow {
         setPoolJpToken(poolId, _jpToken);
         
         return poolId;
-    }
-
-    function poolLength() external view returns (uint256) {
-        return getPoolsLength();
     }
 
     function poolBaseInfo(uint256 poolId) external view poolExists(poolId) returns (
@@ -96,6 +85,10 @@ contract PledgePool is PoolLendBorrow {
             pool.jpToken,
             pool.autoLiquidateThreshold
         );
+    }
+
+    function poolLength() external view returns (uint256) {
+        return getPoolsLength();
     }
 
     function poolDataInfo(uint256 poolId) external view poolExists(poolId) returns (
@@ -148,7 +141,7 @@ contract PledgePool is PoolLendBorrow {
     }
 
     // ============ 费用管理 ============
-    function setFee(uint256 _lendFee, uint256 _borrowFee) external onlyAdmin {
+    function setFee(uint256 _lendFee, uint256 _borrowFee) external validCall {
         require(_lendFee <= MAX_FEE_RATE, "PledgePool: lend fee too high");
         require(_borrowFee <= MAX_FEE_RATE, "PledgePool: borrow fee too high");
         lendFee = _lendFee;
@@ -156,20 +149,20 @@ contract PledgePool is PoolLendBorrow {
         emit SetFee(_lendFee, _borrowFee);
     }
 
-    function setFeeAddress(address payable _feeAddress) external onlyAdmin {
+    function setFeeAddress(address payable _feeAddress) external validCall {
         require(_feeAddress != address(0), "PledgePool: invalid fee address");
         address oldAddress = feeAddress;
         feeAddress = _feeAddress;
         emit SetFeeAddress(oldAddress, _feeAddress);
     }
 
-    function setMinAmount(uint256 _minAmount) external onlyAdmin {
+    function setMinAmount(uint256 _minAmount) external validCall {
         uint256 oldAmount = minAmount;
         minAmount = _minAmount;
         emit SetMinAmount(oldAmount, _minAmount);
     }
 
-    function setPause() external onlyAdmin {
+    function setPause() external validCall {
         globalPaused = !globalPaused;
     }
 
@@ -184,7 +177,7 @@ contract PledgePool is PoolLendBorrow {
     }
 
     // ============ DEX交换 ============
-    function setSwapRouterAddress(address _swapRouter) external onlyAdmin {
+    function setSwapRouterAddress(address _swapRouter) external validCall {
         require(_swapRouter != address(0), "PledgePool: invalid router address");
         address oldRouter = swapRouter;
         swapRouter = _swapRouter;
@@ -258,7 +251,7 @@ contract PledgePool is PoolLendBorrow {
         Pool storage pool = pools[poolId];
         return block.timestamp >= pool.settleTime && pool.state == PoolState.MATCH;
     }
-    function settle(uint256 poolId) external onlyAdmin poolExists(poolId) {
+    function settle(uint256 poolId) external validCall poolExists(poolId) {
         Pool storage pool = pools[poolId];
         require(block.timestamp >= pool.settleTime, "PledgePool: before settle time");
         require(pool.state == PoolState.MATCH, "PledgePool: invalid state");
@@ -307,7 +300,7 @@ contract PledgePool is PoolLendBorrow {
         Pool storage pool = pools[poolId];
         return block.timestamp >= pool.endTime && pool.state == PoolState.EXECUTION;
     }
-    function finish(uint256 poolId) external onlyAdmin poolExists(poolId) {
+    function finish(uint256 poolId) external validCall poolExists(poolId) {
         Pool storage pool = pools[poolId];
         require(block.timestamp >= pool.endTime, "PledgePool: before end time");
         require(pool.state == PoolState.EXECUTION, "PledgePool: invalid state");

@@ -15,6 +15,8 @@ import "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 contract PoolLendBorrow is PoolStorage, ReentrancyGuard {
     using SafeERC20 for IERC20;
 
+    constructor(address multiSignature) PoolStorage(multiSignature) {}
+
     // ============ Admin功能 ============
     function createPool(
         address _settleToken,
@@ -24,7 +26,7 @@ contract PoolLendBorrow is PoolStorage, ReentrancyGuard {
         uint256 _pledgeRate,
         uint256 _liquidationRate,
         uint256 _endTime
-    ) public onlyAdmin returns (uint256) {
+    ) public validCall returns (uint256) {
         require(_settleToken != address(0), "PoolLendBorrow: invalid settle token");
         require(_pledgeToken != address(0), "PoolLendBorrow: invalid pledge token");
         require(_borrowAmount > 0, "PoolLendBorrow: invalid borrow amount");
@@ -65,28 +67,28 @@ contract PoolLendBorrow is PoolStorage, ReentrancyGuard {
         return poolId;
     }
 
-    function setPoolState(uint256 poolId, PoolState newState) external onlyAdmin poolExists(poolId) {
+    function setPoolState(uint256 poolId, PoolState newState) external validCall poolExists(poolId) {
         PoolState oldState = pools[poolId].state;
         pools[poolId].state = newState;
         emit PoolStateChanged(poolId, oldState, newState);
     }
 
-    function setOracle(address _oracle) external onlyAdmin {
+    function setOracle(address _oracle) external validCall {
         require(_oracle != address(0), "PoolLendBorrow: invalid oracle address");
         oracle = _oracle;
     }
 
-    function setDebtToken(address _debtToken) external onlyAdmin {
+    function setDebtToken(address _debtToken) external validCall {
         require(_debtToken != address(0), "PoolLendBorrow: invalid debt token address");
         debtToken = _debtToken;
     }
 
-    function setPoolSpToken(uint256 poolId, address _spToken) public onlyAdmin poolExists(poolId) {
+    function setPoolSpToken(uint256 poolId, address _spToken) public validCall poolExists(poolId) {
         require(_spToken != address(0), "PoolLendBorrow: invalid sp token address");
         pools[poolId].spToken = _spToken;
     }
 
-    function setPoolJpToken(uint256 poolId, address _jpToken) public onlyAdmin poolExists(poolId) {
+    function setPoolJpToken(uint256 poolId, address _jpToken) public validCall poolExists(poolId) {
         require(_jpToken != address(0), "PoolLendBorrow: invalid jp token address");
         pools[poolId].jpToken = _jpToken;
     }

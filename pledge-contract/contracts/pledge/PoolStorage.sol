@@ -2,12 +2,13 @@
 pragma solidity ^0.8.28;
 
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import "../multiSignatureV2/MultiSigClient.sol";
 
 /**
  * @title PoolStorage
  * @dev 质押借贷池存储结构定义
  */
-contract PoolStorage {
+contract PoolStorage is MultiSigClient {
     enum PoolState {
         MATCH,        // 匹配期
         EXECUTION,    // 执行期  
@@ -103,6 +104,11 @@ contract PoolStorage {
     uint256 public constant MAX_PLEDGE_RATE = 50000;         // 最大质押率 500%
     uint256 public constant MAX_FEE_RATE = 1000;
 
+    // 构造函数
+    constructor(address multiSignature) MultiSigClient(multiSignature) {
+        admin = msg.sender;
+    }
+
     // 事件
     event PoolCreated(uint256 indexed poolId, address indexed creator, address settleToken, address pledgeToken);
     event LendDeposit(uint256 indexed poolId, address indexed lender, uint256 amount);
@@ -140,7 +146,7 @@ contract PoolStorage {
         _;
     }
     modifier timeBefore(uint256 poolId) {
-        require(block.timestamp < pools[poolId].settleTime, "PoolStorage: after settle time");
+        require(block.timestamp < pools[poolId].endTime, "PoolStorage: after end time");
         _;
     }
 
