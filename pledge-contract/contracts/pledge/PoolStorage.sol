@@ -8,8 +8,6 @@ import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
  * @dev 质押借贷池存储结构定义
  */
 contract PoolStorage {
-    
-    // 池子状态枚举
     enum PoolState {
         MATCH,        // 匹配期
         EXECUTION,    // 执行期  
@@ -57,8 +55,8 @@ contract PoolStorage {
         uint256 finishAmountBorrow; // 完成借入金额
         uint256 liquidationAmountBorrow; // 清算借入金额
     }
-    
-    // 借出方信息结构体
+
+    // 借出方信息
     struct LendInfo {
         uint256 amount;           // 借出金额
         uint256 lendAmount;       // 实际借出金额（结算后）
@@ -67,22 +65,22 @@ contract PoolStorage {
         bool settled;             // 是否已结算
         bool refunded;            // 是否已退款
     }
-    
-    // 借入方信息结构体
+
+    // 借入方信息
     struct BorrowInfo {
         uint256 pledgeAmount;     // 质押金额
         uint256 borrowAmount;     // 借入金额
         bool settled;             // 是否已结算
         bool liquidated;          // 是否被清算
     }
-    
+
     // 存储映射
     mapping(uint256 => Pool) public pools;                    // 池子ID => 池子信息
     mapping(uint256 => mapping(address => LendInfo)) public lendInfos;     // 池子ID => 用户 => 借出信息
     mapping(uint256 => mapping(address => BorrowInfo)) public borrowInfos; // 池子ID => 用户 => 借入信息
     mapping(uint256 => address[]) public lenders;             // 池子ID => 借出方列表
-    mapping(uint256 => address[]) public borrowers;           // 池子ID => 借入方列表
-    
+    mapping(uint256 => address[]) public borrowers;
+
     // 全局变量
     uint256 public poolCounter;                               // 池子计数器
     address public admin;                                     // 管理员地址
@@ -93,19 +91,19 @@ contract PoolStorage {
     uint256 public lendFee;                                   // 借出费率
     uint256 public borrowFee;                                 // 借入费率
     uint256 public minAmount;                                 // 最小金额
-    bool public globalPaused;                                 // 全局暂停标志
-    
+    bool public globalPaused;
+
     // 常量
     uint256 public constant RATE_BASE = 10000;               // 利率基数
-    uint256 public constant SECONDS_PER_YEAR = 365 days;     // 年秒数
-    
-    // 参数限制常量
+    uint256 public constant SECONDS_PER_YEAR = 365 days;
+
+    // 参数限制
     uint256 public constant MAX_INTEREST_RATE = 10000;       // 最大利率 100%
     uint256 public constant MIN_PLEDGE_RATE = 10000;         // 最小质押率 100%
     uint256 public constant MAX_PLEDGE_RATE = 50000;         // 最大质押率 500%
-    uint256 public constant MAX_FEE_RATE = 1000;             // 最大费率 10%
-    
-    // 事件定义
+    uint256 public constant MAX_FEE_RATE = 1000;
+
+    // 事件
     event PoolCreated(uint256 indexed poolId, address indexed creator, address settleToken, address pledgeToken);
     event LendDeposit(uint256 indexed poolId, address indexed lender, uint256 amount);
     event BorrowPledge(uint256 indexed poolId, address indexed borrower, uint256 pledgeAmount, uint256 borrowAmount);
@@ -123,43 +121,35 @@ contract PoolStorage {
     event Swap(address indexed fromToken, address indexed toToken, uint256 fromAmount, uint256 toAmount);
     event EmergencyLendWithdrawal(address indexed user, uint256 indexed poolId, uint256 amount);
     event EmergencyBorrowWithdrawal(address indexed user, uint256 indexed poolId, uint256 amount);
-    
-    // 管理员权限
+
+    // 修饰器
     modifier onlyAdmin() {
         require(msg.sender == admin, "PoolStorage: caller is not admin");
         _;
     }
-    
-    // 池子存在
     modifier poolExists(uint256 poolId) {
         require(poolId > 0 && poolId <= poolCounter, "PoolStorage: pool does not exist");
         _;
     }
-    
-    // 池子状态
     modifier validState(uint256 poolId, PoolState expectedState) {
         require(pools[poolId].state == expectedState, "PoolStorage: invalid pool state");
         _;
     }
-    
-    // 未暂停
     modifier notPaused() {
         require(!globalPaused, "PoolStorage: contract is paused");
         _;
     }
-    
-    // 时间检查
     modifier timeBefore(uint256 poolId) {
         require(block.timestamp < pools[poolId].settleTime, "PoolStorage: after settle time");
         _;
     }
-    
+
     modifier timeAfter(uint256 poolId) {
         require(block.timestamp >= pools[poolId].settleTime, "PoolStorage: before settle time");
         _;
     }
-    
-    // 公共辅助函数：统一转账（ETH或ERC20）
+
+    /// @dev 统一转账
     function _transferToken(address token, address to, uint256 amount) internal {
         if (amount == 0) return;
         if (token == address(0)) {
@@ -170,8 +160,8 @@ contract PoolStorage {
             IERC20(token).transfer(to, amount);
         }
     }
-    
-    // 公共辅助函数：统一接收代币（ETH或ERC20）
+
+    /// @dev 统一接收代币
     function _receiveToken(address token, address from, uint256 amount) internal returns (uint256) {
         if (token == address(0)) {
             // 接收ETH
