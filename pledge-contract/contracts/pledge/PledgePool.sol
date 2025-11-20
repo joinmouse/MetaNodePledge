@@ -3,32 +3,8 @@ pragma solidity ^0.8.28;
 
 import "./PoolLendBorrow.sol";
 import "../interface/IOracle.sol";
+import "../interface/IUniswapV2Router.sol";
 import "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
-
-interface IUniswapV2Router02 {
-    function WETH() external pure returns (address);
-    function getAmountsIn(uint256 amountOut, address[] memory path) external view returns (uint256[] memory amounts);
-    function swapExactTokensForTokens(
-        uint256 amountIn,
-        uint256 amountOutMin,
-        address[] memory path,
-        address to,
-        uint256 deadline
-    ) external returns (uint256[] memory amounts);
-    function swapExactETHForTokens(
-        uint256 amountOutMin,
-        address[] memory path,
-        address to,
-        uint256 deadline
-    ) external payable returns (uint256[] memory amounts);
-    function swapExactTokensForETH(
-        uint256 amountIn,
-        uint256 amountOutMin,
-        address[] memory path,
-        address to,
-        uint256 deadline
-    ) external returns (uint256[] memory amounts);
-}
 
 /**
  * @title PledgePool
@@ -261,7 +237,7 @@ contract PledgePool is PoolLendBorrow {
      */
     function _getSwapPath(address token0, address token1) internal view returns (address[] memory path) {
         require(swapRouter != address(0), "PledgePool: swap router not set");
-        IUniswapV2Router02 router = IUniswapV2Router02(swapRouter);
+        IUniswapV2Router router = IUniswapV2Router(swapRouter);
         path = new address[](2);
         path[0] = token0 == address(0) ? router.WETH() : token0;
         path[1] = token1 == address(0) ? router.WETH() : token1;
@@ -272,7 +248,7 @@ contract PledgePool is PoolLendBorrow {
      */
     function _getAmountIn(address token0, address token1, uint256 amountOut) internal view returns (uint256) {
         require(swapRouter != address(0), "PledgePool: swap router not set");
-        IUniswapV2Router02 router = IUniswapV2Router02(swapRouter);
+        IUniswapV2Router router = IUniswapV2Router(swapRouter);
         address[] memory path = _getSwapPath(token0, token1);
         uint256[] memory amounts = router.getAmountsIn(amountOut, path);
         return amounts[0];
@@ -294,7 +270,7 @@ contract PledgePool is PoolLendBorrow {
         require(swapRouter != address(0), "PledgePool: swap router not set");
         if (amount0 == 0) return 0;
 
-        IUniswapV2Router02 router = IUniswapV2Router02(swapRouter);
+        IUniswapV2Router router = IUniswapV2Router(swapRouter);
         address[] memory path = _getSwapPath(token0, token1);
         
         // 授权
