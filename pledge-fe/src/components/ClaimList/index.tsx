@@ -1,19 +1,18 @@
-import classNames from 'classnames';
-import React from 'react';
+import './index.less';
 
-import { Collapse, Statistic, Row, Col, Table, Steps, message } from 'antd';
+import { Col, Collapse, Row, Statistic, Steps, Table, message } from 'antd';
 
 import Button from '_components/Button';
 import OrderImg from '_components/OrderImg';
-
-import './index.less';
+import React from 'react';
+import classNames from 'classnames';
 
 export interface IClaimList {
   className?: string;
   style?: React.CSSProperties;
 }
 
-const ClaimList: React.FC<IClaimList> = ({ className, ...props }) => {
+const ClaimList: React.FC<IClaimList> = ({ className = '', style = null, ...props }) => {
   const { Panel } = Collapse;
   const { Step } = Steps;
   const steps = [
@@ -120,8 +119,5 @@ const ClaimList: React.FC<IClaimList> = ({ className, ...props }) => {
   );
 };
 
-ClaimList.defaultProps = {
-  className: '',
-  style: null,
-};
+
 export default ClaimList;

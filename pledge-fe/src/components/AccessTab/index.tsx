@@ -1,22 +1,23 @@
+import './index.less';
+
+import { Divider, Progress, Space, notification } from 'antd';
 import React, { useEffect, useState } from 'react';
-import classnames from 'classnames';
-import services from '_src/services';
-import Button from '_components/Button';
-import BUSD from '_src/assets/images/order_BUSD.png';
-import BTCB from '_src/assets/images/order_BTCB.png';
-import USDT from '_src/assets/images/order_USDT.png';
-import DAI from '_src/assets/images/order_DAI.png';
+
 import BNB from '_src/assets/images/order_BNB.png';
+import BTCB from '_src/assets/images/order_BTCB.png';
+import BUSD from '_src/assets/images/order_BUSD.png';
 import BigNumber from 'bignumber.js';
-import { useActiveWeb3React } from '_src/hooks';
-import { Progress, notification, Divider, Space } from 'antd';
-import Success from '_src/assets/images/Success.png';
+import Button from '_components/Button';
+import DAI from '_src/assets/images/order_DAI.png';
 import Error from '_src/assets/images/Error.png';
+import Success from '_src/assets/images/Success.png';
+import USDT from '_src/assets/images/order_USDT.png';
+import Union from '_src/assets/images/union.png';
+import classnames from 'classnames';
 import icon3 from '_src/assets/images/icon (3).png';
 import icon4 from '_src/assets/images/icon (4).png';
-import Union from '_src/assets/images/union.png';
-
-import './index.less';
+import services from '_src/services';
+import { useActiveWeb3React } from '_src/hooks';
 
 export interface IAccessTab {
   className?: string;
@@ -26,7 +27,7 @@ export interface IAccessTab {
   stateinfo: any;
 }
 
-const AccessTab: React.FC<IAccessTab> = ({ className, style, mode, props, stateinfo }) => {
+const AccessTab: React.FC<IAccessTab> = ({ className = '', style = null, mode, props, stateinfo }) => {
   const { connector, library, chainId, account, activate, deactivate, active, error } = useActiveWeb3React();
 
   const [hasNoClaim, sethasNoClaim] = useState(false);
@@ -398,11 +399,6 @@ const AccessTab: React.FC<IAccessTab> = ({ className, style, mode, props, statei
       </Button>
     </div>
   );
-};
-
-AccessTab.defaultProps = {
-  className: '',
-  style: null,
 };
 
 export default AccessTab;

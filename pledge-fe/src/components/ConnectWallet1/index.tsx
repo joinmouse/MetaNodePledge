@@ -1,19 +1,21 @@
-// import ChainBridge from '@/constants/ChainBridge';
-import { chainInfoState, walletModalOpen } from './../../model/global';
-import { useRecoilValue, useSetRecoilState } from 'recoil';
-import services from './../../services';
-import { UnsupportedChainIdError, useWeb3React } from '@web3-react/core';
-import type { InjectedConnector } from '@web3-react/injected-connector';
+import './index.less';
+
 import { Dropdown, Menu, notification } from 'antd';
 import React, { useEffect, useState } from 'react';
+import { UnsupportedChainIdError, useWeb3React } from '@web3-react/core';
+// import ChainBridge from '@/constants/ChainBridge';
+import { chainInfoState, walletModalOpen } from './../../model/global';
 import styled, { css } from 'styled-components';
-import { injected } from './connector';
 import { useEagerConnect, useInactiveListener } from './WalletHooks';
+import { useRecoilValue, useSetRecoilState } from 'recoil';
+
+import ChainBridge from '_constants/ChainBridge';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
 import { HeaderBox } from '../styleComponents';
+import type { InjectedConnector } from '@web3-react/injected-connector';
 import WalletModal from './../WalletModal';
-import ChainBridge from '_constants/ChainBridge';
-import './index.less';
+import { injected } from './connector';
+import services from './../../services';
 import { useActiveWeb3React } from '_src/hooks';
 
 // import { modal } from
@@ -114,22 +116,27 @@ const ConnectWallet: React.FC<IConnectWallet> = () => {
     if (connected && isDisconnect) {
       return (
         <Dropdown
-          overlay={
-            <Menu>
-              <WalletInfo>
-                <div>
-                  <img src={require('_assets/images/meta-mask-border.svg')} alt="" />
-                  <span>MetaMask</span>
-                </div>
-                <div>
-                  <div>{`${account?.slice(0, 6)}···${account?.slice(-4)}`}</div>
-                  <CopyToClipboard text={account!}>
-                    <img src={require('_assets/images/copy-icon.svg')} alt="" style={{ cursor: 'pointer' }} />
-                  </CopyToClipboard>
-                </div>
-              </WalletInfo>
-            </Menu>
-          }
+          menu={{
+            items: [
+              {
+                key: 'wallet-info',
+                label: (
+                  <WalletInfo>
+                    <div>
+                      <img src={require('_assets/images/meta-mask-border.svg')} alt="" />
+                      <span>MetaMask</span>
+                    </div>
+                    <div>
+                      <div>{`${account?.slice(0, 6)}···${account?.slice(-4)}`}</div>
+                      <CopyToClipboard text={account!}>
+                        <img src={require('_assets/images/copy-icon.svg')} alt="" style={{ cursor: 'pointer' }} />
+                      </CopyToClipboard>
+                    </div>
+                  </WalletInfo>
+                )
+              }
+            ]
+          }}
         >
           <WalletConnected onClick={handleOnCLickConnectWallet}>
             <img src={require('_assets/images/meta-mask.svg')} alt="" />

@@ -1,40 +1,40 @@
-import React, { useState, useEffect } from 'react';
-import classnames from 'classnames';
+import './index.less';
 
-import { Progress, notification, Divider, Space } from 'antd';
-import ConnectWallet from '_components/ConnectWallet';
-import BUSD from '_src/assets/images/busd.png';
+import { Button, InputNumber, Steps, message } from 'antd';
+import { Divider, Progress, Space, notification } from 'antd';
+import { HomeOutlined, LoadingOutlined, SettingFilled, SmileOutlined, SyncOutlined } from '@ant-design/icons';
+import React, { useEffect, useState } from 'react';
+import { useHistory, useRouteMatch } from 'react-router-dom';
+
+import BNB from '_assets/images/4023 3.png';
 import BTCB from '_src/assets/images/btcb.png';
-import USDT from '_assets/images/order_USDT.png';
+import BUSD from '_src/assets/images/busd.png';
+import BigNumber from 'bignumber.js';
+import Button1 from '_components/Button';
+import ConnectWallet from '_components/ConnectWallet';
 import DAI from '_assets/images/order_DAI.png';
 import ETH from '_assets/images/4023 2.png';
-import BNB from '_assets/images/4023 3.png';
-import { InputNumber, Steps, message, Button } from 'antd';
-import services from '_src/services';
-import { useRouteMatch, useHistory } from 'react-router-dom';
-import moment from 'moment';
+import Error from '_src/assets/images/Error.png';
 import { FORMAT_TIME_STANDARD } from '_src/utils/constants';
-import img1 from '_src/assets/images/4023 1.png';
 import JP from '_src/assets/images/Jp.png';
+import LoadingSVG from '_src/assets/images/loading.svg';
 import SP from '_src/assets/images/Sp.png';
 import Success from '_src/assets/images/Success.png';
-import Error from '_src/assets/images/Error.png';
+import USDT from '_assets/images/order_USDT.png';
+import Union from '_src/assets/images/union.png';
+import classnames from 'classnames';
+import { collectStoredAnnotations } from 'mobx/dist/internal';
 import icon3 from '_src/assets/images/icon (3).png';
 import icon4 from '_src/assets/images/icon (4).png';
-import Union from '_src/assets/images/union.png';
-import LoadingSVG from '_src/assets/images/loading.svg';
-import { HomeOutlined, SettingFilled, SmileOutlined, SyncOutlined, LoadingOutlined } from '@ant-design/icons';
-
-import './index.less';
-import Button1 from '_components/Button';
-import { collectStoredAnnotations } from 'mobx/dist/internal';
-import pageURL from '_constants/pageURL';
+import img1 from '_src/assets/images/4023 1.png';
+import moment from 'moment';
 import { number } from 'prop-types';
-import BigNumber from 'bignumber.js';
+import pageURL from '_constants/pageURL';
 import { render } from 'react-dom';
+import services from '_src/services';
 import { use } from 'echarts';
-import { web3 } from '_src/services/web3';
 import { useActiveWeb3React } from '_src/hooks';
+import { web3 } from '_src/services/web3';
 
 export interface ICoin_pool {
   mode: string;
@@ -967,6 +967,6 @@ const Coin_pool: React.FC<ICoin_pool> = ({ mode, pool, coin }) => {
   );
 };
 
-Coin_pool.defaultProps = {};
+
 
 export default Coin_pool;

@@ -1,19 +1,19 @@
-import React, { useState, useEffect } from 'react';
-import classnames from 'classnames';
-import { useActiveWeb3React } from '_src/hooks';
-import { Collapse, Statistic, Row, Col, Table, Steps, message } from 'antd';
-import { Progress, notification, Divider, Space } from 'antd';
-import Success from '_src/assets/images/Success.png';
-import Error from '_src/assets/images/Error.png';
-import icon3 from '_src/assets/images/icon (3).png';
-import icon4 from '_src/assets/images/icon (4).png';
-import Union from '_src/assets/images/union.png';
+import './index.less';
+
+import { Col, Collapse, Row, Statistic, Steps, Table, message } from 'antd';
+import { Divider, Progress, Space, notification } from 'antd';
+import React, { useEffect, useState } from 'react';
 
 import BigNumber from 'bignumber.js';
 import Button from '_components/Button';
-
-import './index.less';
+import Error from '_src/assets/images/Error.png';
+import Success from '_src/assets/images/Success.png';
+import Union from '_src/assets/images/union.png';
+import classnames from 'classnames';
+import icon3 from '_src/assets/images/icon (3).png';
+import icon4 from '_src/assets/images/icon (4).png';
 import services from '_src/services';
+import { useActiveWeb3React } from '_src/hooks';
 
 export interface IClaimTime {
   className?: string;
@@ -29,8 +29,8 @@ export interface IClaimTime {
 }
 
 const ClaimTime: React.FC<IClaimTime> = ({
-  className,
-  style,
+  className = '',
+  style = null,
   endtime,
   state,
   pid,
@@ -317,10 +317,6 @@ const ClaimTime: React.FC<IClaimTime> = ({
   );
 };
 
-ClaimTime.defaultProps = {
-  className: '',
 
-  style: null,
-};
 
 export default ClaimTime;

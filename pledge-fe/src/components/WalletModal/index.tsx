@@ -1,14 +1,15 @@
-import React from 'react';
-import { Modal } from 'antd';
-import { walletModalOpen } from './../../model/global';
-import { useRecoilState } from 'recoil';
-import styled from 'styled-components/macro';
 import { UnsupportedChainIdError, useWeb3React } from '@web3-react/core';
-import { SUPPORTED_WALLETS } from '../../constants/wallet';
-import Option from './Option';
-import { WalletConnectConnector } from '@web3-react/walletconnect-connector';
+
 import type { AbstractConnector } from '@web3-react/abstract-connector';
+import { Modal } from 'antd';
+import Option from './Option';
+import React from 'react';
+import { SUPPORTED_WALLETS } from '../../constants/wallet';
+import { WalletConnectConnector } from '@web3-react/walletconnect-connector';
+import styled from 'styled-components/macro';
 import { useActiveWeb3React } from '_src/hooks';
+import { useRecoilState } from 'recoil';
+import { walletModalOpen } from './../../model/global';
 const Wrapper = styled.div`
   width: 100%;
 `;
@@ -149,7 +150,7 @@ export default function WalletModal({}: // pendingTransactions,
     <>
       <Modal
         title="Connect a wallet"
-        visible={walletOpen}
+        open={walletOpen}
         onCancel={handleCancel}
         closable={true}
         footer={null}

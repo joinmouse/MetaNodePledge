@@ -1,20 +1,20 @@
+import './index.less';
+
+import { Divider, Progress, Space, notification } from 'antd';
 import React, { useEffect, useState } from 'react';
-import { Tooltip } from 'antd';
-import { QuestionCircleOutlined } from '@ant-design/icons';
-import { useWeb3React, UnsupportedChainIdError } from '@web3-react/core';
-import { Progress, notification, Divider, Space } from 'antd';
-import Success from '_src/assets/images/Success.png';
+import { UnsupportedChainIdError, useWeb3React } from '@web3-react/core';
+
+import BigNumber from 'bignumber.js';
+import Button from '_components/Button';
 import Error from '_src/assets/images/Error.png';
+import OrderImg from '_components/OrderImg';
+import { QuestionCircleOutlined } from '@ant-design/icons';
+import Success from '_src/assets/images/Success.png';
+import { Tooltip } from 'antd';
+import Union from '_src/assets/images/union.png';
 import icon3 from '_src/assets/images/icon (3).png';
 import icon4 from '_src/assets/images/icon (4).png';
-import Union from '_src/assets/images/union.png';
-
-import Button from '_components/Button';
-import OrderImg from '_components/OrderImg';
-import BigNumber from 'bignumber.js';
 import services from '_src/services';
-
-import './index.less';
 import { useActiveWeb3React } from '_src/hooks';
 
 export interface IRefund {
@@ -25,7 +25,7 @@ export interface IRefund {
   props?: any;
 }
 
-const Refund: React.FC<IRefund> = ({ className, style, mode, stateinfo, props }) => {
+const Refund: React.FC<IRefund> = ({ className = '', style = null, mode, stateinfo, props }) => {
   const { connector, library, chainId, account, activate, deactivate, active, error } = useActiveWeb3React();
 
   const [hasNoClaim, sethasNoClaim] = useState(false);
@@ -421,9 +421,6 @@ const Refund: React.FC<IRefund> = ({ className, style, mode, stateinfo, props })
   );
 };
 
-Refund.defaultProps = {
-  className: '',
-  style: null,
-};
+
 
 export default Refund;

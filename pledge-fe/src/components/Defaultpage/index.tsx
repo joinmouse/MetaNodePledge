@@ -1,11 +1,12 @@
+import './index.less';
+
+import { Button, Empty, Tooltip } from 'antd';
+
+import { DappLayout } from '_src/Layout';
+import Emptyimg from '_assets/images/empty.png';
+import PortfolioList from '_components/PortfolioList';
 import React from 'react';
 import classnames from 'classnames';
-import { DappLayout } from '_src/Layout';
-import PortfolioList from '_components/PortfolioList';
-import { Tooltip, Button, Empty } from 'antd';
-import Emptyimg from '_assets/images/empty.png';
-
-import './index.less';
 
 export interface IDefaultpage {
   className?: string;
@@ -13,7 +14,7 @@ export interface IDefaultpage {
   mode: any;
 }
 
-const Defaultpage: React.FC<IDefaultpage> = ({ className, style, mode }) => {
+const Defaultpage: React.FC<IDefaultpage> = ({ className = '', style = null, mode }) => {
   const PortfolioListTitle1 = ['Pool / Underlying Asset', 'Fixed Rate', 'State'];
   const PortfolioListTitle = [
     'Pool / Underlying Asset',
@@ -56,9 +57,6 @@ const Defaultpage: React.FC<IDefaultpage> = ({ className, style, mode }) => {
   );
 };
 
-Defaultpage.defaultProps = {
-  className: '',
-  style: null,
-};
+
 
 export default Defaultpage;

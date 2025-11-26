@@ -1,27 +1,25 @@
-import React, { useEffect, useState } from 'react';
-import { NavLink, Link, useHistory, useRouteMatch } from 'react-router-dom';
-import classnames from 'classnames';
-import currencyInfos from '_constants/currencyInfos';
-import styled from 'styled-components';
+import './index.less';
 
-import { useRecoilState } from 'recoil';
-import { currencyState } from '_src/model/global';
-import services from '_src/services';
+import { Drawer, Dropdown, Menu, Select, message } from 'antd';
+import { Link, NavLink, useHistory, useRouteMatch } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
 import { find, get } from 'lodash';
-import { useWeb3React } from '@web3-react/core';
-import { Select, message, Drawer, Dropdown, Menu } from 'antd';
+
 import Button from '_components/Button';
 import ConnectWallet from '_components/ConnectWallet';
-import ConnectWallet1 from '_components/ConnectWallet1';
-
 import PageUrl from '_constants/pageURL';
+import classnames from 'classnames';
+import close from '_assets/images/Icon (2).png';
+import currencyInfos from '_constants/currencyInfos';
+import { currencyState } from '_src/model/global';
+import list from '_assets/images/Icon (1).png';
 import logo from '_assets/images/vector.png';
 import logo2 from '_assets/images/vector2.png';
-import list from '_assets/images/Icon (1).png';
-import close from '_assets/images/Icon (2).png';
-
-import './index.less';
+import services from '_src/services';
+import styled from 'styled-components';
 import { useActiveWeb3React } from '_src/hooks';
+import { useRecoilState } from 'recoil';
+import { useWeb3React } from '@web3-react/core';
 
 export interface IHeaderProps {}
 
@@ -124,28 +122,39 @@ const Header: React.FC<IHeaderProps> = () => {
         </div>
         <div className="changeWallet">
           <Dropdown
-            overlay={
-              <Menu
-                selectedKeys={[currency]}
-                onClick={handleClick}
-                className="selecttab"
-                style={{ width: '240px', height: '160px', padding: '16px' }}
-              >
-                <p style={{ color: ' #8B89A3' }}>Select a network</p>
-                <Menu.Item key={'BSC_Mainnet'} style={{ borderRadius: '12px' }}>
-                  <FlexDiv style={{ display: 'flex', justifyContent: 'left' }}>
-                    <img src={get(currencyInfos, ['BSC_Mainnet', 'chainImageAsset'])} alt="" width={24} height={24} />
-                    <span>BSC-Mainnet</span>
-                  </FlexDiv>
-                </Menu.Item>
-                <Menu.Item key={'BSC_Testnet'} style={{ borderRadius: '12px', marginBottom: '10px' }}>
-                  <FlexDiv style={{ display: 'flex', justifyContent: 'left' }}>
-                    <img src={get(currencyInfos, ['BSC_Testnet', 'chainImageAsset'])} alt="" width={24} height={24} />
-                    <span>BSC-Testnet</span>
-                  </FlexDiv>
-                </Menu.Item>
-              </Menu>
-            }
+            menu={{
+              selectedKeys: [currency],
+              onClick: handleClick,
+              className: "selecttab",
+              style: { width: '240px', height: '160px', padding: '16px' },
+              items: [
+                {
+                  key: 'header',
+                  label: <p style={{ color: ' #8B89A3' }}>Select a network</p>,
+                  disabled: true
+                },
+                {
+                  key: 'BSC_Mainnet',
+                  label: (
+                    <FlexDiv style={{ display: 'flex', justifyContent: 'left' }}>
+                      <img src={get(currencyInfos, ['BSC_Mainnet', 'chainImageAsset'])} alt="" width={24} height={24} />
+                      <span>BSC-Mainnet</span>
+                    </FlexDiv>
+                  ),
+                  style: { borderRadius: '12px' }
+                },
+                {
+                  key: 'BSC_Testnet',
+                  label: (
+                    <FlexDiv style={{ display: 'flex', justifyContent: 'left' }}>
+                      <img src={get(currencyInfos, ['BSC_Testnet', 'chainImageAsset'])} alt="" width={24} height={24} />
+                      <span>BSC-Testnet</span>
+                    </FlexDiv>
+                  ),
+                  style: { borderRadius: '12px', marginBottom: '10px' }
+                }
+              ]
+            }}
           >
             <div>
               <img src={get(currencyInfos, [currency, 'chainImageAsset'])} alt="" width={24} height={24} />
@@ -162,38 +171,49 @@ const Header: React.FC<IHeaderProps> = () => {
           <div className="list_right">
             <div className="changeWallet2">
               <Dropdown
-                overlay={
-                  <Menu
-                    selectedKeys={[currency]}
-                    onClick={handleClick}
-                    className="selecttab"
-                    style={{ width: '240px', height: '160px', padding: '16px' }}
-                  >
-                    <p style={{ color: ' #8B89A3' }}>Select a network</p>
-                    <Menu.Item key={'BSC_Mainnet'} style={{ borderRadius: '12px' }}>
-                      <FlexDiv style={{ display: 'flex', justifyContent: 'left' }}>
-                        <img
-                          src={get(currencyInfos, ['BSC_Mainnet', 'chainImageAsset'])}
-                          alt=""
-                          width={20}
-                          height={20}
-                        />
-                        <span>BSC-Mainnet</span>
-                      </FlexDiv>
-                    </Menu.Item>
-                    <Menu.Item key={'BSC_Testnet'} style={{ borderRadius: '12px', marginBottom: '10px' }}>
-                      <FlexDiv style={{ display: 'flex', justifyContent: 'left' }}>
-                        <img
-                          src={get(currencyInfos, ['BSC_Testnet', 'chainImageAsset'])}
-                          alt=""
-                          width={20}
-                          height={20}
-                        />
-                        <span>BSC-Testnet</span>
-                      </FlexDiv>
-                    </Menu.Item>
-                  </Menu>
-                }
+                menu={{
+                  selectedKeys: [currency],
+                  onClick: handleClick,
+                  className: "selecttab",
+                  style: { width: '240px', height: '160px', padding: '16px' },
+                  items: [
+                    {
+                      key: 'header',
+                      label: <p style={{ color: ' #8B89A3' }}>Select a network</p>,
+                      disabled: true
+                    },
+                    {
+                      key: 'BSC_Mainnet',
+                      label: (
+                        <FlexDiv style={{ display: 'flex', justifyContent: 'left' }}>
+                          <img
+                            src={get(currencyInfos, ['BSC_Mainnet', 'chainImageAsset'])}
+                            alt=""
+                            width={20}
+                            height={20}
+                          />
+                          <span>BSC-Mainnet</span>
+                        </FlexDiv>
+                      ),
+                      style: { borderRadius: '12px' }
+                    },
+                    {
+                      key: 'BSC_Testnet',
+                      label: (
+                        <FlexDiv style={{ display: 'flex', justifyContent: 'left' }}>
+                          <img
+                            src={get(currencyInfos, ['BSC_Testnet', 'chainImageAsset'])}
+                            alt=""
+                            width={20}
+                            height={20}
+                          />
+                          <span>BSC-Testnet</span>
+                        </FlexDiv>
+                      ),
+                      style: { borderRadius: '12px', marginBottom: '10px' }
+                    }
+                  ]
+                }}
               >
                 <div>
                   <img src={get(currencyInfos, [currency, 'chainImageAsset'])} alt="" width={24} height={24} />
@@ -208,7 +228,7 @@ const Header: React.FC<IHeaderProps> = () => {
               <img src={list} onClick={() => setVisable(true)} />
             </div>
           </div>
-          <Drawer placement={'top'} closable={false} onClose={() => setVisable(false)} visible={visable} key={'top'}>
+          <Drawer placement={'top'} closable={false} onClose={() => setVisable(false)} open={visable} key={'top'}>
             <div className="drawer_header">
               <img src={close} onClick={() => setVisable(false)} />
             </div>
@@ -244,6 +264,6 @@ const Header: React.FC<IHeaderProps> = () => {
   );
 };
 
-Header.defaultProps = {};
+
 
 export default Header;

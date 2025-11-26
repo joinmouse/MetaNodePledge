@@ -1,9 +1,9 @@
-import React, { ReactNode } from 'react';
-import classnames from 'classnames';
-
-import { HomeOutlined, SettingFilled, SmileOutlined, SyncOutlined, LoadingOutlined } from '@ant-design/icons';
-
 import './index.less';
+
+import { HomeOutlined, LoadingOutlined, SettingFilled, SmileOutlined, SyncOutlined } from '@ant-design/icons';
+import React, { ReactNode } from 'react';
+
+import classnames from 'classnames';
 
 export interface IButtonProps {
   rightAngleDirection?: 'leftTop' | 'leftBottom' | 'rightTop' | 'rightBottom' | 'null';
@@ -18,17 +18,17 @@ export interface IButtonProps {
 
 const Button: React.FC<IButtonProps> = ({
   children,
-  disabled,
-  className,
-  rightAngleDirection,
+  disabled = false,
+  className = '',
+  rightAngleDirection = 'null',
   style,
-  type,
+  type = 'paramy',
   loading,
-  onClick,
+  onClick = () => {},
   ...props
 }) => {
   function handleOnClick() {
-    if (!disabled) {
+    if (!disabled && onClick) {
       onClick();
     }
   }
@@ -51,13 +51,6 @@ const Button: React.FC<IButtonProps> = ({
   );
 };
 
-Button.defaultProps = {
-  rightAngleDirection: 'null',
-  className: '',
-  type: 'paramy',
-  style: null,
-  disabled: false,
-  onClick: () => {},
-};
+
 
 export default Button;

@@ -21,7 +21,7 @@ function HomePage() {
   const history = useHistory();
   const { chainId } = useWeb3React();
   const [pid, setpid] = useState(0);
-  const { TabPane } = Tabs;
+
   const [tab, settab] = useState('Live');
   const [pool, setpool] = useState('BUSD');
   const [coin, setcoin] = useState('');
@@ -264,8 +264,8 @@ function HomePage() {
             content={content}
             title="Choose a Role"
             trigger="click"
-            visible={show === record.key && visible}
-            onVisibleChange={(e) => handleVisibleChange(e, record.key)}
+            open={show === record.key && visible}
+            onOpenChange={(e) => handleVisibleChange(e, record.key)}
           >
             <Button
               style={{ width: '107px', height: '40px', borderRadius: '15px', lineHeight: '40px', color: '#FFF' }}
@@ -295,8 +295,8 @@ function HomePage() {
           content={content}
           title="Choose a Role"
           trigger="click"
-          visible={show === record.key && visible}
-          onVisibleChange={(e) => handleVisibleChange(e, record.key)}
+          open={show === record.key && visible}
+          onOpenChange={(e) => handleVisibleChange(e, record.key)}
         >
           <div
             className="underlyingAsset"
@@ -388,127 +388,165 @@ function HomePage() {
   return (
     <div className="dapp_home_page">
       <DappLayout title="Market Pool" className="trust_code">
-        <Dropdown overlay={menu} trigger={['click']} className="dropdown">
+                <Dropdown menu={{ items: menu.props.children }} trigger={['click']} className="dropdown">
           <a className="ant-dropdown-link" onClick={(e) => e.preventDefault()}>
             {tab}
             <DownOutlined />
           </a>
         </Dropdown>
-        <Tabs defaultActiveKey="1" onChange={callback} className="all_tab">
-          <TabPane tab="BUSD" key="BUSD">
-            <Table
-              pagination={
-                datastate.filter(
-                  (item) =>
-                    item.Sp === '0xe9e7CEA3DedcA5984780Bafc599bD69ADd087D56' ||
-                    item.Sp === '0xE676Dcd74f44023b95E0E2C6436C97991A7497DA',
-                ).length < 10
-                  ? false
-                  : {}
+        <Tabs 
+          defaultActiveKey="1" 
+          onChange={callback} 
+          className="all_tab"
+          items={[
+            {
+              key: 'BUSD',
+              label: 'BUSD',
+              children: (
+                <Table
+                  pagination={
+                    datastate.filter(
+                      (item) =>
+                        item.Sp === '0xe9e7CEA3DedcA5984780Bafc599bD69ADd087D56' ||
+                        item.Sp === '0xE676Dcd74f44023b95E0E2C6436C97991A7497DA',
+                    ).length < 10
+                      ? false
+                      : {}
+                  }
+                  columns={columns}
+                  dataSource={datastate.filter(
+                    (item) =>
+                      item.Sp === '0xe9e7CEA3DedcA5984780Bafc599bD69ADd087D56' ||
+                      item.Sp === '0xE676Dcd74f44023b95E0E2C6436C97991A7497DA',
+                  )}
+                  rowClassName={(record) => record}
+                />
+              )
+            },
+            {
+              key: 'USDT',
+              label: 'USDT',
+              children: (
+                <Table
+                  pagination={datastate.filter((item) => item.Sp === '').length < 10 ? false : {}}
+                  columns={columns}
+                  dataSource={datastate.filter((item) => item.Sp === '')}
+                  rowClassName={(record) => record}
+                />
+              )
+            },
+            ...(chainId === 97 ? [
+              {
+                key: 'DAI',
+                label: 'DAI',
+                children: (
+                  <Table
+                    pagination={
+                      datastate.filter(
+                        (item) =>
+                          item.Sp === '0x1AF3F329e8BE154074D8769D1FFa4eE058B1DBc3' ||
+                          item.Sp === '0x490BC3FCc845d37C1686044Cd2d6589585DE9B8B',
+                      ).length < 10
+                        ? false
+                        : {}
+                    }
+                    columns={columns}
+                    dataSource={datastate.filter(
+                      (item) =>
+                        item.Sp === '0x1AF3F329e8BE154074D8769D1FFa4eE058B1DBc3' ||
+                        item.Sp === '0x490BC3FCc845d37C1686044Cd2d6589585DE9B8B',
+                    )}
+                    rowClassName={(record) => record}
+                  />
+                )
               }
-              columns={columns}
-              dataSource={datastate.filter(
-                (item) =>
-                  item.Sp === '0xe9e7CEA3DedcA5984780Bafc599bD69ADd087D56' ||
-                  item.Sp === '0xE676Dcd74f44023b95E0E2C6436C97991A7497DA',
-              )}
-              rowClassName={(record) => record}
-            />
-          </TabPane>
-          <TabPane tab="USDT" key="USDT">
-            <Table
-              pagination={datastate.filter((item) => item.Sp === '').length < 10 ? false : {}}
-              columns={columns}
-              dataSource={datastate.filter((item) => item.Sp === '')}
-              rowClassName={(record) => record}
-            />
-          </TabPane>
-          {chainId === 97 ? (
-            <TabPane tab="DAI" key="DAI">
-              <Table
-                pagination={
-                  datastate.filter(
+            ] : [
+              {
+                key: 'PLGR',
+                label: 'PLGR',
+                children: (
+                  <Table
+                    pagination={
+                      datastate.filter((item) => item.Sp === '0x6Aa91CbfE045f9D154050226fCc830ddbA886CED').length < 10
+                        ? false
+                        : {}
+                    }
+                    columns={columns}
+                    dataSource={datastate.filter((item) => item.Sp === '0x6Aa91CbfE045f9D154050226fCc830ddbA886CED')}
+                    rowClassName={(record) => record}
+                  />
+                )
+              }
+            ])
+          ]}
+        />
+        <Tabs 
+          defaultActiveKey="1" 
+          onChange={callback} 
+          className="media_tab"
+          items={[
+            {
+              key: 'BUSD',
+              label: 'BUSD',
+              children: (
+                <Table
+                  pagination={
+                    datastate.filter(
+                      (item) =>
+                        item.Sp === '0xe9e7CEA3DedcA5984780Bafc599bD69ADd087D56' ||
+                        item.Sp === '0xE676Dcd74f44023b95E0E2C6436C97991A7497DA',
+                    ).length < 10
+                      ? false
+                      : {}
+                  }
+                  columns={columns1}
+                  dataSource={datastate.filter(
+                    (item) =>
+                      item.Sp === '0xe9e7CEA3DedcA5984780Bafc599bD69ADd087D56' ||
+                      item.Sp === '0xE676Dcd74f44023b95E0E2C6436C97991A7497DA',
+                  )}
+                  rowClassName={(record) => record}
+                />
+              )
+            },
+            {
+              key: 'USDT',
+              label: 'USDT',
+              children: (
+                <Table
+                  pagination={datastate.filter((item) => item.Sp === '').length < 10 ? false : {}}
+                  columns={columns1}
+                  dataSource={datastate.filter((item) => item.Sp === '')}
+                  rowClassName={(record) => record}
+                />
+              )
+            },
+            {
+              key: 'DAI',
+              label: 'DAI',
+              children: (
+                <Table
+                  pagination={
+                    datastate.filter(
+                      (item) =>
+                        item.Sp === '0x1AF3F329e8BE154074D8769D1FFa4eE058B1DBc3' ||
+                        item.Sp === '0x490BC3FCc845d37C1686044Cd2d6589585DE9B8B',
+                    ).length < 10
+                      ? false
+                      : {}
+                  }
+                  columns={columns1}
+                  dataSource={datastate.filter(
                     (item) =>
                       item.Sp === '0x1AF3F329e8BE154074D8769D1FFa4eE058B1DBc3' ||
                       item.Sp === '0x490BC3FCc845d37C1686044Cd2d6589585DE9B8B',
-                  ).length < 10
-                    ? false
-                    : {}
-                }
-                columns={columns}
-                dataSource={datastate.filter(
-                  (item) =>
-                    item.Sp === '0x1AF3F329e8BE154074D8769D1FFa4eE058B1DBc3' ||
-                    item.Sp === '0x490BC3FCc845d37C1686044Cd2d6589585DE9B8B',
-                )}
-                rowClassName={(record) => record}
-              />
-            </TabPane>
-          ) : (
-            <TabPane tab="PLGR" key="PLGR">
-              <Table
-                pagination={
-                  datastate.filter((item) => item.Sp === '0x6Aa91CbfE045f9D154050226fCc830ddbA886CED').length < 10
-                    ? false
-                    : {}
-                }
-                columns={columns}
-                dataSource={datastate.filter((item) => item.Sp === '0x6Aa91CbfE045f9D154050226fCc830ddbA886CED')}
-                rowClassName={(record) => record}
-              />
-            </TabPane>
-          )}
-        </Tabs>
-        <Tabs defaultActiveKey="1" onChange={callback} className="media_tab">
-          <TabPane tab="BUSD" key="BUSD">
-            <Table
-              pagination={
-                datastate.filter(
-                  (item) =>
-                    item.Sp === '0xe9e7CEA3DedcA5984780Bafc599bD69ADd087D56' ||
-                    item.Sp === '0xE676Dcd74f44023b95E0E2C6436C97991A7497DA',
-                ).length < 10
-                  ? false
-                  : {}
-              }
-              columns={columns1}
-              dataSource={datastate.filter(
-                (item) =>
-                  item.Sp === '0xe9e7CEA3DedcA5984780Bafc599bD69ADd087D56' ||
-                  item.Sp === '0xE676Dcd74f44023b95E0E2C6436C97991A7497DA',
-              )}
-              rowClassName={(record) => record}
-            />
-          </TabPane>
-          <TabPane tab="USDT" key="USDT">
-            <Table
-              pagination={datastate.filter((item) => item.Sp === '').length < 10 ? false : {}}
-              columns={columns1}
-              dataSource={datastate.filter((item) => item.Sp === '')}
-              rowClassName={(record) => record}
-            />
-          </TabPane>
-          <TabPane tab="DAI" key="DAI">
-            <Table
-              pagination={
-                datastate.filter(
-                  (item) =>
-                    item.Sp === '0x1AF3F329e8BE154074D8769D1FFa4eE058B1DBc3' ||
-                    item.Sp === '0x490BC3FCc845d37C1686044Cd2d6589585DE9B8B',
-                ).length < 10
-                  ? false
-                  : {}
-              }
-              columns={columns1}
-              dataSource={datastate.filter(
-                (item) =>
-                  item.Sp === '0x1AF3F329e8BE154074D8769D1FFa4eE058B1DBc3' ||
-                  item.Sp === '0x490BC3FCc845d37C1686044Cd2d6589585DE9B8B',
-              )}
-              rowClassName={(record) => record}
-            />
-          </TabPane>
-        </Tabs>
+                  )}
+                  rowClassName={(record) => record}
+                />
+              )
+            }
+          ]}
+        />
       </DappLayout>
     </div>
   );

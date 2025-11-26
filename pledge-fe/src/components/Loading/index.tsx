@@ -1,7 +1,7 @@
+import './index.less';
+
 import React from 'react';
 import logo from '_src/assets/images/vector.png';
-
-import './index.less';
 
 export interface ILoadingProps {
   style?: React.CSSProperties;
@@ -15,6 +15,6 @@ const Loading: React.FC<ILoadingProps> = ({ style }) => {
   );
 };
 
-Loading.defaultProps = {};
+
 
 export default Loading;

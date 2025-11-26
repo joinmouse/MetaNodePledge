@@ -1,16 +1,18 @@
-import React, { useState, useEffect } from 'react';
-import { useRouteMatch, useHistory } from 'react-router-dom';
-
-import { Tabs, InputNumber, Popover, Space, Tooltip, Select, Cascader, Modal } from 'antd';
-import { QuestionCircleOutlined } from '@ant-design/icons';
-import { DappLayout } from '_src/Layout';
-import pageURL from '_constants/pageURL';
-import Coin_pool from '_components/Coin_pool';
-import Button from '_components/Button';
-import styled, { css } from 'styled-components';
 import './index.less';
-import { color } from 'echarts';
+
+import { Cascader, InputNumber, Modal, Popover, Select, Space, Tabs, Tooltip } from 'antd';
+import React, { useEffect, useState } from 'react';
+import styled, { css } from 'styled-components';
+import { useHistory, useRouteMatch } from 'react-router-dom';
+
+import Button from '_components/Button';
+import Coin_pool from '_components/Coin_pool';
+import { DappLayout } from '_src/Layout';
 import PageHeader from '_components/PageHeader';
+import { QuestionCircleOutlined } from '@ant-design/icons';
+import { color } from 'echarts';
+import pageURL from '_constants/pageURL';
+
 const { Option } = Select;
 type Iparams = {
   mode: 'Swap' | 'Liquidity';
@@ -75,7 +77,7 @@ function Dex() {
   const { url: routeUrl, params } = useRouteMatch<Iparams>();
   const { mode } = params;
   const [activeKey, setActiveKey] = useState<string>(mode);
-  const { TabPane } = Tabs;
+
   const [slippagevalue, setslippagevalue] = useState(0.5);
   const [slippagetime, setslippagetime] = useState(20);
   const onChanges = (newActiveKey: string) => {
@@ -95,27 +97,48 @@ function Dex() {
   return (
     <DappLayout title={`${activeKey} Dex`} className="dapp_Dex">
       测试
-      {/* <Tabs defaultActiveKey="Swap" activeKey={activeKey} onChange={onChanges}>
-        <TabPane tab="Swap" key="Swap">
-          e eeeeeee
-        </TabPane>
-        <TabPane tab="Liquidity" key="Liquidity">
-          12313
-        </TabPane>
-      </Tabs>
-      <Tabs defaultActiveKey="1" onChange={onChange}>
-        <TabPane tab="Tab 1" key="1">
-          Content of Tab Pane 1
-        </TabPane>
-        <TabPane tab="Tab 2" key="2">
-          Content of Tab Pane 2
-        </TabPane>
-        <TabPane tab="Tab 3" key="3">
-          Content of Tab Pane 3
-        </TabPane>
-      </Tabs> */}
+      {/* <Tabs 
+        defaultActiveKey="Swap" 
+        activeKey={activeKey} 
+        onChange={onChanges}
+        items={[
+          {
+            key: 'Swap',
+            label: 'Swap',
+            children: 'e eeeeeee'
+          },
+          {
+            key: 'Liquidity',
+            label: 'Liquidity',
+            children: '12313'
+          }
+        ]}
+      />
+      <Tabs 
+        defaultActiveKey="1" 
+        onChange={onChange}
+        items={[
+          {
+            key: '1',
+            label: 'Tab 1',
+            children: 'Content of Tab Pane 1'
+          },
+          {
+            key: '2',
+            label: 'Tab 2',
+            children: 'Content of Tab Pane 2'
+          },
+          {
+            key: '3',
+            label: 'Tab 3',
+            children: 'Content of Tab Pane 3'
+          }
+        ]}
+      /> */}
     </DappLayout>
   );
 }
+
+export default Dex;
 
 export default Dex;

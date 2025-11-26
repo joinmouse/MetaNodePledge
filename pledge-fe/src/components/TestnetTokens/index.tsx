@@ -1,23 +1,24 @@
+import './index.less';
+
+import { Divider, Progress, Space, notification } from 'antd';
 import React, { useEffect, useState } from 'react';
-import classnames from 'classnames';
-import { DappLayout } from '_src/Layout';
-import Button from '_components/Button';
-import BUSD from '_src/assets/images/BUSDcoin.png';
-import BTCB from '_src/assets/images/order_BTCB.png';
-import USDT from '_src/assets/images/order_USDT.png';
-import DAI from '_src/assets/images/order_DAI.png';
+
 import BNB from '_src/assets/images/order_BNB.png';
-import Success from '_src/assets/images/Success.png';
+import BTCB from '_src/assets/images/order_BTCB.png';
+import BUSD from '_src/assets/images/BUSDcoin.png';
+import Button from '_components/Button';
+import DAI from '_src/assets/images/order_DAI.png';
+import { DappLayout } from '_src/Layout';
 import Error from '_src/assets/images/Error.png';
+import Success from '_src/assets/images/Success.png';
+import USDT from '_src/assets/images/order_USDT.png';
+import Union from '_src/assets/images/union.png';
+import classnames from 'classnames';
 import icon3 from '_src/assets/images/icon (3).png';
 import icon4 from '_src/assets/images/icon (4).png';
-import Union from '_src/assets/images/union.png';
-import { Progress, notification, Divider, Space } from 'antd';
-
-import './index.less';
 import services from '_src/services';
-import { web3 } from '_src/services/web3';
 import { useActiveWeb3React } from '_src/hooks';
+import { web3 } from '_src/services/web3';
 
 export interface ITestnetTokens {
   className?: string;
@@ -26,7 +27,7 @@ export interface ITestnetTokens {
   mode: string;
 }
 
-const TestnetTokens: React.FC<ITestnetTokens> = ({ className, style, props, mode }) => {
+const TestnetTokens: React.FC<ITestnetTokens> = ({ className = '', style = null, props, mode = '' }) => {
   const [loadingsbusd, setloadingsbusd] = useState(false);
   const [loadingsbtc, setloadingsbtc] = useState(false);
 
@@ -255,10 +256,6 @@ const TestnetTokens: React.FC<ITestnetTokens> = ({ className, style, props, mode
   );
 };
 
-TestnetTokens.defaultProps = {
-  className: '',
-  style: null,
-  mode: '',
-};
+
 
 export default TestnetTokens;

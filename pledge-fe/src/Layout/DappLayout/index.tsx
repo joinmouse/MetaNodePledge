@@ -12,7 +12,7 @@ export interface IDappLayout {
   children: ReactNode;
 }
 
-const DappLayout: React.FC<IDappLayout> = ({ title, info, children, className, ...props }) => {
+const DappLayout: React.FC<IDappLayout> = ({ title = '', info = null, children, className = '', style = null, ...props }) => {
   return (
     <section className={classnames('dapp-layout', className)} {...props}>
       <h2 className="landingbox_title" style={{ display: 'flex', alignItems: 'flex-start' }}>
@@ -25,11 +25,6 @@ const DappLayout: React.FC<IDappLayout> = ({ title, info, children, className, .
   );
 };
 
-DappLayout.defaultProps = {
-  title: '',
-  info: null,
-  className: '',
-  style: null,
-};
+
 
 export default DappLayout;

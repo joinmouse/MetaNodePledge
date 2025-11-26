@@ -15,15 +15,18 @@ const SwitchLanguage = () => {
     i18n.changeLanguage(key);
   };
 
-  const MenuList = (
-    <Menu onClick={handleToggleLanguage} style={{ minWidth: '100px' }}>
-      <Menu.Item key="zhCN">{t('zhCN')}</Menu.Item>
-      <Menu.Item key="enUS">{t('enUS')}</Menu.Item>
-    </Menu>
-  );
-
   return (
-    <Dropdown overlay={MenuList} style={{ cursor: 'pointer' }} placement="bottomRight">
+    <Dropdown 
+      menu={{
+        onClick: handleToggleLanguage,
+        style: { minWidth: '100px' },
+        items: [
+          { key: 'zhCN', label: t('zhCN') },
+          { key: 'enUS', label: t('enUS') }
+        ]
+      }} 
+      style={{ cursor: 'pointer' }} 
+      placement="bottomRight"
       <div className="components-switch-language">
         <span style={{ marginRight: '6px' }}>{t(i18n.language)}</span>
         <DownOutlined />
@@ -32,4 +35,5 @@ const SwitchLanguage = () => {
   );
 };
 
+export default SwitchLanguage;
 export default SwitchLanguage;

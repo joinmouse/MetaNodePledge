@@ -1,14 +1,14 @@
-import classNames from 'classnames';
-import React, { useEffect, useState } from 'react';
+import './index.less';
 
-import { Collapse, Statistic, Row, Col, Table, Steps, message } from 'antd';
+import { Col, Collapse, Row, Statistic, Steps, Table, message } from 'antd';
+import React, { useEffect, useState } from 'react';
+import { UnsupportedChainIdError, useWeb3React } from '@web3-react/core';
+
 import BigNumber from 'bignumber.js';
 import Button from '_components/Button';
-import OrderImg from '_components/OrderImg';
 import ClaimTime from '_components/ClaimTime';
-import { useWeb3React, UnsupportedChainIdError } from '@web3-react/core';
-
-import './index.less';
+import OrderImg from '_components/OrderImg';
+import classNames from 'classnames';
 import services from '_src/services';
 import { useActiveWeb3React } from '_src/hooks';
 
@@ -20,7 +20,7 @@ export interface IPortfolioList {
   mode: string;
 }
 
-const PortfolioList: React.FC<IPortfolioList> = ({ className, mode, datainfo, ...props }) => {
+const PortfolioList: React.FC<IPortfolioList> = ({ className = '', mode, datainfo, style = null, ...props }) => {
   const { connector, library, chainId, account, activate, deactivate, active, error } = useActiveWeb3React();
   const { Panel } = Collapse;
   const [stakeAmount, setstakeAmount] = useState('');
@@ -272,8 +272,5 @@ ${props.props.poolname} `,
   );
 };
 
-PortfolioList.defaultProps = {
-  className: '',
-  style: null,
-};
+
 export default PortfolioList;
