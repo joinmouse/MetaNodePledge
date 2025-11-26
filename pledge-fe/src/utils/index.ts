@@ -1,12 +1,15 @@
-import { Contract } from '@ethersproject/contracts';
-import { getAddress } from '@ethersproject/address';
-import { AddressZero } from '@ethersproject/constants';
+import { ChainId, Currency, CurrencyAmount, ETHER, JSBI, Percent, Token } from '@pswww/sdk';
 import { JsonRpcSigner, Web3Provider } from '@ethersproject/providers';
+
+import { AddressZero } from '@ethersproject/constants';
 import { BigNumber } from '@ethersproject/bignumber';
-import { abi as IUniswapV2Router02ABI } from '@uniswap/v2-periphery/build/IUniswapV2Router02.json';
-import { ChainId, JSBI, Percent, Token, CurrencyAmount, Currency, ETHER } from '@pswww/sdk';
+import { Contract } from '@ethersproject/contracts';
+import IUniswapV2Router02JSON from '@uniswap/v2-periphery/build/IUniswapV2Router02.json';
 import { ROUTER_ADDRESS } from '../constants';
 import { TokenAddressMap } from '_src/state/lists/hooks';
+import { getAddress } from '@ethersproject/address';
+
+const IUniswapV2Router02ABI = IUniswapV2Router02JSON.abi;
 
 // returns the checksummed address if the address is valid, otherwise returns false
 export function isAddress(value: any): string | false {

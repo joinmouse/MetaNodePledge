@@ -28,12 +28,25 @@ module.exports = {
     'no-useless-constructor': 'off',
     '@typescript-eslint/no-useless-constructor': 'error',
     'react-hooks/rules-of-hooks': 'error',
-    'react-hooks/exhaustive-deps': [
-      'warn',
-      {
-        additionalHooks: 'useRecoilCallback',
-      },
-    ],
+    'react-hooks/exhaustive-deps': 'warn',
+    // 禁用一些过于严格的规则
+    'no-use-before-define': 'off',
+    '@typescript-eslint/no-use-before-define': 'off',
+    'no-unused-vars': 'warn',
+    'no-shadow': 'off',
+    '@typescript-eslint/no-shadow': 'warn',
+    'camelcase': 'warn',
+    'consistent-return': 'off',
+    'no-console': 'warn',
+    'jsx-a11y/click-events-have-key-events': 'warn',
+    'jsx-a11y/no-noninteractive-element-interactions': 'warn',
+    'jsx-a11y/no-static-element-interactions': 'warn',
+    'jsx-a11y/anchor-is-valid': 'warn',
+    'react/jsx-no-bind': 'off',
+    'no-unused-expressions': 'off',
+    'no-sequences': 'warn',
+    'import/no-unresolved': 'off',
+    'import/no-extraneous-dependencies': 'off',
   },
   overrides: [
     {

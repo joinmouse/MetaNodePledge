@@ -1,37 +1,28 @@
-import React, { useEffect, useState } from 'react';
-import { useRouteMatch, useHistory } from 'react-router-dom';
-import { Tabs, Table, Progress, Popover, Menu, Dropdown } from 'antd';
-import { DownOutlined } from '@ant-design/icons';
-import { useWeb3React, UnsupportedChainIdError } from '@web3-react/core';
-import { InjectedConnector } from '@web3-react/injected-connector';
-
-import moment from 'moment';
-import { FORMAT_TIME_STANDARD } from '_src/utils/constants';
-import { DappLayout } from '_src/Layout';
-import { Link } from 'react-router-dom';
-import PageUrl from '_constants/pageURL';
-import BTCB from '_src/assets/images/order_BTCB.png';
-import BNB from '_src/assets/images/order_BNB.png';
-import BUSD from '_src/assets/images/order_BUSD.png';
-import DAI from '_src/assets/images/order_DAI.png';
-import Lender1 from '_src/assets/images/Group 1843.png';
-import Borrower from '_src/assets/images/Group 1842.png';
-import Close from '_assets/images/Close Square.png';
-import RootStore from '_src/stores/index';
-
 import './index.less';
-import Button from '_components/Button';
-import services from '_src/services';
+
+import { Dropdown, Menu, Popover, Progress, Table, Tabs } from 'antd';
+import { Link, useHistory } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
+
 import BigNumber from 'bignumber.js';
+import Borrower from '_src/assets/images/Group 1842.png';
+import Button from '_components/Button';
+import Close from '_assets/images/Close Square.png';
+import { DappLayout } from '_src/Layout';
+import { DownOutlined } from '@ant-design/icons';
+import { FORMAT_TIME_STANDARD } from '_src/utils/constants';
+import Lender1 from '_src/assets/images/Group 1843.png';
+import PageUrl from '_constants/pageURL';
+import moment from 'moment';
+import services from '_src/services';
+import { useWeb3React } from '@web3-react/core';
 
 function HomePage() {
   const history = useHistory();
-  const { connector, library, chainId, account } = useWeb3React();
-  const { testStore } = RootStore;
+  const { chainId } = useWeb3React();
   const [pid, setpid] = useState(0);
   const { TabPane } = Tabs;
   const [tab, settab] = useState('Live');
-  const [price, setprice] = useState(0);
   const [pool, setpool] = useState('BUSD');
   const [coin, setcoin] = useState('');
   const [visible, setvisible] = useState(false);
@@ -40,45 +31,47 @@ function HomePage() {
   const [datastate, setdatastate] = useState([]);
   const [Id, setId] = useState(56);
 
-  const dealNumber_18 = (num) => {
+  const dealNumber18 = (num) => {
     if (num) {
-      let x = new BigNumber(num);
-      let y = new BigNumber(1e18);
+      const x = new BigNumber(num);
+      const y = new BigNumber(1e18);
       return x.dividedBy(y).toFixed();
     }
+    return undefined;
   };
 
-  const dealNumber_8 = (num) => {
+  const dealNumber8 = (num) => {
     if (num) {
-      let x = new BigNumber(num);
-      let y = new BigNumber(1e6);
+      const x = new BigNumber(num);
+      const y = new BigNumber(1e6);
       return x.dividedBy(y).toString();
     }
+    return undefined;
   };
-  const getPoolInfo = async (chainId) => {
-    const datainfo = await services.userServer.getpoolBaseInfo(chainId);
+  const getPoolInfo = async (poolChainId) => {
+    const datainfo = await services.userServer.getpoolBaseInfo(poolChainId);
 
     const res = datainfo.data.data.map((item, index) => {
-      let maxSupply = dealNumber_18(item.pool_data.maxSupply);
-      let borrowSupply = dealNumber_18(item.pool_data.borrowSupply);
-      let lendSupply = dealNumber_18(item.pool_data.lendSupply);
+      const maxSupply = dealNumber18(item.pool_data.maxSupply);
+      const borrowSupply = dealNumber18(item.pool_data.borrowSupply);
+      const lendSupply = dealNumber18(item.pool_data.lendSupply);
 
       const times = moment.unix(item.pool_data.settleTime).format(FORMAT_TIME_STANDARD);
 
-      var difftime = item.pool_data.endTime - item.pool_data.settleTime;
+      const difftime = item.pool_data.endTime - item.pool_data.settleTime;
 
-      var days = parseInt(difftime / 86400 + '');
+      const days = parseInt(`${difftime / 86400}`, 10);
       return {
         key: index + 1,
         state: item.pool_data.state,
         underlying_asset: item.pool_data.borrowTokenInfo.tokenName,
-        fixed_rate: dealNumber_8(item.pool_data.interestRate),
-        maxSupply: maxSupply,
+        fixed_rate: dealNumber8(item.pool_data.interestRate),
+        maxSupply,
         available_to_lend: [borrowSupply, lendSupply],
         settlement_date: times,
         length: days,
-        margin_ratio: dealNumber_8(item.pool_data.autoLiquidateThreshold),
-        collateralization_ratio: dealNumber_8(item.pool_data.martgageRate),
+        margin_ratio: dealNumber8(item.pool_data.autoLiquidateThreshold),
+        collateralization_ratio: dealNumber8(item.pool_data.martgageRate),
         poolname: item.pool_data.lendTokenInfo.tokenName,
         endTime: item.pool_data.endTime,
         settleTime: item.pool_data.settleTime,
@@ -91,30 +84,21 @@ function HomePage() {
     });
     setdata(res);
 
-    setdatastate(
-      res.filter((item) => {
-        return item.state < 1;
-      }),
-    );
+    setdatastate(res.filter((item) => item.state < 1));
   };
 
   useEffect(() => {
     history.push('BUSD');
-  }, []);
+  }, [history]);
   useEffect(() => {
     setTimeout(() => {
       setId(chainId);
-      getPoolInfo(Id == undefined ? 56 : Id).catch(() => {
-        console.error();
+      getPoolInfo(Id === undefined ? 56 : Id).catch(() => {
+        // Handle error silently
       });
     }, 1000);
-  }, [Id]);
+  }, [Id, chainId, getPoolInfo]);
 
-  // useEffect(() => {
-  //   getPoolInfo(chainId).catch(() => {
-  //     console.error();
-  //   });
-  // }, [chainId]);
   const callback = (key) => {
     history.push(key);
     setpool(key);
@@ -128,57 +112,51 @@ function HomePage() {
   const menu = (
     <Menu>
       <Menu.Item>
-        <p
+        <button
+          type="button"
           className="menutab"
           onClick={() => {
-            const livelist = data.filter((item) => {
-              return item.state < 1;
-            });
+            const livelist = data.filter((item) => item.state < 1);
             settab('Live');
-            setdatastate(data);
             setdatastate(livelist);
           }}
         >
           Live
-        </p>
+        </button>
       </Menu.Item>
       <Menu.Item>
-        <p
+        <button
+          type="button"
           className="menutab"
           onClick={() => {
-            const livelist = data.filter((item) => {
-              return item;
-            });
+            const livelist = data.filter((item) => item);
             settab('All');
-            setdatastate(data);
             setdatastate(livelist);
           }}
         >
           All
-        </p>
+        </button>
       </Menu.Item>
 
       <Menu.Item>
-        <p
+        <button
+          type="button"
           className="menutab"
           onClick={() => {
-            const livelist = data.filter((item) => {
-              return item.state >= 1;
-            });
+            const livelist = data.filter((item) => item.state >= 1);
             settab('Finished');
-            setdatastate(data);
             setdatastate(livelist);
           }}
         >
           Finished
-        </p>
+        </button>
       </Menu.Item>
     </Menu>
   );
-  //每三位加一个小数点
+  // 每三位加一个小数点
   function toThousands(num) {
-    var str = num.toString();
-    var reg = str.indexOf('.') > -1 ? /(\d)(?=(\d{3})+\.)/g : /(\d)(?=(?:\d{3})+$)/g;
+    const str = num.toString();
+    const reg = str.indexOf('.') > -1 ? /(\d)(?=(\d{3})+\.)/g : /(\d)(?=(?:\d{3})+$)/g;
     return str.replace(reg, '$1,');
   }
 
@@ -186,14 +164,12 @@ function HomePage() {
     {
       title: 'Underlying Asset',
       dataIndex: 'underlying_asset',
-      render: (val, record) => {
-        return (
-          <div className="underlyingAsset">
-            <img src={record.logo} alt="" />
-            <p>{val}</p>
-          </div>
-        );
-      },
+      render: (val, record) => (
+        <div className="underlyingAsset">
+          <img src={record.logo} alt="" />
+          <p>{val}</p>
+        </div>
+      ),
     },
 
     {
@@ -203,15 +179,13 @@ function HomePage() {
         compare: (a, b) => a.fixed_rate - b.fixed_rate,
         multiple: 3,
       },
-      render: (val, record) => {
-        return <div>{`${val}%`}</div>;
-      },
+      render: (val) => <div>{`${val}%`}</div>,
     },
     {
       title: 'Available To Lend',
       dataIndex: 'available_to_lend',
       render: (val, record) => {
-        var totalFinancing = (val[1] / record.maxSupply) * 100;
+        const totalFinancing = (val[1] / record.maxSupply) * 100;
         return (
           <div className="totalFinancing">
             <Progress
@@ -243,7 +217,7 @@ function HomePage() {
                   Math.floor(val[1] * 100) / 100,
                 )}`}</span>
               </span>
-              <span style={{ width: '10px' }}></span>
+              <span style={{ width: '10px' }} />
               <span style={{ fontSize: '12px' }}>{toThousands(Number(record.maxSupply))}</span>
             </p>
           </div>
@@ -269,9 +243,7 @@ function HomePage() {
         compare: (a, b) => a.length - b.length,
         multiple: 5,
       },
-      render: (val, record) => {
-        return <div>{`${val} day`}</div>;
-      },
+      render: (val) => <div>{`${val} day`}</div>,
     },
     {
       title: 'Margin Ratio',
@@ -280,38 +252,34 @@ function HomePage() {
         compare: (a, b) => a.margin_ratio - b.margin_ratio,
         multiple: 6,
       },
-      render: (val, record) => {
-        return `${Number(val) + 100}%`;
-      },
+      render: (val) => `${Number(val) + 100}%`,
     },
     {
       title: 'Collateralization Ratio',
       dataIndex: 'collateralization_ratio',
-      render: (val, record) => {
-        return (
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            {`${val}%`}
-            <Popover
-              content={content}
-              title="Choose a Role"
-              trigger="click"
-              visible={show === record.key && visible}
-              onVisibleChange={(e) => handleVisibleChange(e, record.key)}
+      render: (val, record) => (
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          {`${val}%`}
+          <Popover
+            content={content}
+            title="Choose a Role"
+            trigger="click"
+            visible={show === record.key && visible}
+            onVisibleChange={(e) => handleVisibleChange(e, record.key)}
+          >
+            <Button
+              style={{ width: '107px', height: '40px', borderRadius: '15px', lineHeight: '40px', color: '#FFF' }}
+              onClick={() => {
+                setcoin(record.underlying_asset);
+                setshow(record.key);
+                setpid(record.key - 1);
+              }}
             >
-              <Button
-                style={{ width: '107px', height: '40px', borderRadius: '15px', lineHeight: '40px', color: '#FFF' }}
-                onClick={() => {
-                  setcoin(record.underlying_asset);
-                  setshow(record.key);
-                  setpid(record.key - 1);
-                }}
-              >
-                Detail
-              </Button>
-            </Popover>
-          </div>
-        );
-      },
+              Detail
+            </Button>
+          </Popover>
+        </div>
+      ),
       sorter: {
         compare: (a, b) => a.collateralization_ratio - b.collateralization_ratio,
         multiple: 7,
@@ -322,29 +290,38 @@ function HomePage() {
     {
       title: 'Underlying Asset',
       dataIndex: 'underlying_asset',
-      render: (val, record) => {
-        return (
-          <Popover
-            content={content}
-            title="Choose a Role"
-            trigger="click"
-            visible={show === record.key && visible}
-            onVisibleChange={(e) => handleVisibleChange(e, record.key)}
-          >
-            <div
-              className="underlyingAsset"
-              onClick={() => {
-                Changecoin(val), setcoin(record.underlying_asset);
+      render: (val, record) => (
+        <Popover
+          content={content}
+          title="Choose a Role"
+          trigger="click"
+          visible={show === record.key && visible}
+          onVisibleChange={(e) => handleVisibleChange(e, record.key)}
+        >
+          <div
+            className="underlyingAsset"
+            onClick={() => {
+              Changecoin(val);
+              setcoin(record.underlying_asset);
+              setshow(record.key);
+              setpid(record.key - 1);
+            }}
+            role="button"
+            tabIndex={0}
+            onKeyPress={(e) => {
+              if (e.key === 'Enter') {
+                Changecoin(val);
+                setcoin(record.underlying_asset);
                 setshow(record.key);
                 setpid(record.key - 1);
-              }}
-            >
-              <img src={record.logo} alt="" />
-              <p>{val}</p>
-            </div>
-          </Popover>
-        );
-      },
+              }
+            }}
+          >
+            <img src={record.logo} alt="" />
+            <p>{val}</p>
+          </div>
+        </Popover>
+      ),
     },
 
     {
@@ -354,9 +331,7 @@ function HomePage() {
         compare: (a, b) => a.fixed_rate - b.fixed_rate,
         multiple: 3,
       },
-      render: (val, record) => {
-        return <div>{`${val}%`}</div>;
-      },
+      render: (val) => <div>{`${val}%`}</div>,
     },
 
     {
@@ -369,9 +344,6 @@ function HomePage() {
     },
   ];
 
-  function onChange(pagination, filters, sorter, extra) {
-    console.log('params', pagination, filters, sorter, extra);
-  }
   const Changecoin = (val) => {
     setcoin(val);
   };
@@ -424,91 +396,63 @@ function HomePage() {
           <TabPane tab="BUSD" key="BUSD">
             <Table
               pagination={
-                datastate.filter((item, index) => {
-                  return (
-                    item.Sp == '0xe9e7CEA3DedcA5984780Bafc599bD69ADd087D56' ||
-                    item.Sp == '0xE676Dcd74f44023b95E0E2C6436C97991A7497DA'
-                  );
-                }).length < 10
+                datastate.filter(
+                  (item) =>
+                    item.Sp === '0xe9e7CEA3DedcA5984780Bafc599bD69ADd087D56' ||
+                    item.Sp === '0xE676Dcd74f44023b95E0E2C6436C97991A7497DA',
+                ).length < 10
                   ? false
                   : {}
               }
               columns={columns}
-              dataSource={datastate.filter((item, index) => {
-                return (
-                  item.Sp == '0xe9e7CEA3DedcA5984780Bafc599bD69ADd087D56' ||
-                  item.Sp == '0xE676Dcd74f44023b95E0E2C6436C97991A7497DA'
-                );
-              })}
-              onChange={onChange}
-              rowClassName={(record, index) => {
-                return record;
-              }}
+              dataSource={datastate.filter(
+                (item) =>
+                  item.Sp === '0xe9e7CEA3DedcA5984780Bafc599bD69ADd087D56' ||
+                  item.Sp === '0xE676Dcd74f44023b95E0E2C6436C97991A7497DA',
+              )}
+              rowClassName={(record) => record}
             />
           </TabPane>
           <TabPane tab="USDT" key="USDT">
             <Table
-              pagination={
-                datastate.filter((item, index) => {
-                  return item.Sp == '';
-                }).length < 10
-                  ? false
-                  : {}
-              }
+              pagination={datastate.filter((item) => item.Sp === '').length < 10 ? false : {}}
               columns={columns}
-              dataSource={datastate.filter((item, index) => {
-                return item.Sp == '';
-              })}
-              onChange={onChange}
-              rowClassName={(record, index) => {
-                return record;
-              }}
+              dataSource={datastate.filter((item) => item.Sp === '')}
+              rowClassName={(record) => record}
             />
           </TabPane>
-          {chainId == 97 ? (
+          {chainId === 97 ? (
             <TabPane tab="DAI" key="DAI">
               <Table
                 pagination={
-                  datastate.filter((item, index) => {
-                    return (
-                      item.Sp == '0x1AF3F329e8BE154074D8769D1FFa4eE058B1DBc3' ||
-                      item.Sp == '0x490BC3FCc845d37C1686044Cd2d6589585DE9B8B'
-                    );
-                  }).length < 10
+                  datastate.filter(
+                    (item) =>
+                      item.Sp === '0x1AF3F329e8BE154074D8769D1FFa4eE058B1DBc3' ||
+                      item.Sp === '0x490BC3FCc845d37C1686044Cd2d6589585DE9B8B',
+                  ).length < 10
                     ? false
                     : {}
                 }
                 columns={columns}
-                dataSource={datastate.filter((item, index) => {
-                  return (
-                    item.Sp == '0x1AF3F329e8BE154074D8769D1FFa4eE058B1DBc3' ||
-                    item.Sp == '0x490BC3FCc845d37C1686044Cd2d6589585DE9B8B'
-                  );
-                })}
-                onChange={onChange}
-                rowClassName={(record, index) => {
-                  return record;
-                }}
+                dataSource={datastate.filter(
+                  (item) =>
+                    item.Sp === '0x1AF3F329e8BE154074D8769D1FFa4eE058B1DBc3' ||
+                    item.Sp === '0x490BC3FCc845d37C1686044Cd2d6589585DE9B8B',
+                )}
+                rowClassName={(record) => record}
               />
             </TabPane>
           ) : (
             <TabPane tab="PLGR" key="PLGR">
               <Table
                 pagination={
-                  datastate.filter((item, index) => {
-                    return item.Sp == '0x6Aa91CbfE045f9D154050226fCc830ddbA886CED';
-                  }).length < 10
+                  datastate.filter((item) => item.Sp === '0x6Aa91CbfE045f9D154050226fCc830ddbA886CED').length < 10
                     ? false
                     : {}
                 }
                 columns={columns}
-                dataSource={datastate.filter((item, index) => {
-                  return item.Sp == '0x6Aa91CbfE045f9D154050226fCc830ddbA886CED';
-                })}
-                onChange={onChange}
-                rowClassName={(record, index) => {
-                  return record;
-                }}
+                dataSource={datastate.filter((item) => item.Sp === '0x6Aa91CbfE045f9D154050226fCc830ddbA886CED')}
+                rowClassName={(record) => record}
               />
             </TabPane>
           )}
@@ -517,70 +461,49 @@ function HomePage() {
           <TabPane tab="BUSD" key="BUSD">
             <Table
               pagination={
-                datastate.filter((item, index) => {
-                  return (
-                    item.Sp == '0xe9e7CEA3DedcA5984780Bafc599bD69ADd087D56' ||
-                    item.Sp == '0xE676Dcd74f44023b95E0E2C6436C97991A7497DA'
-                  );
-                }).length < 10
+                datastate.filter(
+                  (item) =>
+                    item.Sp === '0xe9e7CEA3DedcA5984780Bafc599bD69ADd087D56' ||
+                    item.Sp === '0xE676Dcd74f44023b95E0E2C6436C97991A7497DA',
+                ).length < 10
                   ? false
                   : {}
               }
               columns={columns1}
-              dataSource={datastate.filter((item, index) => {
-                return (
-                  item.Sp == '0xe9e7CEA3DedcA5984780Bafc599bD69ADd087D56' ||
-                  item.Sp == '0xE676Dcd74f44023b95E0E2C6436C97991A7497DA'
-                );
-              })}
-              onChange={onChange}
-              rowClassName={(record, index) => {
-                return record;
-              }}
+              dataSource={datastate.filter(
+                (item) =>
+                  item.Sp === '0xe9e7CEA3DedcA5984780Bafc599bD69ADd087D56' ||
+                  item.Sp === '0xE676Dcd74f44023b95E0E2C6436C97991A7497DA',
+              )}
+              rowClassName={(record) => record}
             />
           </TabPane>
           <TabPane tab="USDT" key="USDT">
             <Table
-              pagination={
-                datastate.filter((item, index) => {
-                  return item.Sp == '';
-                }).length < 10
-                  ? false
-                  : {}
-              }
+              pagination={datastate.filter((item) => item.Sp === '').length < 10 ? false : {}}
               columns={columns1}
-              dataSource={datastate.filter((item, index) => {
-                return item.Sp == '';
-              })}
-              onChange={onChange}
-              rowClassName={(record, index) => {
-                return record;
-              }}
+              dataSource={datastate.filter((item) => item.Sp === '')}
+              rowClassName={(record) => record}
             />
           </TabPane>
           <TabPane tab="DAI" key="DAI">
             <Table
               pagination={
-                datastate.filter((item, index) => {
-                  return (
-                    item.Sp == '0x1AF3F329e8BE154074D8769D1FFa4eE058B1DBc3' ||
-                    item.Sp == '0x490BC3FCc845d37C1686044Cd2d6589585DE9B8B'
-                  );
-                }).length < 10
+                datastate.filter(
+                  (item) =>
+                    item.Sp === '0x1AF3F329e8BE154074D8769D1FFa4eE058B1DBc3' ||
+                    item.Sp === '0x490BC3FCc845d37C1686044Cd2d6589585DE9B8B',
+                ).length < 10
                   ? false
                   : {}
               }
               columns={columns1}
-              dataSource={datastate.filter((item, index) => {
-                return (
-                  item.Sp == '0x1AF3F329e8BE154074D8769D1FFa4eE058B1DBc3' ||
-                  item.Sp == '0x490BC3FCc845d37C1686044Cd2d6589585DE9B8B'
-                );
-              })}
-              onChange={onChange}
-              rowClassName={(record, index) => {
-                return record;
-              }}
+              dataSource={datastate.filter(
+                (item) =>
+                  item.Sp === '0x1AF3F329e8BE154074D8769D1FFa4eE058B1DBc3' ||
+                  item.Sp === '0x490BC3FCc845d37C1686044Cd2d6589585DE9B8B',
+              )}
+              rowClassName={(record) => record}
             />
           </TabPane>
         </Tabs>
