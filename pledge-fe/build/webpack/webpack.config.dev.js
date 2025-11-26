@@ -20,13 +20,20 @@ module.exports = merge(base, {
     aggregateTimeout: 600,
   },
   devServer: {
-    contentBase: path.resolve(SRC_ROOT, './dist'),
+    static: {
+      directory: path.resolve(SRC_ROOT, './dist'),
+    },
     open: true,
-    openPage: '', // 启动服务后,首次打开的路由
     hot: true,
     host: config.dev.ip,
     port: config.dev.port,
     compress: true,
+    // 使用原生 WebSocket 替代 sockjs
+    webSocketServer: 'ws',
+    client: {
+      webSocketTransport: 'ws',
+      logging: 'info',
+    },
     proxy: {
       '/pos/*': {
         target: 'http://b.slasharetest.com/',

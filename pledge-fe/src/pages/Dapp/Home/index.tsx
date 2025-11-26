@@ -372,15 +372,17 @@ function HomePage() {
           </p>
         </div>
       </Link>
-      <img
-        src={Close}
-        alt=""
+      <button
+        type="button"
         className="close"
+        aria-label="Close"
         onClick={() => {
           setvisible(false);
           setshow('100');
         }}
-      />
+      >
+        <img src={Close} alt="" />
+      </button>
     </div>
   );
   return (

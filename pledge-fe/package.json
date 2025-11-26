@@ -10,8 +10,7 @@
     "lint-eslint": "eslint -c .eslintrc.js --ext .js {src,build}/**/*.js",
     "lint-stylelint": "stylelint --config .stylelintrc.json src/**/*.{less,scss} --syntax scss",
     "web3-token-abi": "node ./build/web3TokenAbi.js",
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "prepare": "husky install"
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
   "license": "ISC",
@@ -32,7 +31,7 @@
     "@commitlint/cli": "^12.1.1",
     "@commitlint/config-conventional": "^12.1.1",
     "@pancakeswap-libs/eslint-config-pancake": "^1.0.1",
-    "@pmmmwh/react-refresh-webpack-plugin": "^0.4.3",
+    "@pmmmwh/react-refresh-webpack-plugin": "^0.5.15",
     "@types/react": "^18.3.3",
     "@types/react-dom": "^18.3.0",
     "@types/react-router-dom": "^5.1.7",
@@ -91,7 +90,7 @@
     "webpack": "5.59.1",
     "webpack-cli": "^4.6.0",
     "webpack-dev-middleware": "^4.1.0",
-    "webpack-dev-server": "^3.11.2",
+    "webpack-dev-server": "^4.15.2",
     "webpack-hot-middleware": "^2.25.0",
     "webpack-merge": "^5.7.3",
     "webpackbar": "^5.0.0-3"
