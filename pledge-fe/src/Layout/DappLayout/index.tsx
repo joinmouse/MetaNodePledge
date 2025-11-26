@@ -1,7 +1,8 @@
-import React, { ReactNode } from 'react';
-import classnames from 'classnames';
-
 import './index.less';
+
+import React, { ReactNode } from 'react';
+
+import classnames from 'classnames';
 
 export interface IDappLayout {
   title?: string;
@@ -16,7 +17,6 @@ const DappLayout: React.FC<IDappLayout> = ({ title, info, children, className, .
     <section className={classnames('dapp-layout', className)} {...props}>
       <h2 className="landingbox_title" style={{ display: 'flex', alignItems: 'flex-start' }}>
         {title}
-        <p style={{ margin: '0', color: 'blue' }}>(Experimental version, use at your own risk)</p>
       </h2>
 
       <div className="landingbox_info">{info}</div>

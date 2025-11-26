@@ -1,0 +1,134 @@
+{
+  "poolBaseInfo": {
+    "data": {
+      "code": 0,
+      "message": "success",
+      "data": [
+        {
+          "pool_data": {
+            "state": 0,
+            "maxSupply": "1000000000000000000000000",
+            "borrowSupply": "500000000000000000000000",
+            "lendSupply": "300000000000000000000000",
+            "settleTime": 1735200000,
+            "endTime": 1767600000,
+            "interestRate": "50000",
+            "autoLiquidateThreshold": "20000",
+            "martgageRate": "150000",
+            "lendToken": "0xe9e7CEA3DedcA5984780Bafc599bD69ADd087D56",
+            "borrowToken": "0x7130d2A12B9BCbFAe4f2634d864A1Ee1Ce3Ead9c",
+            "spCoin": "0x1111111111111111111111111111111111111111",
+            "jpCoin": "0x2222222222222222222222222222222222222222",
+            "borrowTokenInfo": {
+              "tokenName": "BTCB",
+              "tokenPrice": "45000000000000000000000",
+              "tokenLogo": "/images/0x7130d2a12b9bcbfae4f2634d864a1ee1ce3ead9c.png",
+              "borrowFee": "5000"
+            },
+            "lendTokenInfo": {
+              "tokenName": "BUSD",
+              "tokenPrice": "1000000000000000000",
+              "tokenLogo": "/images/0xe9e7cea3dedca5984780bafc599bd69add087d56.png",
+              "lendFee": "3000"
+            }          
+          }
+        },
+        {
+          "pool_data": {
+            "state": 0,
+            "maxSupply": "2000000000000000000000000",
+            "borrowSupply": "800000000000000000000000",
+            "lendSupply": "600000000000000000000000",
+            "settleTime": 1735286400,
+            "endTime": 1767686400,
+            "interestRate": "60000",
+            "autoLiquidateThreshold": "25000",
+            "martgageRate": "160000",
+            "lendToken": "0xe9e7CEA3DedcA5984780Bafc599bD69ADd087D56",
+            "borrowToken": "0x2170Ed0880ac9A755fd29B2688956BD959F933F8",
+            "spCoin": "0x3333333333333333333333333333333333333333",
+            "jpCoin": "0x4444444444444444444444444444444444444444",
+            "borrowTokenInfo": {
+              "tokenName": "ETH",
+              "tokenPrice": "3000000000000000000000",
+              "tokenLogo": "/images/0x2170ed0880ac9a755fd29b2688956bd959f933f8.png",
+              "borrowFee": "6000"
+            },
+            "lendTokenInfo": {
+              "tokenName": "BUSD",
+              "tokenPrice": "1000000000000000000",
+              "tokenLogo": "https://pledge.rcc-tec.xyz/images/busd.png",
+              "lendFee": "4000"
+            }
+          }
+        }
+      ]
+    }
+  },
+  "poolDataInfo": {
+    "data": {
+      "code": 0,
+      "message": "success",
+      "data": [
+        {
+          "poolAddress": "0x1234567890abcdef1234567890abcdef12345678",
+          "totalBorrow": "500000000000000000000000",
+          "totalLend": "300000000000000000000000",
+          "utilizationRate": "60000"
+        },
+        {
+          "poolAddress": "0xabcdef1234567890abcdef1234567890abcdef12",
+          "totalBorrow": "800000000000000000000000",
+          "totalLend": "600000000000000000000000",
+          "utilizationRate": "75000"
+        }
+      ]
+    }
+  },
+  "tokenList": {
+    "name": "Pledge Token List",
+    "timestamp": "2025-01-26T00:00:00.000Z",
+    "version": {
+      "major": 1,
+      "minor": 0,
+      "patch": 0
+    },
+    "tags": {},
+    "logoURI": "https://pledge.rcc-tec.xyz/logo.png",
+    "keywords": ["pledge", "default"],
+    "tokens": [
+      {
+        "name": "BUSD Token",
+        "symbol": "BUSD",
+        "address": "0x55d398326f99059fF775485246999027B3197955",
+        "chainId": 56,
+        "decimals": 18,
+        "logoURI": "https://pledge.rcc-tec.xyz/images/busd.png"
+      },
+      {
+        "name": "Tether USD",
+        "symbol": "USDT",
+        "address": "0x8AC76a51cc950d9822D68b83fE1Ad97B32Cd580d",
+        "chainId": 56,
+        "decimals": 18,
+        "logoURI": "https://pledge.rcc-tec.xyz/images/usdt.png"
+      },
+      {
+        "name": "USD Coin",
+        "symbol": "USDC",
+        "address": "0x8965349fb649A33a30cbFDa057D8eC2C48AbE2A2",
+        "chainId": 56,
+        "decimals": 18,
+        "logoURI": "https://pledge.rcc-tec.xyz/images/usdc.png"
+      },
+      {
+        "name": "Wrapped BNB",
+        "symbol": "WBNB",
+        "address": "0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c",
+        "chainId": 56,
+        "decimals": 18,
+        "logoURI": "https://pledge.rcc-tec.xyz/images/wbnb.png"
+      }
+    ]
+  }
+}
