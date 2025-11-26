@@ -171,7 +171,6 @@ function HomePage() {
         </div>
       ),
     },
-
     {
       title: 'Fixed Rate',
       dataIndex: 'fixed_rate',

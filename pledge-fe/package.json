@@ -7,9 +7,10 @@
     "dev": "export SET NODE_OPTIONS=--openssl-legacy-provider && cross-env NODE_ENV=development REACT_APP_CHAIN_ID='97' webpack serve  --config ./build/dev.js",
     "build": "export NODE_OPTIONS=--openssl-legacy-provider && cross-env NODE_ENV=production REACT_APP_CHAIN_ID='56' webpack --config ./build/pro.js",
     "lint": "yarn run lint-eslint && yarn run lint-stylelint",
-    "lint-eslint": "eslint -c .eslintrc.js --ext .js {src,build}/**/*.js",
+    "lint-eslint": "eslint -c .eslintrc.js --ext .js,.jsx,.ts,.tsx {src,build}/**/*.{js,jsx,ts,tsx}",
     "lint-stylelint": "stylelint --config .stylelintrc.json src/**/*.{less,scss} --syntax scss",
     "web3-token-abi": "node ./build/web3TokenAbi.js",
+    "check-quality": "bash scripts/check-code-quality.sh",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
