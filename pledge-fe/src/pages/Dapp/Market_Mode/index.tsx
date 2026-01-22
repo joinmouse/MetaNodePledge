@@ -74,7 +74,8 @@ function Market_Mode() {
 
       const days = parseInt(`${difftime / 86400}`);
       return {
-        key: index + 1,
+        key: item.pool_data.pool_id || item.pool_id || index + 1, // 使用后端返回的pool_id
+        pid: item.pool_data.pool_id || item.pool_id || index + 1, // 添加pid字段用于合约调用
         state: item.pool_data.state,
         underlying_asset: item.pool_data.borrowTokenInfo.tokenName,
         fixed_rate: dealNumber_8(item.pool_data.interestRate),
@@ -100,14 +101,14 @@ function Market_Mode() {
     });
 
     res.map((item, index) => {
-      services.PoolServer.getuserLendInfo((Number(item.key) - 1).toString(), chainId)
+      services.PoolServer.getuserLendInfo(item.pid?.toString() || index.toString(), chainId)
         .then((res1) => {
           console.log(444, res1);
           res1.stakeAmount == '0' ? console.log(1111111) : pidlend.push(item);
           setdatalend(pidlend);
         })
         .catch(() => console.error());
-      services.PoolServer.getuserBorrowInfo((Number(item.key) - 1).toString(), chainId)
+      services.PoolServer.getuserBorrowInfo(item.pid?.toString() || index.toString(), chainId)
         .then((res) => {
           res.stakeAmount == '0' ? console.log(1111111) : pidborrow.push(item);
           setdataborrow(pidborrow);

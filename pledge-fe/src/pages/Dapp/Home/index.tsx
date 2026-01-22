@@ -73,7 +73,8 @@ function HomePage() {
 
       const days = parseInt(`${difftime / 86400}`, 10);
       return {
-        key: index + 1,
+        key: item.pool_data.pool_id || item.pool_id || index + 1, // 使用后端返回的pool_id
+        pid: item.pool_data.pool_id || item.pool_id || index + 1, // 添加pid字段用于合约调用
         state: item.pool_data.state,
         underlying_asset: item.pool_data.borrowTokenInfo.tokenName,
         fixed_rate: dealNumber8(item.pool_data.interestRate),
@@ -309,7 +310,7 @@ function HomePage() {
               onClick={() => {
                 setcoin(record.underlying_asset);
                 setshow(record.key);
-                setpid(record.key - 1);
+                setpid(record.pid || record.key);
               }}
             >
               Detail
@@ -341,7 +342,7 @@ function HomePage() {
               Changecoin(val);
               setcoin(record.underlying_asset);
               setshow(record.key);
-              setpid(record.key - 1);
+              setpid(record.pid || record.key);
             }}
             role="button"
             tabIndex={0}
@@ -350,7 +351,7 @@ function HomePage() {
                 Changecoin(val);
                 setcoin(record.underlying_asset);
                 setshow(record.key);
-                setpid(record.key - 1);
+                setpid(record.pid || record.key);
               }
             }}
           >
