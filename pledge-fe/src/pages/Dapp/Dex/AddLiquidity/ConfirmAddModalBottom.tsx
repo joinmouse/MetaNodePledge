@@ -1,7 +1,6 @@
 import { Currency, CurrencyAmount, Fraction, Percent } from '@pswww/sdk';
 import React from 'react';
 import { Button, Text } from '@pancakeswap-libs/uikit';
-import { TranslateString } from '_src/utils/translateTextHelpers';
 import { RowBetween, RowFixed } from '_src/components/Row';
 import CurrencyLogo from '_src/components/CurrencyLogo';
 import { Field } from '_src/state/mint/actions';
@@ -57,7 +56,7 @@ export function ConfirmAddModalBottom({
         <Text>{noLiquidity ? '100' : poolTokenPercentage?.toSignificant(4)}%</Text>
       </RowBetween>
       <Button mt="20px" onClick={onAdd} style={{ backgroundColor: '#5D52FF' }}>
-        {noLiquidity ? TranslateString(250, 'Create Pool & Supply') : TranslateString(252, 'Confirm Supply')}
+        {noLiquidity ? 'Create Pool & Supply' : 'Confirm Supply'}
       </Button>
     </>
   );
