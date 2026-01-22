@@ -8,8 +8,8 @@ import Error from '_src/assets/images/Error.png';
 import Success from '_src/assets/images/Success.png';
 import Union from '_src/assets/images/Union.png';
 import classnames from 'classnames';
-import icon3 from '_src/assets/images/icon (3).png';
-import icon4 from '_src/assets/images/icon (4).png';
+import icon3 from '_src/assets/images/Icon (3).png';
+import icon4 from '_src/assets/images/Icon (4).png';
 import services from '_src/services';
 import { useActiveWeb3React } from '_src/hooks';
 

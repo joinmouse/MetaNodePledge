@@ -15,8 +15,8 @@ import JP from '_src/assets/images/Jp.png';
 import SP from '_src/assets/images/Sp.png';
 import Success from '_src/assets/images/Success.png';
 import Union from '_src/assets/images/Union.png';
-import icon3 from '_src/assets/images/icon (3).png';
-import icon4 from '_src/assets/images/icon (4).png';
+import icon3 from '_src/assets/images/Icon (3).png';
+import icon4 from '_src/assets/images/Icon (4).png';
 import moment from 'moment';
 import services from '_src/services';
 // Hooks 和服务导入
