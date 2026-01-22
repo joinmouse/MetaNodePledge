@@ -1,6 +1,6 @@
 import './index.less';
 
-import { Drawer, Dropdown } from 'antd';
+import { Drawer, Dropdown, MenuProps } from 'antd';
 import { NavLink, useRouteMatch } from 'react-router-dom';
 import React, { useEffect, useState } from 'react';
 import { find, get } from 'lodash';
@@ -18,6 +18,7 @@ import services from '_src/services';
 import styled from 'styled-components';
 import { useActiveWeb3React } from '_src/hooks';
 import { useRecoilState } from 'recoil';
+import useI18n from '_src/hooks/useI18n';
 
 export interface IHeaderProps {}
 
@@ -30,6 +31,34 @@ const Header: React.FC<IHeaderProps> = () => {
   const { chainId } = useActiveWeb3React();
   const [currentChainId, setCurrentChainId] = useState<number>();
   const [flag, setflag] = useState(false);
+  const { t, currentLanguage, changeLanguage } = useI18n();
+
+  const handleLanguageChange = (lang: string) => {
+    changeLanguage(lang);
+  };
+
+  const languageMenuItems: MenuProps['items'] = [
+    {
+      key: 'en',
+      label: (
+        <div onClick={() => handleLanguageChange('en')} style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <span>🇺🇸</span>
+          <span>English</span>
+          {currentLanguage === 'en' && <span>✓</span>}
+        </div>
+      ),
+    },
+    {
+      key: 'zh',
+      label: (
+        <div onClick={() => handleLanguageChange('zh')} style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <span>🇨🇳</span>
+          <span>中文</span>
+          {currentLanguage === 'zh' && <span>✓</span>}
+        </div>
+      ),
+    },
+  ];
 
   const handleClick = async (v: any) => {
     await services.PoolServer.switchNetwork(get(currencyInfos, [v.key, 'netWorkInfo']))
@@ -78,7 +107,7 @@ const Header: React.FC<IHeaderProps> = () => {
                 : ''
             }
           >
-            Market
+            {t('header.market')}
           </NavLink>
           <NavLink
             to={PageUrl.Lend_Borrow.replace(':mode', 'Lend')}
@@ -86,7 +115,7 @@ const Header: React.FC<IHeaderProps> = () => {
             activeClassName="active"
             className={location.pathname == '/Market/Lend' ? 'menu-item' : ''}
           >
-            Lend
+            {t('header.lend')}
           </NavLink>
           <NavLink
             to={PageUrl.Lend_Borrow.replace(':mode', 'Borrow')}
@@ -94,7 +123,7 @@ const Header: React.FC<IHeaderProps> = () => {
             activeClassName="active"
             className={location.pathname == '/Market/Borrow' ? 'menu-item' : ''}
           >
-            Borrow
+            {t('header.borrow')}
           </NavLink>
           <NavLink
             to={PageUrl.DEX_Swap.replace(':mode', 'Swap')}
@@ -102,10 +131,10 @@ const Header: React.FC<IHeaderProps> = () => {
             activeClassName="active"
             className={location.pathname == '/DEX/Swap' || location.pathname == '/DEX/Liquidity' ? 'menu-item' : ''}
           >
-            DEX
+            {t('header.dex')}
           </NavLink>
           <a onClick={() => window.open('http://prod-pledger-swap.s3-website-us-west-2.amazonaws.com')} className="">
-            DEX
+            {t('header.dex')}
           </a>
           {chainId == 97 && (
             <NavLink
@@ -114,7 +143,7 @@ const Header: React.FC<IHeaderProps> = () => {
               activeStyle={{ color: '#5d52ff' }}
               activeClassName="active"
             >
-              Get Testnet Tokens
+              {t('header.getTestnetTokens')}
             </NavLink>
           )}
         </div>
@@ -128,7 +157,7 @@ const Header: React.FC<IHeaderProps> = () => {
               items: [
                 {
                   key: 'header',
-                  label: <p style={{ color: ' #8B89A3' }}>Select a network</p>,
+                  label: <p style={{ color: ' #8B89A3' }}>{t('header.selectNetwork')}</p>,
                   disabled: true,
                 },
                 {
@@ -136,7 +165,7 @@ const Header: React.FC<IHeaderProps> = () => {
                   label: (
                     <FlexDiv style={{ display: 'flex', justifyContent: 'left' }}>
                       <img src={get(currencyInfos, ['BSC_Mainnet', 'chainImageAsset'])} alt="" width={24} height={24} />
-                      <span>BSC-Mainnet</span>
+                      <span>{t('header.bscMainnet')}</span>
                     </FlexDiv>
                   ),
                   style: { borderRadius: '12px' },
@@ -146,7 +175,7 @@ const Header: React.FC<IHeaderProps> = () => {
                   label: (
                     <FlexDiv style={{ display: 'flex', justifyContent: 'left' }}>
                       <img src={get(currencyInfos, ['BSC_Testnet', 'chainImageAsset'])} alt="" width={24} height={24} />
-                      <span>BSC-Testnet</span>
+                      <span>{t('header.bscTestnet')}</span>
                     </FlexDiv>
                   ),
                   style: { borderRadius: '12px', marginBottom: '10px' },
@@ -157,6 +186,21 @@ const Header: React.FC<IHeaderProps> = () => {
             <div>
               <img src={get(currencyInfos, [currency, 'chainImageAsset'])} alt="" width={24} height={24} />
               <span>{currency}</span>
+              <img src={require('_assets/images/dropDown.svg')} alt="" />
+            </div>
+          </Dropdown>
+          <Dropdown menu={{ items: languageMenuItems }} placement="bottomRight">
+            <div className="language-selector" style={{ 
+              cursor: 'pointer', 
+              padding: '8px 12px', 
+              border: '1px solid #ddd',
+              borderRadius: '8px',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '8px'
+            }}>
+              <span>{currentLanguage === 'zh' ? '🇨🇳' : '🇺🇸'}</span>
+              <span>{currentLanguage === 'zh' ? '中文' : 'EN'}</span>
               <img src={require('_assets/images/dropDown.svg')} alt="" />
             </div>
           </Dropdown>
@@ -177,7 +221,7 @@ const Header: React.FC<IHeaderProps> = () => {
                   items: [
                     {
                       key: 'header',
-                      label: <p style={{ color: ' #8B89A3' }}>Select a network</p>,
+                      label: <p style={{ color: ' #8B89A3' }}>{t('header.selectNetwork')}</p>,
                       disabled: true,
                     },
                     {
@@ -190,7 +234,7 @@ const Header: React.FC<IHeaderProps> = () => {
                             width={20}
                             height={20}
                           />
-                          <span>BSC-Mainnet</span>
+                          <span>{t('header.bscMainnet')}</span>
                         </FlexDiv>
                       ),
                       style: { borderRadius: '12px' },
@@ -205,7 +249,7 @@ const Header: React.FC<IHeaderProps> = () => {
                             width={20}
                             height={20}
                           />
-                          <span>BSC-Testnet</span>
+                          <span>{t('header.bscTestnet')}</span>
                         </FlexDiv>
                       ),
                       style: { borderRadius: '12px', marginBottom: '10px' },
@@ -216,6 +260,21 @@ const Header: React.FC<IHeaderProps> = () => {
                 <div>
                   <img src={get(currencyInfos, [currency, 'chainImageAsset'])} alt="" width={24} height={24} />
                   <span>{currency}</span>
+                  <img src={require('_assets/images/dropDown.svg')} alt="" />
+                </div>
+              </Dropdown>
+              <Dropdown menu={{ items: languageMenuItems }} placement="bottomRight">
+                <div className="language-selector" style={{ 
+                  cursor: 'pointer', 
+                  padding: '8px 12px', 
+                  border: '1px solid #ddd',
+                  borderRadius: '8px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '8px'
+                }}>
+                  <span>{currentLanguage === 'zh' ? '🇨🇳' : '🇺🇸'}</span>
+                  <span>{currentLanguage === 'zh' ? '中文' : 'EN'}</span>
                   <img src={require('_assets/images/dropDown.svg')} alt="" />
                 </div>
               </Dropdown>
@@ -232,13 +291,13 @@ const Header: React.FC<IHeaderProps> = () => {
             </div>
             <div className="home_menu_list2">
               <NavLink to={PageUrl.Dapp} className="menu-item">
-                Market
+                {t('header.market')}
               </NavLink>
               <NavLink to={PageUrl.Lend_Borrow.replace(':mode', 'Lend')} className="menu-item">
-                Lend
+                {t('header.lend')}
               </NavLink>
               <NavLink to={PageUrl.Lend_Borrow.replace(':mode', 'Borrow')} className="menu-item">
-                Borrow
+                {t('header.borrow')}
               </NavLink>
               {/* <NavLink to={PageUrl.DEX.replace(':mode', 'Swap')} className="menu-item">
                 DEX
@@ -247,11 +306,11 @@ const Header: React.FC<IHeaderProps> = () => {
                 onClick={() => window.open('http://prod-pledger-swap.s3-website-us-west-2.amazonaws.com')}
                 className="menu-item"
               >
-                DEX
+                {t('header.dex')}
               </a>
               {chainId == 97 && (
                 <NavLink to={PageUrl.Lend_Borrow.replace(':mode', 'Provide')} className="menu-item">
-                  Get Testnet Tokens
+                  {t('header.getTestnetTokens')}
                 </NavLink>
               )}
             </div>

@@ -17,10 +17,12 @@ import moment from 'moment';
 import services from '_src/services';
 import { useWeb3React } from '@web3-react/core';
 import { MAINNET_TOKEN_ADDRESSES, TESTNET_TOKEN_ADDRESSES } from '_src/constants/tokenAddresses';
+import useI18n from '_src/hooks/useI18n';
 
 function HomePage() {
   const history = useHistory();
   const { chainId } = useWeb3React();
+  const { t } = useI18n();
   const [pid, setpid] = useState(0);
 
   const [tab, settab] = useState('Live');
@@ -149,7 +151,7 @@ function HomePage() {
             setdatastate(livelist);
           }}
         >
-          Live
+          {t('market.live')}
         </button>
       ),
     },
@@ -165,7 +167,7 @@ function HomePage() {
             setdatastate(livelist);
           }}
         >
-          All
+          {t('market.all')}
         </button>
       ),
     },
@@ -181,7 +183,7 @@ function HomePage() {
             setdatastate(livelist);
           }}
         >
-          Finished
+          {t('market.finished')}
         </button>
       ),
     },
@@ -195,7 +197,7 @@ function HomePage() {
 
   const columns = [
     {
-      title: 'Underlying Asset',
+      title: t('market.underlyingAsset'),
       dataIndex: 'underlying_asset',
       render: (val, record) => (
         <div className="underlyingAsset">
@@ -205,7 +207,7 @@ function HomePage() {
       ),
     },
     {
-      title: 'Fixed Rate',
+      title: t('market.fixedRate'),
       dataIndex: 'fixed_rate',
       sorter: {
         compare: (a, b) => a.fixed_rate - b.fixed_rate,
@@ -214,7 +216,7 @@ function HomePage() {
       render: (val) => <div>{`${val}%`}</div>,
     },
     {
-      title: 'Available To Lend',
+      title: t('market.availableToLend'),
       dataIndex: 'available_to_lend',
       render: (val, record) => {
         const totalFinancing = (val[1] / record.maxSupply) * 100;
@@ -261,7 +263,7 @@ function HomePage() {
       },
     },
     {
-      title: 'Settlement Date',
+      title: t('market.settlementDate'),
       dataIndex: 'settlement_date',
       sorter: {
         compare: (a, b) => a.settleTime - b.settleTime,
@@ -269,16 +271,16 @@ function HomePage() {
       },
     },
     {
-      title: 'Length',
+      title: t('market.length'),
       dataIndex: 'length',
       sorter: {
         compare: (a, b) => a.length - b.length,
         multiple: 5,
       },
-      render: (val) => <div>{`${val} day`}</div>,
+      render: (val) => <div>{`${val} ${t('market.day')}`}</div>,
     },
     {
-      title: 'Margin Ratio',
+      title: t('market.marginRatio'),
       dataIndex: 'margin_ratio',
       sorter: {
         compare: (a, b) => a.margin_ratio - b.margin_ratio,
@@ -290,14 +292,14 @@ function HomePage() {
       },
     },
     {
-      title: 'Collateralization Ratio',
+      title: t('market.collateralizationRatio'),
       dataIndex: 'collateralization_ratio',
       render: (val, record) => (
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           {`${val}%`}
           <Popover
-            content={content}
-            title="Choose a Role"
+          content={getContent()}
+            title={t('market.chooseARole')}
             trigger="click"
             open={show === record.key && visible}
             onOpenChange={(e) => handleVisibleChange(e, record.key)}
@@ -327,8 +329,8 @@ function HomePage() {
       dataIndex: 'underlying_asset',
       render: (val, record) => (
         <Popover
-          content={content}
-          title="Choose a Role"
+          content={getContent()}
+            title={t('market.chooseARole')}
           trigger="click"
           open={show === record.key && visible}
           onOpenChange={(e) => handleVisibleChange(e, record.key)}
@@ -383,7 +385,7 @@ function HomePage() {
     setcoin(val);
   };
 
-  const content = (
+  const getContent = () => (
     <div className="choose">
       <Link
         to={PageUrl.Market_Pool.replace(':pid/:pool/:coin/:mode', `${pid}/${pool}/${coin}/Lender`)}
@@ -392,7 +394,7 @@ function HomePage() {
         <div className="choose_lender">
           <img src={Lender1} alt="" />
           <p>
-            <span>Lender</span> <span> Lock in a fixed interest rate today. Fixed rates guarantee your APY.</span>
+            <span>{t('market.lender')}</span> <span>{t('market.lend')}</span>
           </p>
         </div>
       </Link>
@@ -403,7 +405,7 @@ function HomePage() {
         <div className="choose_borrow">
           <img src={Borrower} alt="" />
           <p>
-            <span>Borrower</span> <span>Borrow with certainty. Fixed rates lock in what you pay.</span>
+            <span>{t('market.borrower')}</span> <span>{t('market.borrowAction')}</span>
           </p>
         </div>
       </Link>
