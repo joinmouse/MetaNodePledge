@@ -26,8 +26,8 @@ const API_CONFIG: ApiConfig = {
 
   // 环境配置
   environments: {
-    development: 'https://www.frankwu.site:8080',
-    production: 'https://www.frankwu.site:8080',
+    development: 'http://www.frankwu.site:8080',
+    production: 'http://www.frankwu.site:8080',
     local: '/api/v22', // 本地开发时通过webpack代理
   },
 };
