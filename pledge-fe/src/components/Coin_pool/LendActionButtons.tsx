@@ -59,8 +59,10 @@ const LendActionButtons: React.FC<LendActionButtonsProps> = ({
       setwarning('Maximum exceeded');
       return false;
     }
-    if (currentTime > (poolinfo[pid]?.settleTime ?? 0)) {
-      setwarning('Over time');
+    // 修复时间检查逻辑：应该检查是否超过到期时间(endTime)，而不是结算时间(settleTime)
+    // settleTime是pool开始接受借贷的时间，endTime是pool结束的时间
+    if (currentTime >= (poolinfo[pid]?.endTime ?? 0)) {
+      setwarning('Pool has ended');
       return false;
     }
     if (lendvalue > (balance && Number(dealNumber_18(balance)))) {
