@@ -18,8 +18,8 @@ module.exports = {
   output: {
     path: path.resolve(PROJECT_ROOT, 'dist'),
     globalObject: 'this',
-    chunkFilename: 'async/js/[name].js',
-    filename: 'js/[name].js',
+    chunkFilename: process.env.NODE_ENV === 'production' ? 'async/js/[name].[contenthash:8].js' : 'async/js/[name].js',
+    filename: process.env.NODE_ENV === 'production' ? 'js/[name].[contenthash:8].js' : 'js/[name].js',
   },
   experiments: {
     // outputModule: true,
@@ -144,8 +144,8 @@ module.exports = {
       inject: true,
     }),
     new MiniCssExtractPlugin({
-      filename: 'css/[name].css',
-      chunkFilename: 'async/css/[name].css',
+      filename: process.env.NODE_ENV === 'production' ? 'css/[name].[contenthash:8].css' : 'css/[name].css',
+      chunkFilename: process.env.NODE_ENV === 'production' ? 'async/css/[name].[contenthash:8].css' : 'async/css/[name].css',
       ignoreOrder: false,
     }),
     new DefinePlugin({
