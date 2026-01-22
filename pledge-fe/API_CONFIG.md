@@ -46,11 +46,11 @@ module.exports = {
 
 ### 本地开发环境
 - 前端运行在: `http://localhost:8000`
-- API请求通过webpack代理转发到: `http://111.230.6.64:8080`
+- API请求通过webpack代理转发到: `https://www.frankwu.site`
 - 代理路径: `/api/v22`
 
 ### 生产环境
-- 直接访问服务器API: `http://111.230.6.64:8080/api/v22`
+- 直接访问服务器API: `https://www.frankwu.site/api/v22`
 
 ## 修改配置
 

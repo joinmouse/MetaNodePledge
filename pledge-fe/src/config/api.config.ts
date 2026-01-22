@@ -18,7 +18,7 @@ export interface ApiConfig {
 // 统一的API配置
 const API_CONFIG: ApiConfig = {
   // 服务器配置
-  serverHost: '111.230.6.64',
+  serverHost: 'www.frankwu.site',
   serverPort: 8080,
 
   // API版本
@@ -26,12 +26,11 @@ const API_CONFIG: ApiConfig = {
 
   // 环境配置
   environments: {
-    development: 'http://111.230.6.64:8080',
-    production: 'http://111.230.6.64:8080',
+    development: 'https://www.frankwu.site:8080',
+    production: 'https://www.frankwu.site:8080',
     local: '/api/v22', // 本地开发时通过webpack代理
   },
 };
-
 // 获取当前环境的基础URL
 export const getBaseUrl = (): string => {
   if (typeof window === 'undefined') {

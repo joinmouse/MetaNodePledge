@@ -3,7 +3,7 @@
 // 这里提供一个简单的配置对象供webpack使用
 
 const API_CONFIG = {
-  serverHost: '111.230.6.64',
+  serverHost: 'www.frankwu.site',
   serverPort: 8080,
   apiVersion: 'v22',
 };
