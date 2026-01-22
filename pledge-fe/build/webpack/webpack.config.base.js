@@ -109,7 +109,7 @@ module.exports = {
     modules: [SRC_ROOT, 'node_modules'],
     alias: {
       'process/browser': require.resolve('process/browser'),
-      '@uniswap/token-lists': path.resolve(PROJECT_ROOT, 'node_modules/@uniswap/token-lists/src/index.ts'),
+      '@uniswap/token-lists': path.resolve(PROJECT_ROOT, 'node_modules/@uniswap/token-lists/src'),
       _src: SRC_ROOT,
       _components: path.resolve(SRC_ROOT, './components/'),
       _containers: path.resolve(SRC_ROOT, './containers/'),

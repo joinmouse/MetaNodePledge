@@ -106,6 +106,7 @@
     "@pancakeswap-libs/uikit": "^0.23.0",
     "@pswww/sdk": "^4.1.0",
     "@reach/dialog": "^0.17.0",
+    "@reach/portal": "^0.17.0",
     "@react-firebase/firestore": "^0.5.5",
     "@reduxjs/toolkit": "^1.8.2",
     "@types/lodash.flatmap": "^4.5.7",

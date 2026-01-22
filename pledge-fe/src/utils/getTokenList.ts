@@ -1,7 +1,7 @@
 import Ajv from 'ajv';
 // bakeryswap defaultTokenJson
 import { TokenList } from '@uniswap/token-lists';
-import schema from '@uniswap/token-lists/src/tokenlist.schema.json';
+import schema from '_constants/token/tokenlist.schema.json';
 import { DEFAULT_TOKEN_LIST_URL } from '../constants/lists';
 import contenthashToUri from './contenthashToUri';
 import defaultTokenJson from '../constants/token/pancakeswap.json';
