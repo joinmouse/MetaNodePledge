@@ -5,7 +5,7 @@ const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 
 const base = require('./webpack.config.base');
 
-base.output.publicPath = '/';
+base.output.publicPath = './';
 
 module.exports = merge(base, {
   mode: 'production',
