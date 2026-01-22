@@ -29,7 +29,9 @@ const API_CONFIG: ApiConfig = {
     development: 'http://111.230.6.64:8080',
     production: '', // Vercel部署时使用相对路径，通过rewrite代理
     local: '/api/v22', // 本地开发时通过webpack代理
-  },
+  }
+}
+
 // 获取当前环境的基础URL
 export const getBaseUrl = (): string => {
   if (typeof window === 'undefined') {
