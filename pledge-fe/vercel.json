@@ -3,7 +3,7 @@
   "name": "pledge-frontend",
   "buildCommand": "npm run build",
   "outputDirectory": "dist",
-  "installCommand": "npm install",
+  "installCommand": "yarn install",
   "rewrites": [
     {
       "source": "/static/(.*)",
