@@ -11,15 +11,13 @@ import Routes from '_src/routes';
 import { ThemeProvider } from '_components/SwitchThemes';
 // antd 组件库 多语言
 import antdEnUS from 'antd/lib/locale/en_US';
-import antdZhCN from 'antd/lib/locale/zh_CN';
 import { createRoot } from 'react-dom/client';
-import i18n from '_utils/i18n';
 import rootStore from '_src/stores';
 
 const Root = () => (
-  <Provider testStore={rootStore.testStore}>
+  <Provider appStore={rootStore.appStore}>
     <ThemeProvider>
-      <ConfigProvider locale={i18n.language === 'zhCN' ? antdZhCN : antdEnUS}>
+      <ConfigProvider locale={antdEnUS}>
         <BrowserRouter>
           <RecoilRoot>
             <Routes />
