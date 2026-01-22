@@ -53,24 +53,20 @@ export function useInactiveListener(suppress = false) {
     const { ethereum } = window as any;
     if (ethereum && ethereum.on && !active && !error && !suppress) {
       const handleConnect = async () => {
-        console.log("Handling 'connect' event");
         await safeActivateConnector(activate, injected);
       };
       const handleChainChanged = async (chainId: any) => {
-        console.log("Handling 'chainChanged' event with payload", chainId);
         // 检查 chainId 是否有效，避免 null 或 undefined 导致的错误
         if (chainId && chainId !== 'null' && chainId !== '0x0') {
           await safeActivateConnector(activate, injected);
         }
       };
       const handleAccountsChanged = async (accounts: string | any[]) => {
-        console.log("Handling 'accountsChanged' event with payload", accounts);
         if (accounts.length > 0) {
           await safeActivateConnector(activate, injected);
         }
       };
       const handleNetworkChanged = async (networkId: any) => {
-        console.log("Handling 'networkChanged' event with payload", networkId);
         // 检查 networkId 是否有效，避免 null 或 undefined 导致的错误
         if (networkId && networkId !== 'null' && networkId !== '0') {
           await safeActivateConnector(activate, injected);

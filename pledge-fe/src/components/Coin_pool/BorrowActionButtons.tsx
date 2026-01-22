@@ -75,20 +75,10 @@ const BorrowActionButtons: React.FC<BorrowActionButtonsProps> = ({
     setloadings(true);
     const borrownum = dealNumber(Math.round(data * 10 ** 18) / 10 ** 18);
 
-    console.log('[BorrowApprove] Starting approval transaction:', {
-      tokenAddress: poolinfo[pid]?.Jp,
-      amount: borrownum,
-      borrowValue: data,
-      chainId,
-      pid,
-    });
-
     try {
       const result = await services.ERC20Server.Approve(poolinfo[pid]?.Jp ?? 0, borrownum, chainId);
-      console.log('[BorrowApprove] Transaction successful:', result);
 
       const allowanceData = await services.ERC20Server.allowance(poolinfo[pid]?.Jp ?? 0, chainId);
-      console.log('[BorrowApprove] Current allowance:', allowanceData);
 
       openNotification('Success');
       setloadings(false);

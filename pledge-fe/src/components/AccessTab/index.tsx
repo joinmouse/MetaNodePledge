@@ -183,7 +183,6 @@ const AccessTab: React.FC<IAccessTab> = ({ className = '', style = null, mode, p
   };
   const getImporttoken = (address) => {
     services.ERC20Server.getname(address).then((res) => {
-      console.log(res);
       mode == 'Lend'
         ? library.provider
             .request({
@@ -198,9 +197,11 @@ const AccessTab: React.FC<IAccessTab> = ({ className = '', style = null, mode, p
               },
             })
             .then((success) => {
-              console.log(success);
+              // success
             })
-            .catch(() => console.log(false))
+            .catch(() => {
+              // error
+            })
         : library.provider
             .request({
               method: 'wallet_watchAsset',
@@ -214,9 +215,11 @@ const AccessTab: React.FC<IAccessTab> = ({ className = '', style = null, mode, p
               },
             })
             .then((success) => {
-              console.log(success);
+              // success
             })
-            .catch(() => console.log(false));
+            .catch(() => {
+              // error
+            });
     });
   };
   const accessClaim = async () => {

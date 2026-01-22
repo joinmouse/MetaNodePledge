@@ -54,9 +54,11 @@ const TestnetTokens: React.FC<ITestnetTokens> = ({ className = '', style = {}, p
         },
       } as any)
       .then((success) => {
-        console.log(success);
+        // success
       })
-      .catch(() => console.log(false));
+      .catch(() => {
+        // error
+      });
   };
 
   // 领取代币（带冷却时间检查）

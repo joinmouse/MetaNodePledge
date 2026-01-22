@@ -240,13 +240,6 @@ ${props.props.poolname} `,
                             </p>
                           )}
                         </div>
-                        {console.log(
-                          Math.floor(
-                            (claimAmountborrow / Number(dealNumber_18(datainfo.pool_data.settleAmountBorrow))) *
-                              Number(dealNumber_18(datainfo.pool_data.finishAmountBorrow)) *
-                              10000000,
-                          ) / 10000000,
-                        )}
                         <ClaimTime
                           endtime={props.props.endtime}
                           state={props.props.state}

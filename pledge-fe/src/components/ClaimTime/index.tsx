@@ -245,7 +245,6 @@ const ClaimTime: React.FC<IClaimTime> = ({
             openNotificationerrorborrow('Error'), setloadings(false);
           });
   };
-  console.log(Spnum, Jpnum);
   useEffect(() => {
     if (chainId !== undefined) {
       {
@@ -283,7 +282,6 @@ const ClaimTime: React.FC<IClaimTime> = ({
           <span>{`${days}d`}</span>:<span>{hours}</span>:<span>{minutes}</span>:<span>{second}</span>
         </p>
       </div>
-      {console.log(444, state)}
       <div className="claim_button">
         {state == '4' ? (
           <Button disabled>Claim</Button>

@@ -204,10 +204,10 @@ const Refund: React.FC<IRefund> = ({ className = '', style = null, mode, statein
       }
       mode == 'Lend'
         ? services.ERC20Server.balanceOf(props.Sptoken).then((data) => {
-            console.log('余额', data), setbalance(data);
+            setbalance(data);
           })
         : services.ERC20Server.balanceOf(props.Jptoken).then((data) => {
-            console.log('余额', data), setbalance(data);
+            setbalance(data);
           });
     } else {
       setbalance('0');
@@ -226,7 +226,6 @@ const Refund: React.FC<IRefund> = ({ className = '', style = null, mode, statein
       : 0;
 
   const getRefund = () => {
-    console.log('getRefund');
     if (props.state == '4') {
       mode == 'Lend'
         ? services.PoolServer.getemergencyLendWithdrawal(props.key - 1, chainId)
