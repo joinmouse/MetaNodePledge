@@ -1,6 +1,6 @@
 /**
  * 代币合约地址配置
- * 
+ *
  * 注意：如果重新部署了测试代币，需要更新此文件中的地址
  * 部署脚本位置：pledge-contract/scripts/deployTestTokens.js
  */

@@ -64,10 +64,10 @@ const LendActionButtons: React.FC<LendActionButtonsProps> = ({
       return false;
     }
     if (lendvalue > (balance && Number(dealNumber_18(balance)))) {
-      console.log("lendvalue:", lendvalue);
-      console.log("balance:", balance);
-      console.log("dealNumber_18(balance):", dealNumber_18(balance));
-      console.log("Number(dealNumber_18(balance)):",balance && Number(dealNumber_18(balance)));
+      console.log('lendvalue:', lendvalue);
+      console.log('balance:', balance);
+      console.log('dealNumber_18(balance):', dealNumber_18(balance));
+      console.log('Number(dealNumber_18(balance)):', balance && Number(dealNumber_18(balance)));
       setwarning('transfer amount exceeds balance lend');
       return false;
     }
@@ -83,7 +83,7 @@ const LendActionButtons: React.FC<LendActionButtonsProps> = ({
     if (!validateLendTransaction()) return;
     setloadings(true);
     const num = dealNumber(lendvalue);
-    
+
     console.log('[Approve] Starting approval transaction:', {
       tokenAddress: poolinfo[pid]?.Sp,
       amount: num,
@@ -91,7 +91,7 @@ const LendActionButtons: React.FC<LendActionButtonsProps> = ({
       chainId,
       pid,
     });
-    
+
     try {
       const result = await services.ERC20Server.Approve(poolinfo[pid]?.Sp ?? 0, num, chainId);
       console.log('[Approve] Transaction successful:', result);
@@ -108,7 +108,7 @@ const LendActionButtons: React.FC<LendActionButtonsProps> = ({
         amount: num,
         chainId,
       });
-      
+
       // 根据错误类型显示更友好的提示
       let errorMsg = 'Error';
       if (error?.code === 4001) {
@@ -118,7 +118,7 @@ const LendActionButtons: React.FC<LendActionButtonsProps> = ({
       } else if (error?.message) {
         errorMsg = `Error: ${error.message.substring(0, 100)}`;
       }
-      
+
       openNotificationerror(errorMsg);
       setloadings(false);
     }
@@ -128,14 +128,14 @@ const LendActionButtons: React.FC<LendActionButtonsProps> = ({
     if (!validateLendTransaction()) return;
     setloadings(true);
     const num = dealNumber(lendvalue);
-    
+
     console.log('[Lend] Starting lend transaction:', {
       pid,
       amount: num,
       tokenAddress: poolinfo[pid]?.Sp,
       chainId,
     });
-    
+
     try {
       const result = await services.PoolServer.depositLend(pid, num, poolinfo[pid]?.Sp ?? 0, chainId);
       console.log('[Lend] Transaction successful:', result);
@@ -151,7 +151,7 @@ const LendActionButtons: React.FC<LendActionButtonsProps> = ({
         pid,
         amount: num,
       });
-      
+
       let errorMsg = 'Error';
       if (error?.code === 4001) {
         errorMsg = 'User rejected the transaction';
@@ -160,7 +160,7 @@ const LendActionButtons: React.FC<LendActionButtonsProps> = ({
       } else if (error?.message) {
         errorMsg = `Error: ${error.message.substring(0, 100)}`;
       }
-      
+
       openNotificationerrorlend(errorMsg);
       setloadings(false);
     }
@@ -183,14 +183,14 @@ const LendActionButtons: React.FC<LendActionButtonsProps> = ({
                 Approve
               </Button1>
             )}
-            <Button1 style={{ width: '48%' }} disabled={true} onClick={() => message.success('Processing complete!')}>
+            <Button1 style={{ width: '48%' }} disabled onClick={() => message.success('Processing complete!')}>
               Lend
             </Button1>
           </>
         )}
         {current === steps.length - 1 && (
           <>
-            <Button1 style={{ width: '48%', borderRadius: '15px' }} disabled={true}>
+            <Button1 style={{ width: '48%', borderRadius: '15px' }} disabled>
               Approve
             </Button1>
             <Button1 loading={loadings} style={{ width: '48%', borderRadius: '15px' }} onClick={handleLendExecute}>

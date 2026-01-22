@@ -5,11 +5,11 @@ import { darken } from 'polished';
 import { ChevronDown, ChevronUp } from 'react-feather';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
+import { currencyId } from '_src/utils/currencyId';
 import { useTotalSupply } from '../../data/TotalSupply';
 
 import { useActiveWeb3React } from '../../hooks';
 import { useTokenBalance } from '../../state/wallet/hooks';
-import { currencyId } from '_src/utils/currencyId';
 import { unwrappedToken } from '../../utils/wrappedCurrency';
 import Card from '../Card';
 import { AutoColumn } from '../Column';

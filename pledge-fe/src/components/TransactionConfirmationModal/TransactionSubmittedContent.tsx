@@ -1,20 +1,20 @@
-import { ChainId } from '@pswww/sdk'
-import React, { useContext } from 'react'
-import { ThemeContext } from 'styled-components'
-import { Button, LinkExternal } from '@pancakeswap-libs/uikit'
-import { ArrowUpCircle } from 'react-feather'
-import { AutoColumn } from '../Column'
-import { getBscScanLink } from '../../utils'
-import { Wrapper, Section, ConfirmedIcon, ContentHeader } from './helpers'
+import { ChainId } from '@pswww/sdk';
+import React, { useContext } from 'react';
+import { ThemeContext } from 'styled-components';
+import { Button, LinkExternal } from '@pancakeswap-libs/uikit';
+import { ArrowUpCircle } from 'react-feather';
+import { AutoColumn } from '../Column';
+import { getBscScanLink } from '../../utils';
+import { Wrapper, Section, ConfirmedIcon, ContentHeader } from './helpers';
 
-type TransactionSubmittedContentProps = {
-  onDismiss: () => void
-  hash: string | undefined
-  chainId: ChainId
+interface TransactionSubmittedContentProps {
+  onDismiss: () => void;
+  hash: string | undefined;
+  chainId: ChainId;
 }
 
 const TransactionSubmittedContent = ({ onDismiss, chainId, hash }: TransactionSubmittedContentProps) => {
-  const theme = useContext(ThemeContext)
+  const theme = useContext(ThemeContext);
 
   return (
     <Wrapper>
@@ -33,7 +33,7 @@ const TransactionSubmittedContent = ({ onDismiss, chainId, hash }: TransactionSu
         </AutoColumn>
       </Section>
     </Wrapper>
-  )
-}
+  );
+};
 
-export default TransactionSubmittedContent
+export default TransactionSubmittedContent;

@@ -7,14 +7,10 @@ export interface ILoadingProps {
   style?: React.CSSProperties;
 }
 
-const Loading: React.FC<ILoadingProps> = ({ style }) => {
-  return (
-    <div className="component_loading" style={style}>
-      <img src={logo} className="logo" />
-    </div>
-  );
-};
-
-
+const Loading: React.FC<ILoadingProps> = ({ style }) => (
+  <div className="component_loading" style={style}>
+    <img src={logo} className="logo" />
+  </div>
+);
 
 export default Loading;

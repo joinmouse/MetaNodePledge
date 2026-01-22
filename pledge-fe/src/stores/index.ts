@@ -12,6 +12,7 @@ import TestStore from './TestStore';
  */
 class RootStore {
   testStore: TestStore;
+
   /**
    * 构造方法, 集合子Store
    */

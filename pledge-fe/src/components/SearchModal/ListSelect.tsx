@@ -85,7 +85,7 @@ function listUrlRowHTMLId(listUrl: string) {
   return `list-row-${listUrl.replace(/\./g, '-')}`;
 }
 
-const ListRow = memo(function ListRow({ listUrl, onBack }: { listUrl: string; onBack: () => void }) {
+const ListRow = memo(({ listUrl, onBack }: { listUrl: string; onBack: () => void }) => {
   const listsByUrl = useSelector<AppState, AppState['lists']['byUrl']>((state) => state.lists.byUrl);
   const selectedListUrl = useSelectedListUrl();
   const dispatch = useDispatch<AppDispatch>();
@@ -233,9 +233,10 @@ export function ListSelect({ onDismiss, onBack }: { onDismiss: () => void; onBac
       });
   }, [adding, dispatch, fetchList, listUrlInput]);
 
-  const validUrl: boolean = useMemo(() => {
-    return uriToHttp(listUrlInput).length > 0 || Boolean(parseENSAddress(listUrlInput));
-  }, [listUrlInput]);
+  const validUrl: boolean = useMemo(
+    () => uriToHttp(listUrlInput).length > 0 || Boolean(parseENSAddress(listUrlInput)),
+    [listUrlInput],
+  );
 
   const handleEnterKey = useCallback(
     (e) => {
@@ -249,9 +250,7 @@ export function ListSelect({ onDismiss, onBack }: { onDismiss: () => void; onBac
   const sortedLists = useMemo(() => {
     const listUrls = Object.keys(lists);
     return listUrls
-      .filter((listUrl) => {
-        return Boolean(lists[listUrl].current);
-      })
+      .filter((listUrl) => Boolean(lists[listUrl].current))
       .sort((u1, u2) => {
         const { current: l1 } = lists[u1];
         const { current: l2 } = lists[u2];

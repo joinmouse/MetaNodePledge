@@ -73,8 +73,8 @@ const BorrowActionButtons: React.FC<BorrowActionButtonsProps> = ({
   const handleBorrowApprove = async () => {
     if (!validateBorrowTransaction()) return;
     setloadings(true);
-    const borrownum = dealNumber(Math.round(data * 10**18) / 10**18);
-    
+    const borrownum = dealNumber(Math.round(data * 10 ** 18) / 10 ** 18);
+
     console.log('[BorrowApprove] Starting approval transaction:', {
       tokenAddress: poolinfo[pid]?.Jp,
       amount: borrownum,
@@ -82,14 +82,14 @@ const BorrowActionButtons: React.FC<BorrowActionButtonsProps> = ({
       chainId,
       pid,
     });
-    
+
     try {
       const result = await services.ERC20Server.Approve(poolinfo[pid]?.Jp ?? 0, borrownum, chainId);
       console.log('[BorrowApprove] Transaction successful:', result);
-      
+
       const allowanceData = await services.ERC20Server.allowance(poolinfo[pid]?.Jp ?? 0, chainId);
       console.log('[BorrowApprove] Current allowance:', allowanceData);
-      
+
       openNotification('Success');
       setloadings(false);
       next();
@@ -111,7 +111,7 @@ const BorrowActionButtons: React.FC<BorrowActionButtonsProps> = ({
     if (!validateBorrowTransaction()) return;
     setloadings(true);
     const timestamp = Math.round(new Date().getTime() / 1000).toString();
-    const borrownum = dealNumber(Math.floor(data * 10**18) / 10**18);
+    const borrownum = dealNumber(Math.floor(data * 10 ** 18) / 10 ** 18);
     try {
       await services.PoolServer.depositBorrow(pid, borrownum, timestamp, poolinfo[pid]?.Jp ?? 0, chainId);
       openNotificationborrow('Success');
@@ -141,14 +141,14 @@ const BorrowActionButtons: React.FC<BorrowActionButtonsProps> = ({
                 Approve
               </Button1>
             )}
-            <Button1 style={{ width: '48%' }} disabled={true} onClick={() => message.success('Processing complete!')}>
+            <Button1 style={{ width: '48%' }} disabled onClick={() => message.success('Processing complete!')}>
               Borrow
             </Button1>
           </>
         )}
         {current === steps.length - 1 && (
           <>
-            <Button1 style={{ width: '48%', borderRadius: '15px' }} disabled={true}>
+            <Button1 style={{ width: '48%', borderRadius: '15px' }} disabled>
               Approve
             </Button1>
             <Button1 style={{ width: '48%', borderRadius: '15px' }} loading={loadings} onClick={handleBorrowExecute}>

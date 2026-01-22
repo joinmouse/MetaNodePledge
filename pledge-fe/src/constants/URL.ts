@@ -12,7 +12,7 @@ const URLSource = {
 const handler = {
   get(target, key) {
     // get 的trap 拦截get方法
-    let value = target[key];
+    const value = target[key];
 
     try {
       return new Proxy(value, handler); // 使用try catch 巧妙的实现了 深层 属性代理

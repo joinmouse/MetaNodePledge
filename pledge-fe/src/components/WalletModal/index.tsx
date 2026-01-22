@@ -1,16 +1,16 @@
-import { UnsupportedChainIdError, useWeb3React } from '@web3-react/core';
+import { UnsupportedChainIdError } from '@web3-react/core';
 
 import type { AbstractConnector } from '@web3-react/abstract-connector';
-import { DISCONNECT_WALLET_KEY } from '../ConnectWallet/WalletHooks';
 import { Modal } from 'antd';
-import Option from './Option';
 import React from 'react';
-import { SUPPORTED_WALLETS } from '../../constants/wallet';
 import { WalletConnectConnector } from '@web3-react/walletconnect-connector';
 import styled from 'styled-components/macro';
 import { useActiveWeb3React } from '_src/hooks';
 import { useRecoilState } from 'recoil';
-import { walletModalOpen } from './../../model/global';
+import { SUPPORTED_WALLETS } from '../../constants/wallet';
+import Option from './Option';
+import { DISCONNECT_WALLET_KEY } from '../ConnectWallet/WalletHooks';
+import { walletModalOpen } from '../../model/global';
 import { safeActivateConnector } from '../../utils/walletUtils';
 
 const Wrapper = styled.div`
@@ -81,22 +81,18 @@ export default function WalletModal({}: // pendingTransactions,
   };
   const tryActivation = async (connector: AbstractConnector | undefined) => {
     if (!connector) return;
-    
+
     if (connector instanceof WalletConnectConnector && connector.walletConnectProvider?.wc?.uri) {
       connector.walletConnectProvider = undefined;
     }
 
-    const success = await safeActivateConnector(
-      activate,
-      connector,
-      (error) => {
-        console.error('Wallet activation error:', error);
-        if (error instanceof UnsupportedChainIdError) {
-          // 对于不支持的链ID，仍然尝试激活
-          activate(connector);
-        }
+    const success = await safeActivateConnector(activate, connector, (error) => {
+      console.error('Wallet activation error:', error);
+      if (error instanceof UnsupportedChainIdError) {
+        // 对于不支持的链ID，仍然尝试激活
+        activate(connector);
       }
-    );
+    });
 
     if (success) {
       // 连接成功，清除断开连接标志
@@ -120,7 +116,7 @@ export default function WalletModal({}: // pendingTransactions,
             color={option.color}
             link={option.href}
             header={option.name}
-            subheader={null} //use option.descriptio to bring back multi-line
+            subheader={null} // use option.descriptio to bring back multi-line
             icon={option.iconURL}
           />
         )
@@ -159,14 +155,7 @@ export default function WalletModal({}: // pendingTransactions,
 
   return (
     <>
-      <Modal
-        title="Connect a wallet"
-        open={walletOpen}
-        onCancel={handleCancel}
-        closable={true}
-        footer={null}
-        width={420}
-      >
+      <Modal title="Connect a wallet" open={walletOpen} onCancel={handleCancel} closable footer={null} width={420}>
         <Wrapper>{getModalContent()}</Wrapper>
       </Modal>
     </>

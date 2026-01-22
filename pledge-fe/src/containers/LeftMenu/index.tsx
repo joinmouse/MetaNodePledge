@@ -5,12 +5,10 @@ import pageURL from '_constants/pageURL';
 
 import './index.less';
 
-const LeftMenu: React.FC = () => {
-  return (
-    <div className="left-menu-list">
-      <Link to={pageURL.home}>首页</Link>
-    </div>
-  );
-};
+const LeftMenu: React.FC = () => (
+  <div className="left-menu-list">
+    <Link to={pageURL.home}>首页</Link>
+  </div>
+);
 
 export default LeftMenu;

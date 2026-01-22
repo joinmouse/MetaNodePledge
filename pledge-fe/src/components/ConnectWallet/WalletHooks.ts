@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
-import { injected } from './connector';
 import { useActiveWeb3React } from '_src/hooks';
+import { injected } from './connector';
 import { safeActivateConnector } from '../../utils/walletUtils';
 
 // 断开连接标志的 key
@@ -14,7 +14,7 @@ export function useEagerConnect() {
   useEffect(() => {
     // 检查是否用户主动断开了连接
     const isDisconnected = window.localStorage.getItem(DISCONNECT_WALLET_KEY) === 'true';
-    
+
     if (isDisconnected) {
       // 用户主动断开，不自动重连
       setTried(true);
@@ -23,15 +23,11 @@ export function useEagerConnect() {
 
     injected.isAuthorized().then(async (isAuthorized) => {
       if (isAuthorized) {
-        const success = await safeActivateConnector(
-          activate,
-          injected,
-          (error) => {
-            console.error('Eager connect failed:', error);
-            setTried(true);
-          }
-        );
-        
+        const success = await safeActivateConnector(activate, injected, (error) => {
+          console.error('Eager connect failed:', error);
+          setTried(true);
+        });
+
         if (!success) {
           setTried(true);
         }

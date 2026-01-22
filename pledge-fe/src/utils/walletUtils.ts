@@ -7,18 +7,18 @@ import { UnsupportedChainIdError } from '@web3-react/core';
 export const safeActivateConnector = async (
   activate: (connector: AbstractConnector, onError?: (error: Error) => void, throwErrors?: boolean) => Promise<void>,
   connector: AbstractConnector,
-  onError?: (error: Error) => void
+  onError?: (error: Error) => void,
 ): Promise<boolean> => {
   try {
     await activate(connector, undefined, true);
     return true;
   } catch (error: any) {
     console.error('Wallet connection error:', error);
-    
+
     // 处理 chainId 为 null 的错误
     if (error.message && error.message.includes('chainId null is not an integer')) {
       console.warn('ChainId is null, retrying connection...');
-      
+
       // 延迟重试
       return new Promise((resolve) => {
         setTimeout(async () => {
@@ -35,7 +35,7 @@ export const safeActivateConnector = async (
         }, 1500);
       });
     }
-    
+
     // 处理不支持的链ID错误
     if (error instanceof UnsupportedChainIdError) {
       console.warn('Unsupported chain ID, attempting to activate anyway...');
@@ -50,7 +50,7 @@ export const safeActivateConnector = async (
         return false;
       }
     }
-    
+
     // 其他错误
     if (onError) {
       onError(error);
@@ -62,13 +62,8 @@ export const safeActivateConnector = async (
 /**
  * 检查 chainId 是否有效
  */
-export const isValidChainId = (chainId: any): boolean => {
-  return chainId !== null && 
-         chainId !== undefined && 
-         chainId !== 'null' && 
-         chainId !== '0x0' && 
-         chainId !== 0;
-};
+export const isValidChainId = (chainId: any): boolean =>
+  chainId !== null && chainId !== undefined && chainId !== 'null' && chainId !== '0x0' && chainId !== 0;
 
 /**
  * 安全获取 chainId
@@ -77,7 +72,7 @@ export const getSafeChainId = (chainId: any): number | null => {
   if (!isValidChainId(chainId)) {
     return null;
   }
-  
+
   if (typeof chainId === 'string') {
     // 处理十六进制格式
     if (chainId.startsWith('0x')) {
@@ -85,10 +80,10 @@ export const getSafeChainId = (chainId: any): number | null => {
     }
     return parseInt(chainId, 10);
   }
-  
+
   if (typeof chainId === 'number') {
     return chainId;
   }
-  
+
   return null;
 };

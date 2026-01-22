@@ -10,7 +10,7 @@ export const dealNumber_18 = (num) => {
 
 export const dealNumber_7 = (num) => {
   if (num) {
-    return Math.floor(num * 10**7) / 10**7
+    return Math.floor(num * 10 ** 7) / 10 ** 7;
   }
 };
 

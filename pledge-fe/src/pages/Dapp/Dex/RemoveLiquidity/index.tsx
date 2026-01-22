@@ -32,14 +32,14 @@ import { calculateGasMargin, calculateSlippageAmount, getRouterContract } from '
 import { currencyId } from '_src/utils/currencyId';
 import useDebouncedChangeHandler from '_src/utils/useDebouncedChangeHandler';
 import { wrappedCurrency } from '_src/utils/wrappedCurrency';
-import AppBody from '../AppBody';
-import { ClickableText, Wrapper } from '../Pool/styleds';
 import { useApproveCallback, ApprovalState } from '_src/hooks/useApproveCallback';
 import { Dots } from '_components/swap/styleds';
 import { useBurnActionHandlers, useDerivedBurnInfo, useBurnState } from '_src/state/burn/hooks';
 
 import { Field } from '_src/state/burn/actions';
 import { useUserDeadline, useUserSlippageTolerance } from '_src/state/user/hooks';
+import { ClickableText, Wrapper } from '../Pool/styleds';
+import AppBody from '../AppBody';
 
 const OutlineCard = styled.div`
   border: 1px solid ${({ theme }) => theme.colors.borderColor};
@@ -61,11 +61,10 @@ export default function RemoveLiquidity({
   const [currencyA, currencyB] = [useCurrency(currencyIdA) ?? undefined, useCurrency(currencyIdB) ?? undefined];
   const { account, chainId, library } = useActiveWeb3React();
   const TranslateString = useI18n();
-  const [tokenA, tokenB] = useMemo(() => [wrappedCurrency(currencyA, chainId), wrappedCurrency(currencyB, chainId)], [
-    currencyA,
-    currencyB,
-    chainId,
-  ]);
+  const [tokenA, tokenB] = useMemo(
+    () => [wrappedCurrency(currencyA, chainId), wrappedCurrency(currencyB, chainId)],
+    [currencyA, currencyB, chainId],
+  );
 
   const theme = useContext(ThemeContext);
 

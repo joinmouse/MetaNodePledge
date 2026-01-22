@@ -1,6 +1,5 @@
+import { ORACLE_address, ORACLE_mainaddress } from '_src/utils/constants';
 import { gasOptions, getBscPledgeOracleAbiContract } from './web3';
-import type { BscPledgeOracle } from '_src/contracts/BscPledgeOracle';
-import { pledge_address, ORACLE_address, ORACLE_mainaddress } from '_src/utils/constants';
 
 const BscPledgeOracleServer = {
   async getPrice(asset, chainId) {

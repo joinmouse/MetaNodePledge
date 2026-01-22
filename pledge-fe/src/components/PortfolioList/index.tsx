@@ -1,11 +1,9 @@
 import './index.less';
 
-import { Col, Collapse, Row, Statistic, Steps, Table, message } from 'antd';
+import { Col, Collapse, Row, Statistic } from 'antd';
 import React, { useEffect, useState } from 'react';
-import { UnsupportedChainIdError, useWeb3React } from '@web3-react/core';
 
 import BigNumber from 'bignumber.js';
-import Button from '_components/Button';
 import ClaimTime from '_components/ClaimTime';
 import OrderImg from '_components/OrderImg';
 import classNames from 'classnames';
@@ -30,15 +28,15 @@ const PortfolioList: React.FC<IPortfolioList> = ({ className = '', mode, datainf
 
   const dealNumber_7 = (num) => {
     if (num) {
-      let x = new BigNumber(num);
-      let y = new BigNumber(1e18);
+      const x = new BigNumber(num);
+      const y = new BigNumber(1e18);
       return Math.floor(Number(x.dividedBy(y)) * Math.pow(10, 7)) / Math.pow(10, 7);
     }
   };
   const dealNumber_18 = (num) => {
     if (num) {
-      let x = new BigNumber(num);
-      let y = new BigNumber(1e18);
+      const x = new BigNumber(num);
+      const y = new BigNumber(1e18);
       return x.dividedBy(y).toFixed();
     }
   };
@@ -92,7 +90,7 @@ const PortfolioList: React.FC<IPortfolioList> = ({ className = '', mode, datainf
 
   const DetailList = [
     {
-      //利息 = 本金*fixed rate/365 * length（天数）
+      // 利息 = 本金*fixed rate/365 * length（天数）
       title: 'Detail',
       Total_financing: `${
         mode == 'Lend'
@@ -122,7 +120,7 @@ ${props.props.poolname} `,
   ];
   return (
     <div className={classNames('portfolio_list', className)} {...props}>
-      <Collapse bordered={false} expandIconPosition="right" ghost={true}>
+      <Collapse bordered={false} expandIconPosition="right" ghost>
         <Panel
           header={
             <Row gutter={16} style={{ width: '100%' }}>
@@ -150,127 +148,126 @@ ${props.props.poolname} `,
           key={props.props.key}
         >
           <div className="order_box">
-            {DetailList.map((item, index) => {
-              return (
-                <div key={index} style={{ display: 'flex', justifyContent: 'space-between', width: '100%' }}>
-                  <>
-                    <ul className="order_list">
-                      <p>{item.title}</p>
-                      <ul className="medialist">
-                        <li>
-                          <span>Margin Ratio</span>
-                          <span>{`${isNaN(Number(props.props.margin_ratio)) ? 100 : Number(props.props.margin_ratio) + 100}%`}</span>
-                        </li>
-                        <li>
-                          <span>Collateralization Ratio</span>
-                          <span>{`${props.props.collateralization_ratio}%`}</span>
-                        </li>
-                        <li>
-                          <span>Settlement Date</span>
-                          <span>{props.props.settlement_date}</span>
-                        </li>
-                      </ul>
+            {DetailList.map((item, index) => (
+              <div key={index} style={{ display: 'flex', justifyContent: 'space-between', width: '100%' }}>
+                <>
+                  <ul className="order_list">
+                    <p>{item.title}</p>
+                    <ul className="medialist">
                       <li>
-                        <span>Total Lend</span> <span>{item.Total_financing}</span>
+                        <span>Margin Ratio</span>
+                        <span>{`${
+                          isNaN(Number(props.props.margin_ratio)) ? 100 : Number(props.props.margin_ratio) + 100
+                        }%`}</span>
                       </li>
-
-                      {mode == 'Lend' ? (
-                        <li>
-                          <span>Deposit Amount</span>
-                          <span>{item.Deposit_Amount}</span>
-                        </li>
-                      ) : (
-                        <li>
-                          <span>Collateral Amount</span>
-                          <span>{item.Collateral_Amount}</span>
-                        </li>
-                      )}
                       <li>
-                        <span>Maturity Date</span> <span>{item.Time}</span>
+                        <span>Collateralization Ratio</span>
+                        <span>{`${props.props.collateralization_ratio}%`}</span>
+                      </li>
+                      <li>
+                        <span>Settlement Date</span>
+                        <span>{props.props.settlement_date}</span>
                       </li>
                     </ul>
+                    <li>
+                      <span>Total Lend</span> <span>{item.Total_financing}</span>
+                    </li>
 
-                    {props.props.state != 0 && props.props.state != 1 && props.props.state != 4 && (
-                      <div className="Reward">
-                        <p>Reward</p>
-                        <div className="rewardinfo">
-                          <div className="rewardtab">
-                            <p className="rewardkey">
-                              {mode == 'Lend' ? 'The principal+interest' : 'Remaining Collateral'}
-                            </p>
-
-                            {props.props.state == '3' ? (
-                              <p className="rewardvalue">
-                                {mode == 'Lend'
-                                  ? `${
-                                      Math.floor(
-                                        (claimAmount / Number(dealNumber_18(datainfo.pool_data.settleAmountLend))) *
-                                          Number(dealNumber_18(datainfo.pool_data.liquidationAmounLend)) *
-                                          10000000,
-                                      ) / 10000000
-                                    }  ${props.props.poolname}`
-                                  : `${
-                                      Math.floor(
-                                        (claimAmountborrow /
-                                          Number(dealNumber_18(datainfo.pool_data.settleAmountBorrow))) *
-                                          Number(dealNumber_18(datainfo.pool_data.liquidationAmounBorrow)) *
-                                          10000000,
-                                      ) / 10000000
-                                    }
-                                ${props.props.underlying_asset}`}
-                              </p>
-                            ) : (
-                              <p className="rewardvalue">
-                                {mode == 'Lend'
-                                  ? `${
-                                      Math.floor(
-                                        (claimAmount / Number(dealNumber_18(datainfo.pool_data.settleAmountLend))) *
-                                          Number(dealNumber_18(datainfo.pool_data.finishAmountLend)) *
-                                          10000000,
-                                      ) / 10000000
-                                    }  ${props.props.poolname}`
-                                  : `${
-                                      Math.floor(
-                                        (claimAmountborrow /
-                                          Number(dealNumber_18(datainfo.pool_data.settleAmountBorrow))) *
-                                          Number(dealNumber_18(datainfo.pool_data.finishAmountBorrow)) *
-                                          10000000,
-                                      ) / 10000000
-                                    }
-                                   ${props.props.underlying_asset}`}
-                              </p>
-                            )}
-                          </div>
-                          {console.log(
-                            Math.floor(
-                              (claimAmountborrow / Number(dealNumber_18(datainfo.pool_data.settleAmountBorrow))) *
-                                Number(dealNumber_18(datainfo.pool_data.finishAmountBorrow)) *
-                                10000000,
-                            ) / 10000000,
-                          )}
-                          <ClaimTime
-                            endtime={props.props.endtime}
-                            state={props.props.state}
-                            pid={props.props.key - 1}
-                            value={datainfo.pool_data.finishAmountLend}
-                            mode={mode}
-                            settlementAmountLend={datainfo.pool_data.settleAmountLend}
-                            spToken={props.props.Sptoken}
-                            jpToken={props.props.Jptoken}
-                          />
-                        </div>
-                      </div>
+                    {mode == 'Lend' ? (
+                      <li>
+                        <span>Deposit Amount</span>
+                        <span>{item.Deposit_Amount}</span>
+                      </li>
+                    ) : (
+                      <li>
+                        <span>Collateral Amount</span>
+                        <span>{item.Collateral_Amount}</span>
+                      </li>
                     )}
-                  </>
-                </div>
-              );
-            })}
+                    <li>
+                      <span>Maturity Date</span> <span>{item.Time}</span>
+                    </li>
+                  </ul>
+
+                  {props.props.state != 0 && props.props.state != 1 && props.props.state != 4 && (
+                    <div className="Reward">
+                      <p>Reward</p>
+                      <div className="rewardinfo">
+                        <div className="rewardtab">
+                          <p className="rewardkey">
+                            {mode == 'Lend' ? 'The principal+interest' : 'Remaining Collateral'}
+                          </p>
+
+                          {props.props.state == '3' ? (
+                            <p className="rewardvalue">
+                              {mode == 'Lend'
+                                ? `${
+                                    Math.floor(
+                                      (claimAmount / Number(dealNumber_18(datainfo.pool_data.settleAmountLend))) *
+                                        Number(dealNumber_18(datainfo.pool_data.liquidationAmounLend)) *
+                                        10000000,
+                                    ) / 10000000
+                                  }  ${props.props.poolname}`
+                                : `${
+                                    Math.floor(
+                                      (claimAmountborrow /
+                                        Number(dealNumber_18(datainfo.pool_data.settleAmountBorrow))) *
+                                        Number(dealNumber_18(datainfo.pool_data.liquidationAmounBorrow)) *
+                                        10000000,
+                                    ) / 10000000
+                                  }
+                                ${props.props.underlying_asset}`}
+                            </p>
+                          ) : (
+                            <p className="rewardvalue">
+                              {mode == 'Lend'
+                                ? `${
+                                    Math.floor(
+                                      (claimAmount / Number(dealNumber_18(datainfo.pool_data.settleAmountLend))) *
+                                        Number(dealNumber_18(datainfo.pool_data.finishAmountLend)) *
+                                        10000000,
+                                    ) / 10000000
+                                  }  ${props.props.poolname}`
+                                : `${
+                                    Math.floor(
+                                      (claimAmountborrow /
+                                        Number(dealNumber_18(datainfo.pool_data.settleAmountBorrow))) *
+                                        Number(dealNumber_18(datainfo.pool_data.finishAmountBorrow)) *
+                                        10000000,
+                                    ) / 10000000
+                                  }
+                                   ${props.props.underlying_asset}`}
+                            </p>
+                          )}
+                        </div>
+                        {console.log(
+                          Math.floor(
+                            (claimAmountborrow / Number(dealNumber_18(datainfo.pool_data.settleAmountBorrow))) *
+                              Number(dealNumber_18(datainfo.pool_data.finishAmountBorrow)) *
+                              10000000,
+                          ) / 10000000,
+                        )}
+                        <ClaimTime
+                          endtime={props.props.endtime}
+                          state={props.props.state}
+                          pid={props.props.key - 1}
+                          value={datainfo.pool_data.finishAmountLend}
+                          mode={mode}
+                          settlementAmountLend={datainfo.pool_data.settleAmountLend}
+                          spToken={props.props.Sptoken}
+                          jpToken={props.props.Jptoken}
+                        />
+                      </div>
+                    </div>
+                  )}
+                </>
+              </div>
+            ))}
           </div>
         </Panel>
       </Collapse>
     </div>
   );
 };
-
 
 export default PortfolioList;

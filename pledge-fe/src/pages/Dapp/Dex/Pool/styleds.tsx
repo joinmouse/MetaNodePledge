@@ -1,16 +1,16 @@
-import { Text } from '@pancakeswap-libs/uikit'
-import styled from 'styled-components'
+import { Text } from '@pancakeswap-libs/uikit';
+import styled from 'styled-components';
 
 export const Wrapper = styled.div`
   position: relative;
-`
+`;
 
 export const ClickableText = styled(Text)`
   :hover {
     cursor: pointer;
   }
   color: ${({ theme }) => theme.colors.primary};
-`
+`;
 
 export const Dots = styled.span`
   &::after {
@@ -31,4 +31,4 @@ export const Dots = styled.span`
       content: '...';
     }
   }
-`
+`;

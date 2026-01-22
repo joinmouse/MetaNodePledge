@@ -6,14 +6,12 @@ import { InputNumber, Progress, notification } from 'antd';
 import React, { useEffect, useState } from 'react';
 
 import BigNumber from 'bignumber.js';
-import BorrowActionButtons from './BorrowActionButtons';
 // 资源文件导入
 import Error from '_src/assets/images/Error.png';
 // 常量和配置导入
 import { FORMAT_TIME_STANDARD } from '_src/utils/constants';
 import JP from '_src/assets/images/Jp.png';
 // 项目内部组件导入
-import LendActionButtons from './LendActionButtons';
 import SP from '_src/assets/images/Sp.png';
 import Success from '_src/assets/images/Success.png';
 import Union from '_src/assets/images/Union.png';
@@ -25,6 +23,8 @@ import services from '_src/services';
 import { useActiveWeb3React } from '_src/hooks';
 import { useRouteMatch } from 'react-router-dom';
 import { web3 } from '_src/services/web3';
+import LendActionButtons from './LendActionButtons';
+import BorrowActionButtons from './BorrowActionButtons';
 
 export interface ICoinPool {
   mode: string;
@@ -116,7 +116,7 @@ const CoinPool: React.FC<ICoinPool> = ({ mode, pool, coin }) => {
             <p style={{ fontSize: '16px', lineHeight: '24px', fontWeight: 600, margin: '0' }}>{placement}</p>
           </div>
           <div style={{ display: 'flex', alignItems: 'center' }}>
-            <p style={{ margin: '0 9.4px 0 33px' }}>{'Approve error'}</p>{' '}
+            <p style={{ margin: '0 9.4px 0 33px' }}>Approve error</p>{' '}
             <img src={icon4} alt="" style={{ width: '11.2px', height: '11.2px' }} />
           </div>
         </div>
@@ -152,7 +152,7 @@ const CoinPool: React.FC<ICoinPool> = ({ mode, pool, coin }) => {
             <p style={{ fontSize: '16px', lineHeight: '24px', fontWeight: 600, margin: '0' }}>{placement}</p>
           </div>
           <div style={{ display: 'flex', alignItems: 'center' }}>
-            <p style={{ margin: '0 9.4px 0 33px' }}>{'Lend success'}</p>{' '}
+            <p style={{ margin: '0 9.4px 0 33px' }}>Lend success</p>{' '}
             <img src={icon3} alt="" style={{ width: '11.2px', height: '11.2px' }} />
           </div>
         </div>
@@ -188,7 +188,7 @@ const CoinPool: React.FC<ICoinPool> = ({ mode, pool, coin }) => {
             <p style={{ fontSize: '16px', lineHeight: '24px', fontWeight: 600, margin: '0' }}>{placement}</p>
           </div>
           <div style={{ display: 'flex', alignItems: 'center' }}>
-            <p style={{ margin: '0 9.4px 0 33px' }}>{'Borrow success'}</p>{' '}
+            <p style={{ margin: '0 9.4px 0 33px' }}>Borrow success</p>{' '}
             <img src={icon3} alt="" style={{ width: '11.2px', height: '11.2px' }} />
           </div>
         </div>
@@ -224,7 +224,7 @@ const CoinPool: React.FC<ICoinPool> = ({ mode, pool, coin }) => {
             <p style={{ fontSize: '16px', lineHeight: '24px', fontWeight: 600, margin: '0' }}>{placement}</p>
           </div>
           <div style={{ display: 'flex', alignItems: 'center' }}>
-            <p style={{ margin: '0 9.4px 0 33px' }}>{'Lend error'}</p>{' '}
+            <p style={{ margin: '0 9.4px 0 33px' }}>Lend error</p>{' '}
             <img src={icon4} alt="" style={{ width: '11.2px', height: '11.2px' }} />
           </div>
         </div>
@@ -260,7 +260,7 @@ const CoinPool: React.FC<ICoinPool> = ({ mode, pool, coin }) => {
             <p style={{ fontSize: '16px', lineHeight: '24px', fontWeight: 600, margin: '0' }}>{placement}</p>
           </div>
           <div style={{ display: 'flex', alignItems: 'center' }}>
-            <p style={{ margin: '0 9.4px 0 33px' }}>{'Borrow error'}</p>{' '}
+            <p style={{ margin: '0 9.4px 0 33px' }}>Borrow error</p>{' '}
             <img src={icon4} alt="" style={{ width: '11.2px', height: '11.2px' }} />
           </div>
         </div>
@@ -297,9 +297,9 @@ const CoinPool: React.FC<ICoinPool> = ({ mode, pool, coin }) => {
         const lendSupply = dealNumber_18(item.pool_data.lendSupply);
         const settlementdate = moment.unix(item.pool_data.settleTime).format(FORMAT_TIME_STANDARD);
         const maturitydate = moment.unix(item.pool_data.endTime).format(FORMAT_TIME_STANDARD);
-        var difftime = item.pool_data.endTime - item.pool_data.settleTime;
+        const difftime = item.pool_data.endTime - item.pool_data.settleTime;
 
-        var days = parseInt(difftime / 86400 + '');
+        const days = parseInt(`${difftime / 86400}`);
         // 计算 margin_ratio，处理空值和 NaN 的情况
         const autoLiquidateValue = dealNumber_8(item.pool_data.autoLiquidateThreshold);
         const marginRatioNum = autoLiquidateValue ? Number(autoLiquidateValue) : 0;
@@ -310,7 +310,7 @@ const CoinPool: React.FC<ICoinPool> = ({ mode, pool, coin }) => {
           state: item.pool_data.state,
           underlying_asset: item.pool_data.borrowTokenInfo.tokenName,
           fixed_rate: dealNumber_8(item.pool_data.interestRate),
-          maxSupply: maxSupply,
+          maxSupply,
           available_to_lend: [borrowSupply, lendSupply],
           settlement_date: settlementdate,
           length: days,
@@ -375,26 +375,24 @@ const CoinPool: React.FC<ICoinPool> = ({ mode, pool, coin }) => {
 
   // 每三位加一个小数点
   function toThousands(num) {
-    var str = num.toString();
-    var reg = str.indexOf('.') > -1 ? /(\d)(?=(\d{3})+\.)/g : /(\d)(?=(?:\d{3})+$)/g;
+    const str = num.toString();
+    const reg = str.indexOf('.') > -1 ? /(\d)(?=(\d{3})+\.)/g : /(\d)(?=(?:\d{3})+$)/g;
     return str.replace(reg, '$1,');
   }
 
   // 计算可借贷比例的函数
   function calculateLendableRatio(pid: string): number {
     if (!poolinfo[pid]) return 0;
-    
+
     const availableToLend = poolinfo[pid]?.available_to_lend?.[0] ?? 0;
     const borrowPrice = Number(poolinfo[pid]?.borrowPrice ?? 0);
     const lendPrice = Number(poolinfo[pid]?.lendPrice ?? 0);
     const collateralizationRatio = poolinfo[pid]?.collateralization_ratio ?? 0;
     const maxSupply = Number(poolinfo[pid]?.maxSupply ?? 0);
-    
+
     if (lendPrice === 0 || collateralizationRatio === 0 || maxSupply === 0) return 0;
-    
-    return Math.floor(
-      ((availableToLend * borrowPrice) / lendPrice / collateralizationRatio) * 10000
-    ) / maxSupply;
+
+    return Math.floor(((availableToLend * borrowPrice) / lendPrice / collateralizationRatio) * 10000) / maxSupply;
   }
 
   function handleOnChange(value) {
@@ -418,7 +416,6 @@ const CoinPool: React.FC<ICoinPool> = ({ mode, pool, coin }) => {
         100,
     );
   }
-
 
   const steps = [
     {
@@ -445,7 +442,8 @@ const CoinPool: React.FC<ICoinPool> = ({ mode, pool, coin }) => {
     <div className="coin_pool">
       <div className="coin_pool_box">
         <div className="coin_pool_box_title">
-          <img src={poolinfo[pid]?.logo2 ?? ''} alt={`${pool} pool logo`} style={{ width: '40px', height: '40px' }} /> <h3>{pool} Pool</h3>
+          <img src={poolinfo[pid]?.logo2 ?? ''} alt={`${pool} pool logo`} style={{ width: '40px', height: '40px' }} />{' '}
+          <h3>{pool} Pool</h3>
         </div>
         <div className="coin_pool_box_info">
           <p className="info_title">

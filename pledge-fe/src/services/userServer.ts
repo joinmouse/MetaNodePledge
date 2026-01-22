@@ -15,7 +15,7 @@ const userServer = {
   async getpoolBaseInfo(chainId: number) {
     return await axios.get(`${URL.info.poolBaseInfo}?chainId=${chainId}`);
   },
-  
+
   /**
    * 获取池子数据信息
    * @param {number} chainId - 链ID

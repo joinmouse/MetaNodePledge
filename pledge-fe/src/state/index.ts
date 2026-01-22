@@ -1,6 +1,7 @@
 import { configureStore, getDefaultMiddleware } from '@reduxjs/toolkit';
 import { save, load } from 'redux-localstorage-simple';
 
+import { getThemeCache } from '_utils/theme';
 import application from './application/reducer';
 import { updateVersion } from './global/actions';
 import user from './user/reducer';
@@ -11,16 +12,15 @@ import lists from './lists/reducer';
 import burn from './burn/reducer';
 import multicall from './multicall/reducer';
 import toasts from './toasts';
-import { getThemeCache } from '_utils/theme';
 
-type MergedState = {
+interface MergedState {
   user: {
     [key: string]: any;
   };
   transactions: {
     [key: string]: any;
   };
-};
+}
 const PERSISTED_KEYS: string[] = ['user', 'transactions'];
 const loadedState = load({ states: PERSISTED_KEYS }) as MergedState;
 if (loadedState.user) {

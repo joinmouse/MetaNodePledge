@@ -1,15 +1,15 @@
-import React, { useContext, useMemo } from 'react'
-import styled, { ThemeContext } from 'styled-components'
-import { Trade, TradeType } from '@pswww/sdk'
-import { Button, Text } from '@pancakeswap-libs/uikit'
-import { ArrowDown, AlertTriangle } from 'react-feather'
-import { Field } from '../../state/swap/actions'
-import { isAddress, shortenAddress } from '../../utils'
-import { computeSlippageAdjustedAmounts, computeTradePriceBreakdown, warningSeverity } from '../../utils/prices'
-import { AutoColumn } from '../Column'
-import CurrencyLogo from '../CurrencyLogo'
-import { RowBetween, RowFixed } from '../Row'
-import { SwapShowAcceptChanges } from './styleds'
+import React, { useContext, useMemo } from 'react';
+import styled, { ThemeContext } from 'styled-components';
+import { Trade, TradeType } from '@pswww/sdk';
+import { Button, Text } from '@pancakeswap-libs/uikit';
+import { ArrowDown, AlertTriangle } from 'react-feather';
+import { Field } from '../../state/swap/actions';
+import { isAddress, shortenAddress } from '../../utils';
+import { computeSlippageAdjustedAmounts, computeTradePriceBreakdown, warningSeverity } from '../../utils/prices';
+import { AutoColumn } from '../Column';
+import CurrencyLogo from '../CurrencyLogo';
+import { RowBetween, RowFixed } from '../Row';
+import { SwapShowAcceptChanges } from './styleds';
 
 const PriceInfoText = styled(Text)`
   font-style: italic;
@@ -19,7 +19,7 @@ const PriceInfoText = styled(Text)`
     color: ${({ theme }) => theme.colors.primary};
     font-weight: 600;
   }
-`
+`;
 
 export default function SwapModalHeader({
   trade,
@@ -28,20 +28,20 @@ export default function SwapModalHeader({
   showAcceptChanges,
   onAcceptChanges,
 }: {
-  trade: Trade
-  allowedSlippage: number
-  recipient: string | null
-  showAcceptChanges: boolean
-  onAcceptChanges: () => void
+  trade: Trade;
+  allowedSlippage: number;
+  recipient: string | null;
+  showAcceptChanges: boolean;
+  onAcceptChanges: () => void;
 }) {
-  const slippageAdjustedAmounts = useMemo(() => computeSlippageAdjustedAmounts(trade, allowedSlippage), [
-    trade,
-    allowedSlippage,
-  ])
-  const { priceImpactWithoutFee } = useMemo(() => computeTradePriceBreakdown(trade), [trade])
-  const priceImpactSeverity = warningSeverity(priceImpactWithoutFee)
+  const slippageAdjustedAmounts = useMemo(
+    () => computeSlippageAdjustedAmounts(trade, allowedSlippage),
+    [trade, allowedSlippage],
+  );
+  const { priceImpactWithoutFee } = useMemo(() => computeTradePriceBreakdown(trade), [trade]);
+  const priceImpactSeverity = warningSeverity(priceImpactWithoutFee);
 
-  const theme = useContext(ThemeContext)
+  const theme = useContext(ThemeContext);
 
   return (
     <AutoColumn gap="md" style={{ marginTop: '20px' }}>
@@ -126,5 +126,5 @@ export default function SwapModalHeader({
         </AutoColumn>
       ) : null}
     </AutoColumn>
-  )
+  );
 }

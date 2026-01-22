@@ -2,10 +2,10 @@ import { Currency, CurrencyAmount, ETHER, JSBI, Token, TokenAmount } from '@psww
 import { useMemo } from 'react';
 import ERC20_INTERFACE from '_constants/abis/erc20';
 import { isAddress } from '_src/utils';
+import { useMultipleContractSingleData, useSingleContractMultipleData } from '_src/state/multicall/hooks';
 import { useAllTokens } from './Tokens';
 import { useMulticallContract } from './useContract';
 import { useActiveWeb3React } from '.';
-import { useMultipleContractSingleData, useSingleContractMultipleData } from '_src/state/multicall/hooks';
 
 /**
  * Returns a map of the given addresses to their eventually consistent ETH balances.

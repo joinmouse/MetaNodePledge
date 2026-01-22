@@ -1,16 +1,16 @@
 import React from 'react';
 import { useRouteMatch, useHistory, Switch } from 'react-router-dom';
 
-import { Tabs } from 'antd';
 import { DappLayout } from '_src/Layout';
 
 import Routes from './routes';
 import './index.less';
 import styled from 'styled-components';
 import Popups from '_src/components/Popups';
-type Iparams = {
+
+interface Iparams {
   mode: 'Swap' | 'Liquidity';
-};
+}
 
 const AppWrapper = styled.div`
   display: flex;

@@ -1,6 +1,6 @@
 import './index.less';
 
-import { HomeOutlined, LoadingOutlined, SettingFilled, SmileOutlined, SyncOutlined } from '@ant-design/icons';
+import { LoadingOutlined } from '@ant-design/icons';
 import React, { ReactNode } from 'react';
 
 import classnames from 'classnames';
@@ -50,7 +50,5 @@ const Button: React.FC<IButtonProps> = ({
     </div>
   );
 };
-
-
 
 export default Button;

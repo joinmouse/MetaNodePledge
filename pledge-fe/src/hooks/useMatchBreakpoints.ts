@@ -39,13 +39,13 @@ const mediaQueries: MediaQueries = (() => {
 const getKey = (size: string) => `is${size.charAt(0).toUpperCase()}${size.slice(1)}`;
 
 const useMatchBreakpoints = (): BreakpointChecks => {
-  const [state, setState] = useState<State>(() => {
-    return Object.keys(mediaQueries).reduce((accum, size) => {
+  const [state, setState] = useState<State>(() =>
+    Object.keys(mediaQueries).reduce((accum, size) => {
       const key = getKey(size);
       const mql = window.matchMedia(mediaQueries[size]);
       return { ...accum, [key]: mql.matches };
-    }, {});
-  });
+    }, {}),
+  );
 
   useEffect(() => {
     // Create listeners for each media query returning a function to unsubscribe

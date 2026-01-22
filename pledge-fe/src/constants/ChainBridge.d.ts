@@ -1,15 +1,15 @@
-export type TokenConfig = {
+export interface TokenConfig {
   address: string;
   name?: string;
   symbol?: string;
   imageUri?: string;
   resourceId: string;
   isNativeWrappedToken?: boolean;
-};
+}
 
 export type ChainType = 'Ethereum' | 'Substrate';
 
-export type BridgeConfig = {
+export interface BridgeConfig {
   networkId?: number;
   chainId: number;
   name: string;
@@ -19,13 +19,13 @@ export type BridgeConfig = {
   tokens: TokenConfig[];
   nativeTokenSymbol: string;
   decimals: number;
-};
+}
 
 export type EvmBridgeConfig = BridgeConfig & {
   type: 'Ethereum';
   bridgeAddress: string;
   erc20HandlerAddress: string;
-  blockExplorer?: string; //This should be the full path to display a tx hash, without the trailing slash, ie. https://etherscan.io/tx
+  blockExplorer?: string; // This should be the full path to display a tx hash, without the trailing slash, ie. https://etherscan.io/tx
   defaultGasPrice?: number;
   deployedBlockNumber?: number;
 };
@@ -42,11 +42,11 @@ export type SubstrateBridgeConfig = BridgeConfig & {
 
 export type BridgeConfigSimple = EvmBridgeConfig | SubstrateBridgeConfig;
 
-export type ChainBridgeConfig = {
+export interface ChainBridgeConfig {
   chains: BridgeConfigSimple[];
-};
+}
 
-export type AddEthereumChainParameter = {
+export interface AddEthereumChainParameter {
   chainId: string;
   blockExplorerUrls?: string[];
   chainName?: string;
@@ -57,4 +57,4 @@ export type AddEthereumChainParameter = {
     decimals: number;
   };
   rpcUrls?: string[];
-};
+}

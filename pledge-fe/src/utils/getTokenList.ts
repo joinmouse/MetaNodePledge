@@ -1,17 +1,17 @@
-import Ajv from 'ajv'
+import Ajv from 'ajv';
 // bakeryswap defaultTokenJson
-import { DEFAULT_TOKEN_LIST_URL } from '../constants/lists'
-import { TokenList } from '@uniswap/token-lists'
-import contenthashToUri from './contenthashToUri'
-import defaultTokenJson from '../constants/token/pancakeswap.json'
-import { parseENSAddress } from './parseENSAddress'
-import schema from '@uniswap/token-lists/src/tokenlist.schema.json'
-import uriToHttp from './uriToHttp'
+import { TokenList } from '@uniswap/token-lists';
+import schema from '@uniswap/token-lists/src/tokenlist.schema.json';
+import { DEFAULT_TOKEN_LIST_URL } from '../constants/lists';
+import contenthashToUri from './contenthashToUri';
+import defaultTokenJson from '../constants/token/pancakeswap.json';
+import { parseENSAddress } from './parseENSAddress';
+import uriToHttp from './uriToHttp';
 
 // Mock开关：true=使用mock数据，false=调用真实API
 const USE_MOCK = false;
 
-const tokenListValidator = new Ajv({ allErrors: true }).compile(schema)
+const tokenListValidator = new Ajv({ allErrors: true }).compile(schema);
 
 /**
  * Contains the logic for resolving a list URL to a validated token list
@@ -20,67 +20,68 @@ const tokenListValidator = new Ajv({ allErrors: true }).compile(schema)
  */
 export default async function getTokenList(
   listUrl: string,
-  resolveENSContentHash: (ensName: string) => Promise<string>
+  resolveENSContentHash: (ensName: string) => Promise<string>,
 ): Promise<TokenList> {
   // 本地开发环境直接调用API，不使用默认静态JSON
-  const isLocalDev = typeof window !== 'undefined' && 
+  const isLocalDev =
+    typeof window !== 'undefined' &&
     (window.location.hostname.includes('127.0.0.1') || window.location.hostname.includes('localhost'));
-  
+
   // 仅在非本地环境且URL匹配时返回默认数据
   if (!isLocalDev && listUrl === DEFAULT_TOKEN_LIST_URL) {
-    return defaultTokenJson
+    return defaultTokenJson;
   }
-  const parsedENS = parseENSAddress(listUrl)
+  const parsedENS = parseENSAddress(listUrl);
 
-  let urls: string[]
+  let urls: string[];
   if (parsedENS) {
-    let contentHashUri
+    let contentHashUri;
     try {
-      contentHashUri = await resolveENSContentHash(parsedENS.ensName)
+      contentHashUri = await resolveENSContentHash(parsedENS.ensName);
     } catch (error) {
-      console.error(`Failed to resolve ENS name: ${parsedENS.ensName}`, error)
-      throw new Error(`Failed to resolve ENS name: ${parsedENS.ensName}`)
+      console.error(`Failed to resolve ENS name: ${parsedENS.ensName}`, error);
+      throw new Error(`Failed to resolve ENS name: ${parsedENS.ensName}`);
     }
-    let translatedUri
+    let translatedUri;
     try {
-      translatedUri = contenthashToUri(contentHashUri)
+      translatedUri = contenthashToUri(contentHashUri);
     } catch (error) {
-      console.error('Failed to translate contenthash to URI', contentHashUri)
-      throw new Error(`Failed to translate contenthash to URI: ${contentHashUri}`)
+      console.error('Failed to translate contenthash to URI', contentHashUri);
+      throw new Error(`Failed to translate contenthash to URI: ${contentHashUri}`);
     }
-    urls = uriToHttp(`${translatedUri}${parsedENS.ensPath ?? ''}`)
+    urls = uriToHttp(`${translatedUri}${parsedENS.ensPath ?? ''}`);
   } else {
-    urls = uriToHttp(listUrl)
+    urls = uriToHttp(listUrl);
   }
   for (let i = 0; i < urls.length; i++) {
-    const url = urls[i]
-    const isLast = i === urls.length - 1
-    let response
+    const url = urls[i];
+    const isLast = i === urls.length - 1;
+    let response;
     try {
-      response = await fetch(url)
+      response = await fetch(url);
     } catch (error) {
-      console.error('Failed to fetch list', listUrl, error)
-      if (isLast) throw new Error(`Failed to download list ${listUrl}`)
+      console.error('Failed to fetch list', listUrl, error);
+      if (isLast) throw new Error(`Failed to download list ${listUrl}`);
       // eslint-disable-next-line no-continue
-      continue
+      continue;
     }
 
     if (!response.ok) {
-      if (isLast) throw new Error(`Failed to download list ${listUrl}`)
+      if (isLast) throw new Error(`Failed to download list ${listUrl}`);
       // eslint-disable-next-line no-continue
-      continue
+      continue;
     }
 
-    const json = await response.json()
+    const json = await response.json();
     if (!tokenListValidator(json)) {
       const validationErrors: string =
         tokenListValidator.errors?.reduce<string>((memo, error) => {
-          const add = `${error.dataPath} ${error.message ?? ''}`
-          return memo.length > 0 ? `${memo}; ${add}` : `${add}`
-        }, '') ?? 'unknown error'
-      throw new Error(`Token list failed validation: ${validationErrors}`)
+          const add = `${error.dataPath} ${error.message ?? ''}`;
+          return memo.length > 0 ? `${memo}; ${add}` : `${add}`;
+        }, '') ?? 'unknown error';
+      throw new Error(`Token list failed validation: ${validationErrors}`);
     }
-    return json
+    return json;
   }
-  throw new Error('Unrecognized list URL protocol.')
+  throw new Error('Unrecognized list URL protocol.');
 }

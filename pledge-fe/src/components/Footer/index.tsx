@@ -1,8 +1,6 @@
 import React from 'react';
 import './index.less';
 
-const Footer = () => {
-  return <div className="components_footer"></div>;
-};
+const Footer = () => <div className="components_footer" />;
 
 export default Footer;

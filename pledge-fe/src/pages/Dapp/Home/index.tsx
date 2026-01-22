@@ -1,6 +1,6 @@
 import './index.less';
 
-import { Dropdown, Menu, Popover, Progress, Table, Tabs } from 'antd';
+import { Dropdown, Popover, Progress, Table, Tabs } from 'antd';
 import { Link, useHistory } from 'react-router-dom';
 import React, { useEffect, useState } from 'react';
 
@@ -31,13 +31,13 @@ function HomePage() {
   const [data, setdata] = useState([]);
   const [datastate, setdatastate] = useState([]);
   const [Id, setId] = useState(56);
-  
+
   // 预过滤各标签页数据，提升切换性能
   const [filteredData, setFilteredData] = useState({
     BUSD: [],
     USDT: [],
     DAI: [],
-    PLGR: []
+    PLGR: [],
   });
 
   const dealNumber18 = (num) => {
@@ -91,27 +91,22 @@ function HomePage() {
         lendPrice: item.pool_data.lendTokenInfo.tokenPrice,
       };
     });
-    
+
     setdata(res);
-    
+
     // 预过滤各标签页数据，提升切换性能
     const liveData = res.filter((item) => item.state < 1);
     const filtered = {
-BUSD: liveData.filter(item => 
-        item.Sp === MAINNET_TOKEN_ADDRESSES.BUSD ||
-        item.Sp === TESTNET_TOKEN_ADDRESSES.BUSD
+      BUSD: liveData.filter(
+        (item) => item.Sp === MAINNET_TOKEN_ADDRESSES.BUSD || item.Sp === TESTNET_TOKEN_ADDRESSES.BUSD,
       ),
-      USDT: liveData.filter(item => 
-        item.Sp === MAINNET_TOKEN_ADDRESSES.USDT ||
-        item.Sp === MAINNET_TOKEN_ADDRESSES.USDT.toLowerCase()
+      USDT: liveData.filter(
+        (item) => item.Sp === MAINNET_TOKEN_ADDRESSES.USDT || item.Sp === MAINNET_TOKEN_ADDRESSES.USDT.toLowerCase(),
       ),
-DAI: liveData.filter(item => 
-        item.Sp === MAINNET_TOKEN_ADDRESSES.DAI ||
-        item.Sp === TESTNET_TOKEN_ADDRESSES.DAI
+      DAI: liveData.filter(
+        (item) => item.Sp === MAINNET_TOKEN_ADDRESSES.DAI || item.Sp === TESTNET_TOKEN_ADDRESSES.DAI,
       ),
-      PLGR: liveData.filter(item => 
-        item.Sp === '0x6Aa91CbfE045f9D154050226fCc830ddbA886CED'
-      )
+      PLGR: liveData.filter((item) => item.Sp === '0x6Aa91CbfE045f9D154050226fCc830ddbA886CED'),
     };
     setFilteredData(filtered);
     setdatastate(liveData);
@@ -434,9 +429,9 @@ DAI: liveData.filter(item =>
             <DownOutlined />
           </a>
         </Dropdown>
-        <Tabs 
-          defaultActiveKey="1" 
-          onChange={callback} 
+        <Tabs
+          defaultActiveKey="1"
+          onChange={callback}
           className="all_tab"
           items={[
             {
@@ -449,7 +444,7 @@ DAI: liveData.filter(item =>
                   dataSource={datastate}
                   rowClassName={(record) => record}
                 />
-              )
+              ),
             },
             {
               key: 'USDT',
@@ -461,56 +456,56 @@ DAI: liveData.filter(item =>
                   dataSource={datastate}
                   rowClassName={(record) => record}
                 />
-              )
+              ),
             },
-            ...(chainId === 97 ? [
-              {
-                key: 'DAI',
-                label: 'DAI',
-                children: (
-                  <Table
-pagination={
-                      datastate.filter(
-                        (item) =>
-                          item.Sp === MAINNET_TOKEN_ADDRESSES.DAI ||
-                          item.Sp === TESTNET_TOKEN_ADDRESSES.DAI,
-                      ).length < 10
-                        ? false
-                        : {}
-                    }
-                    columns={columns}
-                    dataSource={datastate.filter(
-                      (item) =>
-                        item.Sp === MAINNET_TOKEN_ADDRESSES.DAI ||
-                        item.Sp === TESTNET_TOKEN_ADDRESSES.DAI,
-                    )}
-                    rowClassName={(record) => record}
-                  />
-                )
-              }
-            ] : [
-              {
-                key: 'PLGR',
-                label: 'PLGR',
-                children: (
-                  <Table
-                    pagination={
-                      datastate.filter((item) => item.Sp === '0x6Aa91CbfE045f9D154050226fCc830ddbA886CED').length < 10
-                        ? false
-                        : {}
-                    }
-                    columns={columns}
-                  dataSource={datastate}
-                    rowClassName={(record) => record}
-                  />
-                )
-              }
-            ])
+            ...(chainId === 97
+              ? [
+                  {
+                    key: 'DAI',
+                    label: 'DAI',
+                    children: (
+                      <Table
+                        pagination={
+                          datastate.filter(
+                            (item) =>
+                              item.Sp === MAINNET_TOKEN_ADDRESSES.DAI || item.Sp === TESTNET_TOKEN_ADDRESSES.DAI,
+                          ).length < 10
+                            ? false
+                            : {}
+                        }
+                        columns={columns}
+                        dataSource={datastate.filter(
+                          (item) => item.Sp === MAINNET_TOKEN_ADDRESSES.DAI || item.Sp === TESTNET_TOKEN_ADDRESSES.DAI,
+                        )}
+                        rowClassName={(record) => record}
+                      />
+                    ),
+                  },
+                ]
+              : [
+                  {
+                    key: 'PLGR',
+                    label: 'PLGR',
+                    children: (
+                      <Table
+                        pagination={
+                          datastate.filter((item) => item.Sp === '0x6Aa91CbfE045f9D154050226fCc830ddbA886CED').length <
+                          10
+                            ? false
+                            : {}
+                        }
+                        columns={columns}
+                        dataSource={datastate}
+                        rowClassName={(record) => record}
+                      />
+                    ),
+                  },
+                ]),
           ]}
         />
-        <Tabs 
-          defaultActiveKey="1" 
-          onChange={callback} 
+        <Tabs
+          defaultActiveKey="1"
+          onChange={callback}
           className="media_tab"
           items={[
             {
@@ -523,7 +518,7 @@ pagination={
                   dataSource={datastate}
                   rowClassName={(record) => record}
                 />
-              )
+              ),
             },
             {
               key: 'USDT',
@@ -535,18 +530,16 @@ pagination={
                   dataSource={datastate}
                   rowClassName={(record) => record}
                 />
-              )
+              ),
             },
             {
               key: 'DAI',
               label: 'DAI',
               children: (
                 <Table
-pagination={
+                  pagination={
                     datastate.filter(
-                      (item) =>
-                        item.Sp === MAINNET_TOKEN_ADDRESSES.DAI ||
-                        item.Sp === TESTNET_TOKEN_ADDRESSES.DAI,
+                      (item) => item.Sp === MAINNET_TOKEN_ADDRESSES.DAI || item.Sp === TESTNET_TOKEN_ADDRESSES.DAI,
                     ).length < 10
                       ? false
                       : {}
@@ -555,8 +548,8 @@ pagination={
                   dataSource={datastate}
                   rowClassName={(record) => record}
                 />
-              )
-            }
+              ),
+            },
           ]}
         />
       </DappLayout>

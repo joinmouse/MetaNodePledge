@@ -13,9 +13,9 @@ const Field = styled.div`
   }
 `;
 
-type TransactionDeadlineSettingModalProps = {
+interface TransactionDeadlineSettingModalProps {
   translateString: (translationId: number, fallback: string) => string;
-};
+}
 
 const TransactionDeadlineSetting = ({ translateString }: TransactionDeadlineSettingModalProps) => {
   const [deadline, setDeadline] = useUserDeadline();

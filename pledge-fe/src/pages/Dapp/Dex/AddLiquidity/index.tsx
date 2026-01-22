@@ -30,11 +30,11 @@ import { currencyId } from '_src/utils/currencyId';
 import Pane from '_components/Pane';
 import ConnectWalletButton from '_components/ConnectWalletButton';
 import useI18n from '_src/hooks/useI18n';
+import { ROUTER_ADDRESS } from '_src/constants';
 import AppBody from '../AppBody';
 import { Dots, Wrapper } from '../Pool/styleds';
 import { ConfirmAddModalBottom } from './ConfirmAddModalBottom';
 import { PoolPriceBar } from './PoolPriceBar';
-import { ROUTER_ADDRESS } from '_src/constants';
 
 export default function AddLiquidity({
   match: {
@@ -90,22 +90,18 @@ export default function AddLiquidity({
 
   // get the max amounts user can add
   const maxAmounts: { [field in Field]?: TokenAmount } = [Field.CURRENCY_A, Field.CURRENCY_B].reduce(
-    (accumulator, field) => {
-      return {
-        ...accumulator,
-        [field]: maxAmountSpend(currencyBalances[field]),
-      };
-    },
+    (accumulator, field) => ({
+      ...accumulator,
+      [field]: maxAmountSpend(currencyBalances[field]),
+    }),
     {},
   );
 
   const atMaxAmounts: { [field in Field]?: TokenAmount } = [Field.CURRENCY_A, Field.CURRENCY_B].reduce(
-    (accumulator, field) => {
-      return {
-        ...accumulator,
-        [field]: maxAmounts[field]?.equalTo(parsedAmounts[field] ?? '0'),
-      };
-    },
+    (accumulator, field) => ({
+      ...accumulator,
+      [field]: maxAmounts[field]?.equalTo(parsedAmounts[field] ?? '0'),
+    }),
     {},
   );
 
@@ -192,8 +188,8 @@ export default function AddLiquidity({
       });
   }
 
-  const modalHeader = () => {
-    return noLiquidity ? (
+  const modalHeader = () =>
+    noLiquidity ? (
       <AutoColumn gap="20px">
         <LightCard mt="20px" borderRadius="20px">
           <RowFlat>
@@ -232,20 +228,17 @@ export default function AddLiquidity({
         </UIKitText>
       </AutoColumn>
     );
-  };
 
-  const modalBottom = () => {
-    return (
-      <ConfirmAddModalBottom
-        price={price}
-        currencies={currencies}
-        parsedAmounts={parsedAmounts}
-        noLiquidity={noLiquidity}
-        onAdd={onAdd}
-        poolTokenPercentage={poolTokenPercentage}
-      />
-    );
-  };
+  const modalBottom = () => (
+    <ConfirmAddModalBottom
+      price={price}
+      currencies={currencies}
+      parsedAmounts={parsedAmounts}
+      noLiquidity={noLiquidity}
+      onAdd={onAdd}
+      poolTokenPercentage={poolTokenPercentage}
+    />
+  );
 
   const pendingText = `Supplying ${parsedAmounts[Field.CURRENCY_A]?.toSignificant(6)} ${
     currencies[Field.CURRENCY_A]?.symbol

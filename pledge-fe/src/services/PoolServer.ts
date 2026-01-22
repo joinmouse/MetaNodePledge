@@ -1,12 +1,7 @@
-import BigNumber from 'bignumber.js';
-import { gasOptions, getPledgePoolContract, web3, getDefaultAccount } from './web3';
-import { AddEthereumChainParameter, BridgeConfigSimple } from '_constants/ChainBridge.d';
-import { pledge_address, ORACLE_address, pledge_mainaddress } from '_src/utils/constants';
+import { AddEthereumChainParameter } from '_constants/ChainBridge.d';
+import { pledge_address, pledge_mainaddress } from '_src/utils/constants';
 
-import type { PledgePool } from '_src/contracts/PledgePool';
-import { pid, send } from 'process';
-import { concat } from 'ethers/lib/utils';
-import currencyInfos from '_constants/currencyInfos';
+import { gasOptions, getPledgePoolContract, getDefaultAccount } from './web3';
 
 const PoolServer = {
   async poolLength() {
@@ -76,7 +71,7 @@ const PoolServer = {
     const contract = getPledgePoolContract(
       chainId == 97 ? pledge_address : chainId == 56 ? pledge_mainaddress : pledge_mainaddress,
     );
-    let options = await gasOptions();
+    const options = await gasOptions();
     const data = await contract.methods.claimLend(pid).send(options);
     return data;
   },
@@ -84,7 +79,7 @@ const PoolServer = {
     const contract = getPledgePoolContract(
       chainId == 97 ? pledge_address : chainId == 56 ? pledge_mainaddress : pledge_mainaddress,
     );
-    let options = await gasOptions();
+    const options = await gasOptions();
     const data = await contract.methods.emergencyLendWithdrawal(pid).send(options);
     return data;
   },
@@ -92,7 +87,7 @@ const PoolServer = {
     const contract = getPledgePoolContract(
       chainId == 97 ? pledge_address : chainId == 56 ? pledge_mainaddress : pledge_mainaddress,
     );
-    let options = await gasOptions();
+    const options = await gasOptions();
     const data = await contract.methods.withdrawLend(pid, value).send(options);
     return data;
   },
@@ -100,7 +95,7 @@ const PoolServer = {
     const contract = getPledgePoolContract(
       chainId == 97 ? pledge_address : chainId == 56 ? pledge_mainaddress : pledge_mainaddress,
     );
-    let options = await gasOptions();
+    const options = await gasOptions();
     const data = await contract.methods.refundLend(pid).send(options);
     return data;
   },
@@ -108,7 +103,7 @@ const PoolServer = {
     const contract = getPledgePoolContract(
       chainId == 97 ? pledge_address : chainId == 56 ? pledge_mainaddress : pledge_mainaddress,
     );
-    let options = await gasOptions();
+    const options = await gasOptions();
     const data = await contract.methods.claimBorrow(pid).send(options);
     return data;
   },
@@ -116,7 +111,7 @@ const PoolServer = {
     const contract = getPledgePoolContract(
       chainId == 97 ? pledge_address : chainId == 56 ? pledge_mainaddress : pledge_mainaddress,
     );
-    let options = await gasOptions();
+    const options = await gasOptions();
     const data = await contract.methods.emergencyBorrowWithdrawal(pid).send(options);
     return data;
   },
@@ -124,7 +119,7 @@ const PoolServer = {
     const contract = getPledgePoolContract(
       chainId == 97 ? pledge_address : chainId == 56 ? pledge_mainaddress : pledge_mainaddress,
     );
-    let options = await gasOptions();
+    const options = await gasOptions();
     const data = await contract.methods.withdrawBorrow(pid, value).send(options);
     return data;
   },
@@ -132,7 +127,7 @@ const PoolServer = {
     const contract = getPledgePoolContract(
       chainId == 97 ? pledge_address : chainId == 56 ? pledge_mainaddress : pledge_mainaddress,
     );
-    let options = await gasOptions();
+    const options = await gasOptions();
     const data = await contract.methods.refundBorrow(pid).send(options);
     return data;
   },

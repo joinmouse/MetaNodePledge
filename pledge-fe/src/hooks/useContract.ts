@@ -1,16 +1,15 @@
 import { ChainId, WETH } from '@pswww/sdk';
-import { MULTICALL_ABI, MULTICALL_NETWORKS } from '../constants/multicall';
 
 import { Contract } from '@ethersproject/contracts';
 import ENS_ABI from '_constants/abis/ens-registrar.json';
 import ENS_PUBLIC_RESOLVER_ABI from '_constants/abis/ens-public-resolver.json';
-import ERC20_ABI from '../constants/abis/erc20.json';
-import { ERC20_BYTES32_ABI } from '_constants/abis/erc20';
+import ERC20_ABI, { ERC20_BYTES32_ABI } from '_constants/abis/erc20';
 import IUniswapV2PairJSON from '@uniswap/v2-core/build/IUniswapV2Pair.json';
 import WETH_ABI from '_constants/abis/weth.json';
+import { useMemo } from 'react';
 import { getContract } from '../utils';
 import { useActiveWeb3React } from './index';
-import { useMemo } from 'react';
+import { MULTICALL_ABI, MULTICALL_NETWORKS } from '../constants/multicall';
 
 const IUniswapV2PairABI = IUniswapV2PairJSON.abi;
 

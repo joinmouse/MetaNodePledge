@@ -1,4 +1,4 @@
-import React, { Suspense, lazy } from 'react';
+import React, { Suspense } from 'react';
 import { Route, Switch } from 'react-router-dom';
 
 import pageURL from '_constants/pageURL';
@@ -85,16 +85,14 @@ const routeMap = [
   },
 ];
 
-const Routes = () => {
-  return (
-    <Suspense fallback={null}>
-      <Switch>
-        {routeMap.map((item, index) => (
-          <Route key={index} path={item.path} exact={item.exact} component={item.component} />
-        ))}
-      </Switch>
-    </Suspense>
-  );
-};
+const Routes = () => (
+  <Suspense fallback={null}>
+    <Switch>
+      {routeMap.map((item, index) => (
+        <Route key={index} path={item.path} exact={item.exact} component={item.component} />
+      ))}
+    </Switch>
+  </Suspense>
+);
 
 export default Routes;

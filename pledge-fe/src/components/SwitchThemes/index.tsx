@@ -4,6 +4,7 @@ import ThemeLight from '_assets/images/theme_light.svg';
 import ThemeDark from '_assets/images/theme_dark.svg';
 
 import './index.less';
+
 interface ThemeContextInjected {
   theme: string; // 当前主题
   setTheme: React.Dispatch<string>; // 修改当前主题状态
@@ -48,10 +49,8 @@ export const ThemeProvider: React.FC = ({ children }) => {
  */
 const SwitchThemes: React.FC = () => {
   const { theme, setTheme } = useContext(ThemeContext);
-  const handleToggleThemes = (value) => {
-    return () => {
-      theme !== value && setTheme(value);
-    };
+  const handleToggleThemes = (value) => () => {
+    theme !== value && setTheme(value);
   };
 
   return (

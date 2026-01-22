@@ -1,15 +1,10 @@
 import type { CurrencyType } from '_src/model/global';
 import { web3 } from '_src/services/web3';
-import {
-  MPLGR_CONTRACT_ADDRESS,
-  PLEDGER_BRIDGE_BSC_CONTRACT_ADDRESS,
-  PLEDGER_BRIDGE_ETH_CONTRACT_ADDRESS,
-  PLGR_CONTRACT_ADDRESS,
-} from '_utils/constants';
-import type { AddEthereumChainParameter } from './ChainBridge.d';
+import { PLEDGER_BRIDGE_BSC_CONTRACT_ADDRESS, PLGR_CONTRACT_ADDRESS } from '_utils/constants';
 import { filter, map } from 'lodash';
+import type { AddEthereumChainParameter } from './ChainBridge.d';
 
-export type CurrencyInfos = {
+export interface CurrencyInfos {
   chainId: number;
   chainName: CurrencyType;
   contractAddress: string;
@@ -19,7 +14,7 @@ export type CurrencyInfos = {
   currencyName: string;
   currencyImageAsset: string;
   netWorkInfo: AddEthereumChainParameter;
-};
+}
 
 const currencyInfos = {
   BSC_Mainnet: {
@@ -60,9 +55,7 @@ const currencyInfos = {
         symbol: 'BNB',
         decimals: 18,
       },
-      rpcUrls: [
-        'https://bsc-testnet-rpc.publicnode.com'
-      ],
+      rpcUrls: ['https://bsc-testnet-rpc.publicnode.com'],
       blockExplorerUrls: ['https://testnet.bscscan.com'],
     },
   },
@@ -94,7 +87,7 @@ const envChainInfos =
     ? filter(currencyInfos, (c) => c.chainId === 97)
     : filter(currencyInfos, (c) => c.chainId === 56);
 
-export type ChainInfoKeysType = typeof envChainInfos[number]['chainName'];
+export type ChainInfoKeysType = (typeof envChainInfos)[number]['chainName'];
 
 export const chainInfoKeys: ChainInfoKeysType[] = map(envChainInfos, (c) => c.chainName);
 

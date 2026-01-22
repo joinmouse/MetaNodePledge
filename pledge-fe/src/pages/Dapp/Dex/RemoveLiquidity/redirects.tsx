@@ -1,6 +1,7 @@
 import React from 'react';
 import { RouteComponentProps, Redirect } from 'react-router-dom';
 import PageUrl from '_constants/pageURL';
+
 const OLD_PATH_STRUCTURE = /^(0x[a-fA-F0-9]{40})-(0x[a-fA-F0-9]{40})$/;
 
 export function RedirectOldRemoveLiquidityPathStructure({

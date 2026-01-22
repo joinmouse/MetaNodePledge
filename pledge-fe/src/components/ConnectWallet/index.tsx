@@ -1,23 +1,22 @@
 import './index.less';
 
-import { Dropdown, Menu, notification } from 'antd';
+import { Dropdown, notification } from 'antd';
 import React, { useEffect, useState } from 'react';
-import { UnsupportedChainIdError, useWeb3React } from '@web3-react/core';
+import { UnsupportedChainIdError } from '@web3-react/core';
 // import ChainBridge from '@/constants/ChainBridge';
-import { chainInfoState, walletModalOpen } from './../../model/global';
-import styled, { css } from 'styled-components';
-import { useEagerConnect, useInactiveListener, DISCONNECT_WALLET_KEY } from './WalletHooks';
+import styled from 'styled-components';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 
-import ChainBridge from '_constants/ChainBridge';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
-import { HeaderBox } from '../styleComponents';
 import type { InjectedConnector } from '@web3-react/injected-connector';
-import WalletModal from './../WalletModal';
-import { injected } from './connector';
-import services from './../../services';
 import { useActiveWeb3React } from '_src/hooks';
 import { connectorLocalStorageKey } from '@pancakeswap-libs/uikit';
+import { HeaderBox } from '../styleComponents';
+import WalletModal from '../WalletModal';
+import { injected } from './connector';
+import services from '../../services';
+import { useEagerConnect, useInactiveListener, DISCONNECT_WALLET_KEY } from './WalletHooks';
+import { chainInfoState, walletModalOpen } from '../../model/global';
 
 // import { modal } from
 
@@ -75,36 +74,34 @@ const ConnectWallet: React.FC<IConnectWallet> = ({ className }) => {
   async function activatingConnectorFn() {
     if (activatingConnector && activatingConnector === connector) {
       setActivatingConnector(undefined);
-    } else {
-      if (error instanceof UnsupportedChainIdError) {
-        // console.log(error);
-        // const fraNetworkDefault = ChainBridge.chains
-        //   .filter((item) => item.type === 'Ethereum')
-        //   .find((item) => item.networkId === 525);
-        try {
-          await services.PoolServer.switchNetwork(chainInfo.netWorkInfo);
-        } catch {
-          notification.warning({
-            message: error?.name,
-            description: error?.message,
-            top: 80,
-          });
-        }
-      } else if (error && error.message && error.message.includes('chainId null is not an integer')) {
-        // 处理 chainId 为 null 的错误
-        console.warn('ChainId is null, attempting to reconnect...');
-        try {
-          // 延迟重试连接
-          setTimeout(() => {
-            if (injected) {
-              activate(injected, undefined, true).catch((retryError) => {
-                console.error('Retry connection failed:', retryError);
-              });
-            }
-          }, 1000);
-        } catch (retryError) {
-          console.error('Error during retry:', retryError);
-        }
+    } else if (error instanceof UnsupportedChainIdError) {
+      // console.log(error);
+      // const fraNetworkDefault = ChainBridge.chains
+      //   .filter((item) => item.type === 'Ethereum')
+      //   .find((item) => item.networkId === 525);
+      try {
+        await services.PoolServer.switchNetwork(chainInfo.netWorkInfo);
+      } catch {
+        notification.warning({
+          message: error?.name,
+          description: error?.message,
+          top: 80,
+        });
+      }
+    } else if (error && error.message && error.message.includes('chainId null is not an integer')) {
+      // 处理 chainId 为 null 的错误
+      console.warn('ChainId is null, attempting to reconnect...');
+      try {
+        // 延迟重试连接
+        setTimeout(() => {
+          if (injected) {
+            activate(injected, undefined, true).catch((retryError) => {
+              console.error('Retry connection failed:', retryError);
+            });
+          }
+        }, 1000);
+      } catch (retryError) {
+        console.error('Error during retry:', retryError);
       }
     }
   }
@@ -167,28 +164,30 @@ const ConnectWallet: React.FC<IConnectWallet> = ({ className }) => {
                       </CopyToClipboard>
                     </div>
                   </WalletInfo>
-                )
+                ),
               },
               {
-                type: 'divider'
+                type: 'divider',
               },
               {
                 key: 'disconnect',
                 label: (
-                  <div style={{ 
-                    color: '#ff4d4f', 
-                    fontWeight: 500,
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '8px'
-                  }}>
+                  <div
+                    style={{
+                      color: '#ff4d4f',
+                      fontWeight: 500,
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '8px',
+                    }}
+                  >
                     <span>🔌</span>
                     <span>Disconnect</span>
                   </div>
                 ),
-                onClick: handleDisconnect
-              }
-            ]
+                onClick: handleDisconnect,
+              },
+            ],
           }}
         >
           <WalletConnected onClick={handleOnCLickConnectWallet}>
@@ -203,7 +202,9 @@ const ConnectWallet: React.FC<IConnectWallet> = ({ className }) => {
     }
     return (
       <>
-        <WalletNoConnected onClick={handleOnCLickConnectWallet} className={className}>Connect Wallet</WalletNoConnected>
+        <WalletNoConnected onClick={handleOnCLickConnectWallet} className={className}>
+          Connect Wallet
+        </WalletNoConnected>
         <WalletModal />
         {/* {!!error?<WalletNoConnected>Wrong Network</WalletNoConnected>:<WalletNoConnected onClick={handleOnCLickConnectWallet}>Connect Wallet</WalletNoConnected>} */}
       </>

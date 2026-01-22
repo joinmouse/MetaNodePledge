@@ -3,11 +3,11 @@ import styled from 'styled-components';
 import { Text } from '@pancakeswap-libs/uikit';
 import useI18n from '_src/hooks/useI18n';
 import useENS from '_src/hooks/useENS';
+import { getBscScanLink } from '_utils/index';
 import { useActiveWeb3React } from '../../hooks';
 import { ExternalLink } from '../Shared';
 import { AutoColumn } from '../Column';
 import { RowBetween } from '../Row';
-import { getBscScanLink } from '_utils/index';
 
 const InputPanel = styled.div`
   display: flex;

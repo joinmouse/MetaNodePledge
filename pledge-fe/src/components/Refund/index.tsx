@@ -1,16 +1,13 @@
 import './index.less';
 
-import { Divider, Progress, Space, notification } from 'antd';
+import { notification } from 'antd';
 import React, { useEffect, useState } from 'react';
-import { UnsupportedChainIdError, useWeb3React } from '@web3-react/core';
 
 import BigNumber from 'bignumber.js';
 import Button from '_components/Button';
 import Error from '_src/assets/images/Error.png';
 import OrderImg from '_components/OrderImg';
-import { QuestionCircleOutlined } from '@ant-design/icons';
 import Success from '_src/assets/images/Success.png';
-import { Tooltip } from 'antd';
 import Union from '_src/assets/images/Union.png';
 import icon3 from '_src/assets/images/icon (3).png';
 import icon4 from '_src/assets/images/icon (4).png';
@@ -69,7 +66,7 @@ const Refund: React.FC<IRefund> = ({ className = '', style = null, mode, statein
             <p style={{ fontSize: '16px', lineHeight: '24px', fontWeight: 600, margin: '0' }}>{placement}</p>
           </div>
           <div style={{ display: 'flex', alignItems: 'center' }}>
-            <p style={{ margin: '0 9.4px 0 33px' }}>{'Claim refund success'}</p>{' '}
+            <p style={{ margin: '0 9.4px 0 33px' }}>Claim refund success</p>{' '}
             <img src={icon3} alt="" style={{ width: '11.2px', height: '11.2px' }} />
           </div>
         </div>
@@ -105,7 +102,7 @@ const Refund: React.FC<IRefund> = ({ className = '', style = null, mode, statein
             <p style={{ fontSize: '16px', lineHeight: '24px', fontWeight: 600, margin: '0' }}>{placement}</p>
           </div>
           <div style={{ display: 'flex', alignItems: 'center' }}>
-            <p style={{ margin: '0 9.4px 0 33px' }}>{'Claim refund success'}</p>{' '}
+            <p style={{ margin: '0 9.4px 0 33px' }}>Claim refund success</p>{' '}
             <img src={icon3} alt="" style={{ width: '11.2px', height: '11.2px' }} />
           </div>
         </div>
@@ -141,7 +138,7 @@ const Refund: React.FC<IRefund> = ({ className = '', style = null, mode, statein
             <p style={{ fontSize: '16px', lineHeight: '24px', fontWeight: 600, margin: '0' }}>{placement}</p>
           </div>
           <div style={{ display: 'flex', alignItems: 'center' }}>
-            <p style={{ margin: '0 9.4px 0 33px' }}>{'Claim refund error'}</p>{' '}
+            <p style={{ margin: '0 9.4px 0 33px' }}>Claim refund error</p>{' '}
             <img src={icon4} alt="" style={{ width: '11.2px', height: '11.2px' }} />
           </div>
         </div>
@@ -176,7 +173,7 @@ const Refund: React.FC<IRefund> = ({ className = '', style = null, mode, statein
             <p style={{ fontSize: '16px', lineHeight: '24px', fontWeight: 600, margin: '0' }}>{placement}</p>
           </div>
           <div style={{ display: 'flex', alignItems: 'center' }}>
-            <p style={{ margin: '0 9.4px 0 33px' }}>{'Claim refund error'}</p>{' '}
+            <p style={{ margin: '0 9.4px 0 33px' }}>Claim refund error</p>{' '}
             <img src={icon4} alt="" style={{ width: '11.2px', height: '11.2px' }} />
           </div>
         </div>
@@ -185,8 +182,8 @@ const Refund: React.FC<IRefund> = ({ className = '', style = null, mode, statein
   };
   const dealNumber_18 = (num) => {
     if (num) {
-      let x = new BigNumber(num);
-      let y = new BigNumber(1e18);
+      const x = new BigNumber(num);
+      const y = new BigNumber(1e18);
       return Math.floor(Number(x.dividedBy(y)) * Math.pow(10, 7)) / Math.pow(10, 7);
     }
   };
@@ -316,7 +313,7 @@ const Refund: React.FC<IRefund> = ({ className = '', style = null, mode, statein
                       setloadings(true), getRefund();
                     }}
                     loading={loadings}
-                    disabled={hasNoClaim == false ? false : true}
+                    disabled={hasNoClaim != false}
                   >
                     Claim
                   </Button>
@@ -326,7 +323,7 @@ const Refund: React.FC<IRefund> = ({ className = '', style = null, mode, statein
                       setloadings(true), getRefund();
                     }}
                     loading={loadings}
-                    disabled={refundLend !== 0 ? (hasNoClaim == false ? false : true) : true}
+                    disabled={refundLend !== 0 ? hasNoClaim != false : true}
                   >
                     Claim
                   </Button>
@@ -337,7 +334,7 @@ const Refund: React.FC<IRefund> = ({ className = '', style = null, mode, statein
                 <p>
                   <span> Wait for the settlement date to get back the unmatched quota</span>
                 </p>
-                <Button disabled={true}>Claim</Button>
+                <Button disabled>Claim</Button>
               </div>
             )}
           </li>
@@ -389,7 +386,7 @@ const Refund: React.FC<IRefund> = ({ className = '', style = null, mode, statein
                     onClick={() => {
                       setloadings(true), getRefund();
                     }}
-                    disabled={hasNoClaim == false ? false : true}
+                    disabled={hasNoClaim != false}
                     loading={loadings}
                   >
                     Claim
@@ -399,7 +396,7 @@ const Refund: React.FC<IRefund> = ({ className = '', style = null, mode, statein
                     onClick={() => {
                       setloadings(true), getRefund();
                     }}
-                    disabled={refundBorrow !== 0 ? (hasNoClaim == false ? false : true) : true}
+                    disabled={refundBorrow !== 0 ? hasNoClaim != false : true}
                     loading={loadings}
                   >
                     Claim
@@ -411,7 +408,7 @@ const Refund: React.FC<IRefund> = ({ className = '', style = null, mode, statein
                 <p>
                   <span> Wait for the settlement date to get back the unmatched quota</span>
                 </p>
-                <Button disabled={true}>Claim</Button>
+                <Button disabled>Claim</Button>
               </div>
             )}
           </li>
@@ -420,7 +417,5 @@ const Refund: React.FC<IRefund> = ({ className = '', style = null, mode, statein
     </div>
   );
 };
-
-
 
 export default Refund;

@@ -5,9 +5,9 @@ import { AddressZero } from '@ethersproject/constants';
 import { BigNumber } from '@ethersproject/bignumber';
 import { Contract } from '@ethersproject/contracts';
 import IUniswapV2Router02JSON from '@uniswap/v2-periphery/build/IUniswapV2Router02.json';
-import { ROUTER_ADDRESS } from '../constants';
 import { TokenAddressMap } from '_src/state/lists/hooks';
 import { getAddress } from '@ethersproject/address';
+import { ROUTER_ADDRESS } from '../constants';
 
 const IUniswapV2Router02ABI = IUniswapV2Router02JSON.abi;
 

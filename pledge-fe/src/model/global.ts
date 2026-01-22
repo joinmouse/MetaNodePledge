@@ -1,12 +1,13 @@
 import { atom } from 'recoil';
-import currencyInfos from './../constants/currencyInfos';
-import type { CurrencyInfos, chainInfoKeys } from './../constants/currencyInfos';
 import { DEFAULT_DEADLINE_FROM_NOW, INITIAL_ALLOWED_SLIPPAGE } from '_constants/index';
 import DEFAULT_LIST from '_constants/token/pancakeswap.json';
-export const currencies = ['BSC_Mainnet', 'BSC_Testnet'] as const;
 import { TokenList } from '@uniswap/token-lists/dist/types';
+import type { CurrencyInfos } from '../constants/currencyInfos';
+import currencyInfos from '../constants/currencyInfos';
 
-export type CurrencyType = typeof currencies[number];
+export const currencies = ['BSC_Mainnet', 'BSC_Testnet'] as const;
+
+export type CurrencyType = (typeof currencies)[number];
 const defaultChain = currencyInfos[0];
 
 export const currencyState = atom<CurrencyType>({

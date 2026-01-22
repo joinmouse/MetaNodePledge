@@ -14,12 +14,11 @@ import { usePairs } from '_src/data/Reserves';
 import { toV2LiquidityToken, useTrackedTokenPairs } from '_src/state/user/hooks';
 import { Dots } from '_components/swap/styleds';
 import useI18n from '_src/hooks/useI18n';
-import AppBody from '../AppBody';
 import ConnectWalletButton from '_src/components/ConnectWalletButton';
 import hezi from '_src/images/Group2102.png';
-import styled from 'styled-components';
 import PageUrl from '_constants/pageURL';
 import CardNav from '_components/CardNav';
+import AppBody from '../AppBody';
 
 import './index.less';
 
@@ -33,9 +32,10 @@ export default function Pool() {
     () => trackedTokenPairs.map((tokens) => ({ liquidityToken: toV2LiquidityToken(tokens), tokens })),
     [trackedTokenPairs],
   );
-  const liquidityTokens = useMemo(() => tokenPairsWithLiquidityTokens.map((tpwlt) => tpwlt.liquidityToken), [
-    tokenPairsWithLiquidityTokens,
-  ]);
+  const liquidityTokens = useMemo(
+    () => tokenPairsWithLiquidityTokens.map((tpwlt) => tpwlt.liquidityToken),
+    [tokenPairsWithLiquidityTokens],
+  );
   const [v2PairsBalances, fetchingV2PairBalances] = useTokenBalancesWithLoadingIndicator(
     account ?? undefined,
     liquidityTokens,

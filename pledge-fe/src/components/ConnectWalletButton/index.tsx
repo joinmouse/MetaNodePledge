@@ -1,8 +1,8 @@
 import React from 'react';
-import { Button, ButtonProps, useWalletModal } from '@pancakeswap-libs/uikit';
+import { Button, ButtonProps } from '@pancakeswap-libs/uikit';
 import useI18n from '_src/hooks/useI18n';
 import { useSetRecoilState } from 'recoil';
-import { walletModalOpen } from './../../model/global';
+import { walletModalOpen } from '../../model/global';
 
 const UnlockButton: React.FC<ButtonProps> = (props) => {
   const TranslateString = useI18n();

@@ -14,7 +14,7 @@ module.exports = {
     ecmaVersion: 12,
     sourceType: 'module',
   },
-  plugins: ['react', '@typescript-eslint'],
+  plugins: ['react', '@typescript-eslint', 'unused-imports'],
   rules: {
     'no-var': 'error',
     // 优先使用 interface 而不是 type
@@ -36,7 +36,13 @@ module.exports = {
     // 禁用一些过于严格的规则
     'no-use-before-define': 'off',
     '@typescript-eslint/no-use-before-define': 'off',
-    'no-unused-vars': 'warn',
+    'no-unused-vars': 'off',
+    '@typescript-eslint/no-unused-vars': 'off',
+    'unused-imports/no-unused-imports': 'error',
+    'unused-imports/no-unused-vars': [
+      'warn',
+      { 'vars': 'all', 'varsIgnorePattern': '^_', 'args': 'after-used', 'argsIgnorePattern': '^_' }
+    ],
     'no-shadow': 'off',
     '@typescript-eslint/no-shadow': 'warn',
     'camelcase': 'warn',

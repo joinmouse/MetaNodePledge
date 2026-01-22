@@ -1,11 +1,10 @@
 import './index.less';
 
-import { Drawer, Dropdown, Menu, Select, message } from 'antd';
-import { Link, NavLink, useHistory, useRouteMatch } from 'react-router-dom';
+import { Drawer, Dropdown } from 'antd';
+import { NavLink, useRouteMatch } from 'react-router-dom';
 import React, { useEffect, useState } from 'react';
 import { find, get } from 'lodash';
 
-import Button from '_components/Button';
 import ConnectWallet from '_components/ConnectWallet';
 import PageUrl from '_constants/pageURL';
 import classnames from 'classnames';
@@ -19,11 +18,10 @@ import services from '_src/services';
 import styled from 'styled-components';
 import { useActiveWeb3React } from '_src/hooks';
 import { useRecoilState } from 'recoil';
-import { useWeb3React } from '@web3-react/core';
 
 export interface IHeaderProps {}
 
-type Iparams = {};
+interface Iparams {}
 const Header: React.FC<IHeaderProps> = () => {
   const [isOpacity, setIsOpacity] = useState(true);
   const [visable, setVisable] = useState(false);
@@ -125,13 +123,13 @@ const Header: React.FC<IHeaderProps> = () => {
             menu={{
               selectedKeys: [currency],
               onClick: handleClick,
-              className: "selecttab",
+              className: 'selecttab',
               style: { width: '240px', height: '160px', padding: '16px' },
               items: [
                 {
                   key: 'header',
                   label: <p style={{ color: ' #8B89A3' }}>Select a network</p>,
-                  disabled: true
+                  disabled: true,
                 },
                 {
                   key: 'BSC_Mainnet',
@@ -141,7 +139,7 @@ const Header: React.FC<IHeaderProps> = () => {
                       <span>BSC-Mainnet</span>
                     </FlexDiv>
                   ),
-                  style: { borderRadius: '12px' }
+                  style: { borderRadius: '12px' },
                 },
                 {
                   key: 'BSC_Testnet',
@@ -151,9 +149,9 @@ const Header: React.FC<IHeaderProps> = () => {
                       <span>BSC-Testnet</span>
                     </FlexDiv>
                   ),
-                  style: { borderRadius: '12px', marginBottom: '10px' }
-                }
-              ]
+                  style: { borderRadius: '12px', marginBottom: '10px' },
+                },
+              ],
             }}
           >
             <div>
@@ -174,13 +172,13 @@ const Header: React.FC<IHeaderProps> = () => {
                 menu={{
                   selectedKeys: [currency],
                   onClick: handleClick,
-                  className: "selecttab",
+                  className: 'selecttab',
                   style: { width: '240px', height: '160px', padding: '16px' },
                   items: [
                     {
                       key: 'header',
                       label: <p style={{ color: ' #8B89A3' }}>Select a network</p>,
-                      disabled: true
+                      disabled: true,
                     },
                     {
                       key: 'BSC_Mainnet',
@@ -195,7 +193,7 @@ const Header: React.FC<IHeaderProps> = () => {
                           <span>BSC-Mainnet</span>
                         </FlexDiv>
                       ),
-                      style: { borderRadius: '12px' }
+                      style: { borderRadius: '12px' },
                     },
                     {
                       key: 'BSC_Testnet',
@@ -210,9 +208,9 @@ const Header: React.FC<IHeaderProps> = () => {
                           <span>BSC-Testnet</span>
                         </FlexDiv>
                       ),
-                      style: { borderRadius: '12px', marginBottom: '10px' }
-                    }
-                  ]
+                      style: { borderRadius: '12px', marginBottom: '10px' },
+                    },
+                  ],
                 }}
               >
                 <div>
@@ -228,7 +226,7 @@ const Header: React.FC<IHeaderProps> = () => {
               <img src={list} onClick={() => setVisable(true)} />
             </div>
           </div>
-          <Drawer placement={'top'} closable={false} onClose={() => setVisable(false)} open={visable} key={'top'}>
+          <Drawer placement="top" closable={false} onClose={() => setVisable(false)} open={visable} key="top">
             <div className="drawer_header">
               <img src={close} onClick={() => setVisable(false)} />
             </div>
@@ -263,7 +261,5 @@ const Header: React.FC<IHeaderProps> = () => {
     </div>
   );
 };
-
-
 
 export default Header;

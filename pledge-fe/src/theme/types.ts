@@ -1,6 +1,6 @@
 export type Breakpoints = string[];
 
-export type MediaQueries = {
+export interface MediaQueries {
   xs: string;
   sm: string;
   md: string;
@@ -8,10 +8,10 @@ export type MediaQueries = {
   xl: string;
   xxl: string;
   nav: string;
-};
+}
 
-export type DevicesQueries = {
+export interface DevicesQueries {
   mobile: string;
   tablet: string;
   desktop: string;
-};
+}

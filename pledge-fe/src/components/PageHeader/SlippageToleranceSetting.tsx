@@ -36,9 +36,9 @@ const predefinedValues = [
   { label: '1%', value: 1 },
 ];
 
-type SlippageToleranceSettingsModalProps = {
+interface SlippageToleranceSettingsModalProps {
   translateString: (translationId: number, fallback: string) => string;
-};
+}
 
 const SlippageToleranceSettings = ({ translateString }: SlippageToleranceSettingsModalProps) => {
   const [userSlippageTolerance, setUserslippageTolerance] = useUserSlippageTolerance();

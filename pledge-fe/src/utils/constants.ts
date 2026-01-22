@@ -1,15 +1,15 @@
-//2.0
+// 2.0
 // export const pledge_address = '0x460cD52E2bB8a0547F4fe2ff80cd354CC1A1f43a';
 // export const ORACLE_address = '0x72D8E6144A46b7b51F59831A9D38C7f9E682B7C1';
-//2.1
+// 2.1
 // export const pledge_address = '0xb996788A2471f34ad301dD5090d85521Da252ED4';
 // export const ORACLE_address = '0xd96DBDC193617A0cD4bbf38E78a0fB4799A8E554';
-//2.2
+// 2.2
 // export const pledge_address = '0x216f718A983FCCb462b338FA9c60f2A89199490c';
 // export const ORACLE_address = '0x272aCa56637FDaBb2064f19d64BC3dE64A85A1b2';
-//prop
-export const pledge_address = '0x713A90b5E2B703Dc30307f0B872E5d666c42e40d';  // PledgePool 合约地址 (2025-12-19 部署)
-export const ORACLE_address = '0x6b6B0803dFB0AF604a0CE7B98Fa4eF53Aa2Fbe38';  // Oracle 合约地址 (2025-12-19 部署)
+// prop
+export const pledge_address = '0x713A90b5E2B703Dc30307f0B872E5d666c42e40d'; // PledgePool 合约地址 (2025-12-19 部署)
+export const ORACLE_address = '0x6b6B0803dFB0AF604a0CE7B98Fa4eF53Aa2Fbe38'; // Oracle 合约地址 (2025-12-19 部署)
 
 export const pledge_mainaddress = '0x25C3f3d3E3299d7C56700CE54303Fbe1E6a16fee';
 export const ORACLE_mainaddress = '0x4Aa9EB3149089D7208C9C0403BF1b9bA25ff05BD';

@@ -1,10 +1,8 @@
 import './index.less';
 
-import { Col, Collapse, Row, Statistic, Steps, Table, message } from 'antd';
-import { Divider, Progress, Space, notification } from 'antd';
+import { notification } from 'antd';
 import React, { useEffect, useState } from 'react';
 
-import BigNumber from 'bignumber.js';
 import Button from '_components/Button';
 import Error from '_src/assets/images/Error.png';
 import Success from '_src/assets/images/Success.png';
@@ -79,7 +77,7 @@ const ClaimTime: React.FC<IClaimTime> = ({
             <p style={{ fontSize: '16px', lineHeight: '24px', fontWeight: 600, margin: '0' }}>{placement}</p>
           </div>
           <div style={{ display: 'flex', alignItems: 'center' }}>
-            <p style={{ margin: '0 9.4px 0 33px' }}>{'Claim reward success'}</p>{' '}
+            <p style={{ margin: '0 9.4px 0 33px' }}>Claim reward success</p>{' '}
             <img src={icon3} alt="" style={{ width: '11.2px', height: '11.2px' }} />
           </div>
         </div>
@@ -115,7 +113,7 @@ const ClaimTime: React.FC<IClaimTime> = ({
             <p style={{ fontSize: '16px', lineHeight: '24px', fontWeight: 600, margin: '0' }}>{placement}</p>
           </div>
           <div style={{ display: 'flex', alignItems: 'center' }}>
-            <p style={{ margin: '0 9.4px 0 33px' }}>{'Claim reward success'}</p>{' '}
+            <p style={{ margin: '0 9.4px 0 33px' }}>Claim reward success</p>{' '}
             <img src={icon3} alt="" style={{ width: '11.2px', height: '11.2px' }} />
           </div>
         </div>
@@ -151,7 +149,7 @@ const ClaimTime: React.FC<IClaimTime> = ({
             <p style={{ fontSize: '16px', lineHeight: '24px', fontWeight: 600, margin: '0' }}>{placement}</p>
           </div>
           <div style={{ display: 'flex', alignItems: 'center' }}>
-            <p style={{ margin: '0 9.4px 0 33px' }}>{'Claim reward error'}</p>{' '}
+            <p style={{ margin: '0 9.4px 0 33px' }}>Claim reward error</p>{' '}
             <img src={icon4} alt="" style={{ width: '11.2px', height: '11.2px' }} />
           </div>
         </div>
@@ -187,7 +185,7 @@ const ClaimTime: React.FC<IClaimTime> = ({
             <p style={{ fontSize: '16px', lineHeight: '24px', fontWeight: 600, margin: '0' }}>{placement}</p>
           </div>
           <div style={{ display: 'flex', alignItems: 'center' }}>
-            <p style={{ margin: '0 9.4px 0 33px' }}>{'Claim reward error'}</p>{' '}
+            <p style={{ margin: '0 9.4px 0 33px' }}>Claim reward error</p>{' '}
             <img src={icon4} alt="" style={{ width: '11.2px', height: '11.2px' }} />
           </div>
         </div>
@@ -199,20 +197,20 @@ const ClaimTime: React.FC<IClaimTime> = ({
   function interval() {
     timer = setInterval(() => {
       let a = Number(endtime - new Date().getTime() / 1000);
-      let days = parseInt((a / (3600 * 24)).toString()) > 0 ? parseInt((a / (3600 * 24)).toString()) : 0;
-      let hours =
+      const days = parseInt((a / (3600 * 24)).toString()) > 0 ? parseInt((a / (3600 * 24)).toString()) : 0;
+      const hours =
         parseInt(((a - days * 24 * 3600) / 3600).toString()) > 0
           ? parseInt(((a - days * 24 * 3600) / 3600).toString())
           : '0';
-      let minutes =
+      const minutes =
         parseInt(((a - days * 24 * 3600 - Number(hours) * 3600) / 60).toString()) > 0
           ? parseInt(((a - days * 24 * 3600 - Number(hours) * 3600) / 60).toString())
           : '0';
-      let second =
+      const second =
         parseInt((a - days * 24 * 3600 - Number(hours) * 3600 - Number(minutes) * 60).toString()) > 0
           ? parseInt((a - days * 24 * 3600 - Number(hours) * 3600 - Number(minutes) * 60).toString())
           : '0';
-      const times = days + ':' + hours + ':' + minutes + ':' + second;
+      const times = `${days}:${hours}:${minutes}:${second}`;
 
       setdays(days);
       sethours(Number(hours));
@@ -227,7 +225,7 @@ const ClaimTime: React.FC<IClaimTime> = ({
   }
 
   const getclaim = () => {
-    var timestamp = Math.round(new Date().getTime() / 1000 + 300).toString();
+    const timestamp = Math.round(new Date().getTime() / 1000 + 300).toString();
 
     mode == 'Lend'
       ? services.PoolServer.getwithdrawLend(pid, Spnum, chainId)
@@ -255,13 +253,13 @@ const ClaimTime: React.FC<IClaimTime> = ({
           ? services.ERC20Server.balanceOf(spToken).then((res) => {
               setSpnum(res);
               services.PoolServer.getuserLendInfo(pid.toString(), chainId).then((data) => {
-                sethasNoClaim(Spnum == '0' ? true : false);
+                sethasNoClaim(Spnum == '0');
               });
             })
           : services.ERC20Server.balanceOf(jpToken).then((res) => {
               setJpnum(res);
               services.PoolServer.getuserBorrowInfo(pid.toString(), chainId).then((data) => {
-                sethasNoClaim(Jpnum == '0' ? true : false);
+                sethasNoClaim(Jpnum == '0');
               });
             });
       }
@@ -288,7 +286,7 @@ const ClaimTime: React.FC<IClaimTime> = ({
       {console.log(444, state)}
       <div className="claim_button">
         {state == '4' ? (
-          <Button disabled={true}>Claim</Button>
+          <Button disabled>Claim</Button>
         ) : state == '3' ? (
           <Button
             loading={loadings}
@@ -301,7 +299,7 @@ const ClaimTime: React.FC<IClaimTime> = ({
           </Button>
         ) : hasNoClaim == false ? (
           <Button
-            disabled={days + hours + minutes + second == 0 ? false : true}
+            disabled={days + hours + minutes + second != 0}
             loading={loadings}
             onClick={() => {
               setloadings(true), getclaim();
@@ -310,13 +308,11 @@ const ClaimTime: React.FC<IClaimTime> = ({
             Claim
           </Button>
         ) : (
-          <Button disabled={true}>Claim</Button>
+          <Button disabled>Claim</Button>
         )}
       </div>
     </div>
   );
 };
-
-
 
 export default ClaimTime;
