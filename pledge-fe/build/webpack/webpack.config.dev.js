@@ -16,9 +16,10 @@ base.output.publicPath = '/';
 module.exports = merge(base, {
   target: 'web',
   mode: 'development',
-  devtool: 'eval-source-map',
+  devtool: 'eval-cheap-module-source-map', // 更快的source-map，适合开发环境
   watchOptions: {
     aggregateTimeout: 600,
+    ignored: /node_modules/, // 忽略node_modules的监听
   },
   devServer: {
     static: {

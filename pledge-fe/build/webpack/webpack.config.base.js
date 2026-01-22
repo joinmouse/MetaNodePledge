@@ -15,6 +15,13 @@ const config = require('../config');
 
 module.exports = {
   entry: webpackEntry,
+  cache: {
+    type: 'filesystem', // 使用文件系统缓存
+    buildDependencies: {
+      config: [__filename], // 当配置文件变化时失效缓存
+    },
+    cacheDirectory: path.resolve(PROJECT_ROOT, '.cache/webpack'),
+  },
   output: {
     path: path.resolve(PROJECT_ROOT, 'dist'),
     globalObject: 'this',
@@ -31,7 +38,16 @@ module.exports = {
     rules: [
       {
         test: /\.(ts|js)x?$/,
-        use: ['babel-loader'],
+        use: [
+          {
+            loader: 'babel-loader',
+            options: {
+              cacheDirectory: true, // 启用babel缓存
+              cacheCompression: false, // 禁用压缩以加快缓存读写
+              compact: true,
+            },
+          },
+        ],
         exclude: /node_modules\/(?!@uniswap\/token-lists)/,
       },
       // {
