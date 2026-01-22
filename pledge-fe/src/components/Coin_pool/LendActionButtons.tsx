@@ -134,8 +134,10 @@ const LendActionButtons: React.FC<LendActionButtonsProps> = ({
     console.log('[Lend] Starting lend transaction:', {
       pid,
       amount: num,
+      amountInWei: num,
       tokenAddress: poolinfo[pid]?.Sp,
       chainId,
+      isNativeToken: poolinfo[pid]?.Sp === '0x0000000000000000000000000000000000000000',
     });
 
     try {
@@ -150,15 +152,29 @@ const LendActionButtons: React.FC<LendActionButtonsProps> = ({
         error,
         errorMessage: error?.message,
         errorCode: error?.code,
+        errorData: error?.data,
         pid,
         amount: num,
+        tokenAddress: poolinfo[pid]?.Sp,
+        chainId,
       });
 
+      // 根据错误类型显示更友好的提示
       let errorMsg = 'Error';
       if (error?.code === 4001) {
         errorMsg = 'User rejected the transaction';
+      } else if (error?.code === -32603) {
+        // JSON-RPC内部错误
+        errorMsg = 'Transaction failed. Please check if you have enough gas and the token is approved.';
+        console.error('[Lend] JSON-RPC internal error. This could be caused by:');
+        console.error('  1. Insufficient gas balance');
+        console.error('  2. Token not approved (Sp token)');
+        console.error('  3. Network connectivity issue');
+        console.error('  4. Contract execution reverted');
       } else if (error?.message?.includes('insufficient funds')) {
         errorMsg = 'Insufficient funds for gas';
+      } else if (error?.message?.includes('nonce')) {
+        errorMsg = 'Nonce error. Please try again.';
       } else if (error?.message) {
         errorMsg = `Error: ${error.message.substring(0, 100)}`;
       }

@@ -47,14 +47,51 @@ const PoolServer = {
     return await data;
   },
   async depositLend(pid, value, coinAddress, chainId) {
+    console.log('[depositLend] Method called with:', {
+      pid,
+      value,
+      coinAddress,
+      chainId,
+      contractAddress: chainId == 97 ? pledge_address : chainId == 56 ? pledge_mainaddress : pledge_mainaddress,
+      isNativeToken: coinAddress === '0x0000000000000000000000000000000000000000',
+    });
+
     const contract = getPledgePoolContract(
       chainId == 97 ? pledge_address : chainId == 56 ? pledge_mainaddress : pledge_mainaddress,
     );
-    let options = await gasOptions();
+
+    // 为 depositLend 设置适当的 gas limit
+    // 这个操作涉及 token 转账和质押，通常需要 300000-500000 gas
+    const options = await gasOptions({
+      gasLimit: 400000, // 设置足够的 gas limit
+    });
+
+    // 如果是原生币（BNB），需要发送value
     if (coinAddress === '0x0000000000000000000000000000000000000000') {
-      options = { ...options, value };
+      options.value = value;
+      console.log('[depositLend] Adding native token value to options:', { value, options });
+    } else {
+      console.log('[depositLend] Using ERC20 token, value will be transferred via approve');
     }
-    return await contract.methods.depositLend(pid, value).send(options);
+
+    console.log('[depositLend] Sending transaction to contract with options:', options);
+
+    try {
+      const tx = await contract.methods.depositLend(pid, value).send(options);
+      console.log('[depositLend] Transaction completed:', tx);
+      return tx;
+    } catch (error: any) {
+      console.error('[depositLend] Transaction failed with error:', error);
+      // 如果是 gas 相关错误，提供更多提示
+      if (error?.message?.includes('gas required exceeds allowance')) {
+        console.error('[depositLend] Gas limit too low. Increasing to 600000');
+        options.gas = 600000;
+        const tx = await contract.methods.depositLend(pid, value).send(options);
+        console.log('[depositLend] Retry transaction completed:', tx);
+        return tx;
+      }
+      throw error;
+    }
   },
   async depositBorrow(pid, value, time, coinAddress, chainId) {
     const contract = getPledgePoolContract(

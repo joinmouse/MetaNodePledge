@@ -21,31 +21,21 @@ const ERC20Server = {
 
     try {
       const contract = getERC20Contract(contractAddress);
-      const options = await gasOptions();
+      const spender = chainId == 97 ? pledge_address : chainId == 56 ? pledge_mainaddress : pledge_mainaddress;
+
+      // 为 approve 操作设置适当的 gas limit
+      // approve 操作通常需要 50000-100000 gas
+      const options = await gasOptions({
+        gasLimit: 80000, // 设置足够的 gas limit
+      });
 
       console.log('[ERC20Server.Approve] Gas options:', options);
 
-      const spender = chainId == 97 ? pledge_address : chainId == 56 ? pledge_mainaddress : pledge_mainaddress;
-
-      // 尝试手动指定 gas limit 来避免 MetaMask 估算失败
       const approveMethod = contract.methods.approve(spender, amount);
 
-      console.log('[ERC20Server.Approve] Estimating gas...');
-      let gasLimit;
-      try {
-        gasLimit = await approveMethod.estimateGas({ from: options.from });
-        console.log('[ERC20Server.Approve] Estimated gas:', gasLimit);
-      } catch (gasError: any) {
-        console.warn('[ERC20Server.Approve] Gas estimation failed, using default:', gasError?.message);
-        gasLimit = 100000; // 使用默认值
-      }
+      console.log('[ERC20Server.Approve] Sending transaction...');
 
-      console.log('[ERC20Server.Approve] Sending transaction with gas limit:', gasLimit);
-
-      const rates = await approveMethod.send({
-        ...options,
-        gas: gasLimit,
-      });
+      const rates = await approveMethod.send(options);
 
       console.log('[ERC20Server.Approve] Approval successful:', {
         transactionHash: rates.transactionHash,
@@ -63,6 +53,18 @@ const ERC20Server = {
         amount,
         chainId,
       });
+
+      // 如果是 gas 相关错误，提供更多提示
+      if (error?.message?.includes('gas required exceeds allowance')) {
+        console.error('[ERC20Server.Approve] Gas limit too low. Increasing to 150000');
+        const contract = getERC20Contract(contractAddress);
+        const spender = chainId == 97 ? pledge_address : chainId == 56 ? pledge_mainaddress : pledge_mainaddress;
+        const options = await gasOptions({ gasLimit: 150000 });
+        const rates = await contract.methods.approve(spender, amount).send(options);
+        console.log('[ERC20Server.Approve] Retry approval successful:', rates);
+        return rates;
+      }
+
       throw error;
     }
   },

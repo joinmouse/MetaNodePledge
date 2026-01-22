@@ -90,12 +90,31 @@ const gasOptions = async (params = {}): Promise<SendOptions> => {
 
   console.log('[gasOptions] Using account:', from);
 
-  // 只返回 from 地址，让 MetaMask 自动处理 gas price 和 gas limit
-  // 这样可以避免 RPC 节点不一致导致的 "signal is aborted" 错误
-  return {
-    from,
-    ...params,
-  };
+  try {
+    // 获取当前 gas price
+    const gasPrice = await web3.eth.getGasPrice();
+    console.log('[gasOptions] Current gas price:', gasPrice, 'wei');
+
+    // 如果没有提供 gasLimit，设置一个合理的默认值
+    // depositLend 和其他合约交互通常需要 200000-500000 gas
+    const gasLimit = params.gasLimit || 300000;
+    console.log('[gasOptions] Using gas limit:', gasLimit);
+
+    return {
+      from,
+      gasPrice,
+      gas: gasLimit,
+      ...params,
+    };
+  } catch (error) {
+    console.error('[gasOptions] Error getting gas price:', error);
+    // 如果获取 gas price 失败，只返回 from 地址，让 MetaMask 处理
+    console.log('[gasOptions] Falling back to MetaMask auto-gas');
+    return {
+      from,
+      ...params,
+    };
+  }
 };
 export {
   web3,
