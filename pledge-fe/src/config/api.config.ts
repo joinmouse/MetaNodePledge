@@ -27,10 +27,10 @@ const API_CONFIG: ApiConfig = {
   // 环境配置
   environments: {
     development: 'http://111.230.6.64:8080',
-    production: 'http://111.230.6.64:8080',
+    production: '', // Vercel部署时使用相对路径，通过rewrite代理
     local: '/api/v22', // 本地开发时通过webpack代理
   },
-};// 获取当前环境的基础URL
+// 获取当前环境的基础URL
 export const getBaseUrl = (): string => {
   if (typeof window === 'undefined') {
     return API_CONFIG.environments.development;
@@ -43,10 +43,9 @@ export const getBaseUrl = (): string => {
     return `${API_CONFIG.environments.development}/api/${API_CONFIG.apiVersion}`;
   }
 
-  // 生产环境
-  return `${API_CONFIG.environments.development}/api/${API_CONFIG.apiVersion}`;
+  // Vercel生产环境 - 使用相对路径，通过vercel.json的rewrite代理
+  return `/api/${API_CONFIG.apiVersion}`;
 };
-
 // 获取完整的API URL
 export const getApiUrl = (endpoint: string = ''): string => {
   const baseUrl = getBaseUrl();

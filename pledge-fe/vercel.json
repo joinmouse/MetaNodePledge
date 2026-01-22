@@ -6,6 +6,10 @@
   "installCommand": "yarn install",
   "rewrites": [
     {
+      "source": "/api/(.*)",
+      "destination": "http://111.230.6.64:8080/api/$1"
+    },
+    {
       "source": "/static/(.*)",
       "destination": "/static/$1"
     },
