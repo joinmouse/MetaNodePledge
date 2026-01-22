@@ -190,5 +190,5 @@ Market Pool 是固定利率借贷市场，连接出借方和借款方。
    - 交易成功后可在 [BSC Testnet Explorer](https://testnet.bscscan.com) 查看交易详情
 
 3. **API 配置**
-   - 生产 API: `https://pledge.rcc-tec.xyz/api/v22`
+   - 生产 API: `http://111.230.6.64:8080/api/v22`
    - 本地代理: `/api/v21`
