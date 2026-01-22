@@ -32,7 +32,7 @@ module.exports = {
       {
         test: /\.(ts|js)x?$/,
         use: ['babel-loader'],
-        exclude: [/node_modules/],
+        exclude: /node_modules\/(?!@uniswap\/token-lists)/,
       },
       // {
       //   test: /\.js$/,
@@ -106,8 +106,10 @@ module.exports = {
   },
   resolve: {
     extensions: ['.js', '.jsx', '.ts', '.tsx', '.wasm'],
-    modules: [path.resolve(__dirname, 'src'), 'node_modules'],
+    modules: [SRC_ROOT, 'node_modules'],
     alias: {
+      'process/browser': require.resolve('process/browser'),
+      '@uniswap/token-lists': path.resolve(PROJECT_ROOT, 'node_modules/@uniswap/token-lists/src/index.ts'),
       _src: SRC_ROOT,
       _components: path.resolve(SRC_ROOT, './components/'),
       _containers: path.resolve(SRC_ROOT, './containers/'),
