@@ -1,0 +1,35 @@
+{
+  "version": 2,
+  "name": "pledge-frontend",
+  "builds": [
+    {
+      "src": "package.json",
+      "use": "@vercel/static-build",
+      "config": {
+        "distDir": "dist"
+      }
+    }
+  ],
+  "routes": [
+    {
+      "src": "/static/(.*)",
+      "dest": "/static/$1"
+    },
+    {
+      "src": "/assets/(.*)",
+      "dest": "/assets/$1"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/index.html"
+    }
+  ],
+  "env": {
+    "REACT_APP_CHAIN_ID": "56"
+  },
+  "build": {
+    "env": {
+      "REACT_APP_CHAIN_ID": "56"
+    }
+  }
+}

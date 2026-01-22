@@ -1,0 +1,68 @@
+version: '3.8'
+
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: pledge-mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: root123456
+      MYSQL_DATABASE: pledge_v22
+      MYSQL_USER: pledge_v22
+      MYSQL_PASSWORD: pledge_v22
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./sql:/docker-entrypoint-initdb.d
+    command: --default-authentication-plugin=mysql_native_password
+
+  redis:
+    image: redis:6.2-alpine
+    container_name: pledge-redis
+    restart: always
+    command: redis-server --requirepass pledger_web3 --appendonly yes
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+
+  pledge-api:
+    image: alpine:3.18
+    container_name: pledge-api
+    restart: always
+    working_dir: /app
+    command: /app/pledge-api
+    environment:
+      CONFIG_PATH: /app/config/config.toml
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./pledge-api:/app/pledge-api:ro
+      - ./config:/app/config:ro
+      - ./log:/app/log
+    depends_on:
+      - mysql
+      - redis
+
+  pledge-task:
+    image: alpine:3.18
+    container_name: pledge-task
+    restart: always
+    working_dir: /app
+    command: /app/pledge-task
+    environment:
+      CONFIG_PATH: /app/config/config.toml
+    ports:
+      - "8082:8082"
+    volumes:
+      - ./pledge-task:/app/pledge-task:ro
+      - ./config:/app/config:ro
+      - ./log:/app/log
+    depends_on:
+      - mysql
+      - redis
+
+volumes:
+  mysql_data:
+  redis_data:
