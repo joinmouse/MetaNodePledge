@@ -141,6 +141,7 @@ const LendActionButtons: React.FC<LendActionButtonsProps> = ({
     });
 
     try {
+      console.log("Lending with pid:", pid, "amount:", num, "tokenAddress:", poolinfo[pid]?.Sp, "chainId:", chainId);
       const result = await services.PoolServer.depositLend(pid, num, poolinfo[pid]?.Sp ?? 0, chainId);
       console.log('[Lend] Transaction successful:', result);
       setloadings(false);
