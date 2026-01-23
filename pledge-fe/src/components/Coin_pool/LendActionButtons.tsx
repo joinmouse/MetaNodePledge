@@ -127,6 +127,7 @@ const LendActionButtons: React.FC<LendActionButtonsProps> = ({
   };
 
   const handleLendExecute = async () => {
+    console.log("handleLendExecute");
     if (!validateLendTransaction()) return;
     setloadings(true);
     const num = dealNumber(lendvalue);
