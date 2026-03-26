@@ -27,5 +27,22 @@ module.exports = {
       gasPrice: 10000000000, // 10 Gwei
       timeout: 60000, // 60秒超时
     },
+  },
+
+  // BSCScan API 配置（使用 @nomiclabs/hardhat-etherscan）
+  etherscan: {
+    apiKey: {
+      bscTestnet: process.env.BSCSCAN_API_KEY || "",
+    },
+    customChains: [
+      {
+        network: "bscTestnet",
+        chainId: 97,
+        urls: {
+          apiURL: "https://api-testnet.bscscan.com/api",
+          browserURL: "https://testnet.bscscan.com"
+        }
+      }
+    ]
   }
 };
